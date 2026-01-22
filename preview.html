@@ -571,16 +571,7 @@
     .analysis-text .highlight {
       color: #ffffff;
       font-weight: 400;
-    }
-
-    .analysis-text .highlight.green {
-      color: var(--green);
-      text-shadow: 0 0 20px rgba(74, 222, 128, 0.3);
-    }
-
-    .analysis-text .highlight.amber {
-      color: var(--amber);
-      text-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+      text-shadow: 0 0 15px rgba(255, 255, 255, 0.25);
     }
 
     .report-badges {
@@ -604,6 +595,11 @@
 
     .report-badge:hover {
       transform: translateY(-2px);
+    }
+
+    .report-badge.active {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
 
     .badge-key {
@@ -670,17 +666,6 @@
       transform: translateY(-2px);
     }
 
-    .report-action-btn.primary {
-      background: rgba(74, 222, 128, 0.12);
-      border-color: rgba(74, 222, 128, 0.25);
-      color: var(--green);
-    }
-
-    .report-action-btn.primary:hover {
-      background: rgba(74, 222, 128, 0.2);
-      border-color: rgba(74, 222, 128, 0.4);
-    }
-
     .report-action-btn kbd {
       background: rgba(255, 255, 255, 0.1);
       padding: 4px 8px;
@@ -689,9 +674,299 @@
       color: var(--text-secondary);
     }
 
-    .report-action-btn.primary kbd {
-      background: rgba(74, 222, 128, 0.25);
-      color: var(--green);
+    .dashboard-hint-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+      padding: 14px 32px;
+      background: linear-gradient(to top, rgba(10, 10, 10, 0.95), transparent);
+      font-size: 0.6rem;
+      color: #444;
+      z-index: 50;
+    }
+
+    .dashboard-hint-bar span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .dashboard-hint-bar kbd {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 2px 6px;
+      border-radius: 3px;
+      margin-right: 2px;
+      color: #555;
+    }
+
+    /* ===========================================
+       DASHBOARD ANNOTATION CARDS - L5ttice Style
+       =========================================== */
+    .dashboard-annotation {
+      display: flex;
+      gap: 28px;
+      padding: 24px;
+      margin: 20px 0;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.02);
+      animation: annotationOpen 0.35s var(--ease-out-expo);
+      transform-origin: top left;
+    }
+
+    .dashboard-annotation.closing {
+      animation: annotationClose 0.25s ease-out forwards;
+    }
+
+    @keyframes annotationOpen {
+      from { opacity: 0; transform: scaleY(0.95) translateY(-8px); }
+      to { opacity: 1; transform: scaleY(1) translateY(0); }
+    }
+
+    @keyframes annotationClose {
+      from { opacity: 1; transform: scaleY(1); }
+      to { opacity: 0; transform: scaleY(0.95) translateY(-8px); }
+    }
+
+    /* Color variants */
+    .dashboard-annotation.amber { border-color: rgba(251, 191, 36, 0.12); background: rgba(251, 191, 36, 0.02); }
+    .dashboard-annotation.blue { border-color: rgba(59, 130, 246, 0.12); background: rgba(59, 130, 246, 0.02); }
+    .dashboard-annotation.purple { border-color: rgba(139, 92, 246, 0.12); background: rgba(139, 92, 246, 0.02); }
+    .dashboard-annotation.green { border-color: rgba(34, 197, 94, 0.12); background: rgba(34, 197, 94, 0.02); }
+
+    .annotation-left {
+      flex-shrink: 0;
+      width: 160px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .annotation-header {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px 5px 5px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      align-self: flex-start;
+    }
+
+    .annotation-header .header-key {
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-size: 0.6rem;
+      font-weight: 600;
+    }
+
+    .dashboard-annotation.amber .annotation-header { background: rgba(251, 191, 36, 0.1); color: #fde68a; }
+    .dashboard-annotation.amber .header-key { background: rgba(251, 191, 36, 0.25); color: #fbbf24; }
+    .dashboard-annotation.blue .annotation-header { background: rgba(59, 130, 246, 0.1); color: #93c5fd; }
+    .dashboard-annotation.blue .header-key { background: rgba(59, 130, 246, 0.25); color: #60a5fa; }
+    .dashboard-annotation.purple .annotation-header { background: rgba(139, 92, 246, 0.1); color: #c4b5fd; }
+    .dashboard-annotation.purple .header-key { background: rgba(139, 92, 246, 0.25); color: #a78bfa; }
+    .dashboard-annotation.green .annotation-header { background: rgba(34, 197, 94, 0.1); color: #86efac; }
+    .dashboard-annotation.green .header-key { background: rgba(34, 197, 94, 0.25); color: #4ade80; }
+
+    .annotation-stat {
+      font-size: 3rem;
+      font-weight: 200;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
+      color: var(--text-white);
+    }
+
+    .annotation-stat sup {
+      font-size: 0.4em;
+      font-weight: 400;
+      color: var(--text-tertiary);
+      margin-left: 4px;
+    }
+
+    .annotation-ticker {
+      overflow: hidden;
+      height: 18px;
+      mask-image: linear-gradient(90deg, transparent 0%, black 10%, black 90%, transparent 100%);
+    }
+
+    .annotation-ticker-inner {
+      display: flex;
+      gap: 16px;
+      animation: tickerScroll 20s linear infinite;
+      white-space: nowrap;
+    }
+
+    .annotation-ticker-inner span {
+      font-size: 0.65rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-tertiary);
+    }
+
+    .dashboard-annotation.amber .annotation-ticker-inner span { color: rgba(251, 191, 36, 0.5); }
+    .dashboard-annotation.blue .annotation-ticker-inner span { color: rgba(59, 130, 246, 0.5); }
+    .dashboard-annotation.purple .annotation-ticker-inner span { color: rgba(139, 92, 246, 0.5); }
+    .dashboard-annotation.green .annotation-ticker-inner span { color: rgba(34, 197, 94, 0.5); }
+
+    @keyframes tickerScroll {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    .annotation-right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .annotation-prose {
+      font-size: 0.88rem;
+      line-height: 1.7;
+      font-weight: 300;
+      color: #888;
+    }
+
+    /* White-only highlights in prose */
+    .annotation-prose strong {
+      color: #fff;
+      font-weight: 400;
+    }
+
+    .annotation-prose em {
+      font-style: normal;
+      color: #ccc;
+    }
+
+    .annotation-prose code {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'SF Mono', monospace;
+      font-size: 0.85em;
+      color: #999;
+    }
+
+    .annotation-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .annotation-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 400;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .annotation-action:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+    }
+
+    .annotation-action.primary {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.12);
+      color: var(--text-primary);
+    }
+
+    .annotation-action .key {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2px 5px;
+      border-radius: 3px;
+      font-size: 0.6rem;
+      font-weight: 600;
+    }
+
+    .annotation-input {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 8px;
+      margin-top: 4px;
+    }
+
+    .annotation-input .input-arrow {
+      color: var(--text-tertiary);
+      font-size: 0.8rem;
+    }
+
+    .annotation-input-field {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: inherit;
+      font-size: 0.8rem;
+      color: var(--text-primary);
+    }
+
+    .annotation-input-field::placeholder {
+      color: #444;
+    }
+
+    .annotation-input .input-hint {
+      font-size: 0.55rem;
+      color: #333;
+    }
+
+    .annotation-input .input-hint kbd {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 2px 5px;
+      border-radius: 3px;
+    }
+
+    .card-conversation {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .card-exchange {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .card-query {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .card-query .arrow {
+      color: var(--text-tertiary);
+    }
+
+    .card-response {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      padding-left: 14px;
     }
 
     /* ===========================================
@@ -1245,6 +1520,47 @@
       box-shadow: 0 0 25px rgba(74, 222, 128, 0.15);
     }
 
+    /* Neutral grey variant - no score-based coloring */
+    .stat-card.neutral {
+      border-color: rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .stat-card.neutral::before {
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.08);
+    }
+    .stat-card.neutral .stat-value {
+      color: #888;
+    }
+    .stat-card.neutral.active {
+      border-color: rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    /* Hotkey badge for stat cards */
+    .stat-hotkey {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3px 7px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #666;
+      min-width: 20px;
+      text-align: center;
+      opacity: 0.7;
+      transition: all 0.2s ease;
+    }
+    .stat-card:hover .stat-hotkey,
+    .stat-card.expanded .stat-hotkey {
+      opacity: 1;
+      color: #888;
+    }
+
     .stat-card.amber {
       border-color: rgba(251, 191, 36, 0.2);
       background: rgba(251, 191, 36, 0.03);
@@ -1331,7 +1647,7 @@
     }
 
     .stat-card.expanded .stat-expanded {
-      max-height: 150px;
+      max-height: 280px;
       opacity: 1;
       padding-top: 14px;
       margin-top: 12px;
@@ -1343,6 +1659,43 @@
       color: var(--text-prose);
       line-height: 1.5;
       margin-bottom: 12px;
+    }
+
+    .stat-summary {
+      font-size: 0.8rem;
+      color: var(--text-prose);
+      line-height: 1.6;
+      font-weight: 300;
+      margin-bottom: 14px;
+    }
+
+    .stat-qa {
+      margin-bottom: 14px;
+    }
+
+    .stat-qa-item {
+      margin-bottom: 10px;
+    }
+
+    .stat-qa-question {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+
+    .stat-qa-question .arrow {
+      color: var(--text-tertiary);
+    }
+
+    .stat-qa-answer {
+      font-size: 0.78rem;
+      color: var(--text-prose);
+      line-height: 1.5;
+      padding-left: 16px;
+      font-weight: 300;
     }
 
     .stat-actions {
@@ -2269,6 +2622,35 @@
       letter-spacing: 0.12em;
       color: var(--text-secondary);
       font-weight: 500;
+    }
+
+    /* Stat value row - flex container for value + description */
+    .insight-stat-value-row {
+      display: flex;
+      align-items: baseline;
+    }
+
+    /* Description that appears on hover */
+    .insight-stat-desc {
+      display: inline-flex;
+      align-items: baseline;
+      max-width: 0;
+      opacity: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      font-size: 0.85rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      margin-left: 0;
+      transition: max-width 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
+                  opacity 0.2s ease, 
+                  margin-left 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .insight-stat:hover .insight-stat-desc {
+      max-width: 180px;
+      opacity: 1;
+      margin-left: 12px;
     }
 
     /* Number count-up animation for first tab open */
@@ -3346,11 +3728,11 @@
         <!-- Main Report Text -->
         <p class="analysis-text">
           Scanned <span class="highlight">47 files</span> across your React codebase. 
-          Overall health score is <span class="highlight green">78%</span>, which is above average for projects of this size.
+          Overall health score is <span class="highlight">78%</span>, which is above average for projects of this size.
         </p>
         
         <p class="analysis-text">
-          Found <span class="highlight amber">14 issues</span> that could benefit from attention, 
+          Found <span class="highlight">14 issues</span> that could benefit from attention, 
           including <span class="highlight">4 quick wins</span> that can be resolved automatically.
         </p>
         
@@ -3386,7 +3768,7 @@
         
         <!-- Action Buttons -->
         <div class="report-actions">
-          <button class="report-action-btn primary" id="report-btn-editor">
+          <button class="report-action-btn" id="report-btn-editor">
             <span>Open Editor</span>
             <kbd>E</kbd>
           </button>
@@ -3404,6 +3786,12 @@
           </button>
         </div>
       </div>
+    </div>
+    
+    <div class="dashboard-hint-bar">
+      <span><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> Explore insights</span>
+      <span><kbd>E</kbd> Editor</span>
+      <span><kbd>esc</kbd> Close</span>
     </div>
   </div>
 
@@ -4213,6 +4601,92 @@
     let activityItems = [];
     let fixAllInProgress = false;
     let activityTaskStates = {}; // Track individual task states: { taskIndex: { progress: 0, status: 'pending' } }
+    
+    // Dashboard annotation state
+    let activeDashboardAnnotation = null;
+    let activeDashboardElement = null;
+
+    // Dashboard card data for hotkey annotations
+    const dashboardCardData = {
+      '1': {
+        color: 'amber',
+        title: 'Fragmentation Index',
+        stat: '0.73',
+        statTarget: 0.73,
+        statSup: '/ 1.0',
+        isDecimal: true,
+        ticker: ['entropy', 'variance', 'dispersion', 'inconsistency', 'fragmentation', 'drift', 'patterns', 'conflicts'],
+        prose: 'Above the <strong>0.5 threshold</strong> for visual coherence. Token entropy suggests <em>multiple competing design patterns</em> across your component library.',
+        actions: [
+          { key: 'F', label: 'Fix highest impact', primary: true },
+          { key: '?', label: 'Why 0.5' }
+        ],
+        placeholder: 'Ask about fragmentation...',
+        responses: { 
+          'why': 'The 0.5 threshold comes from information theory — above this point, visual noise outweighs signal.',
+          'default': 'This measures design system entropy. Lower is better.' 
+        }
+      },
+      '2': {
+        color: 'blue',
+        title: 'Style Conflicts',
+        stat: '37',
+        statTarget: 37,
+        statSup: 'conflicts',
+        isDecimal: false,
+        ticker: ['colors', 'spacing', 'typography', 'shadows', 'borders', 'radius', 'tokens', 'overrides'],
+        prose: 'Found <strong>14 redundant colors</strong> and <strong>23 spacing conflicts</strong> propagating through nested components.',
+        actions: [
+          { key: 'G', label: 'View graph' },
+          { key: 'L', label: 'List conflicts' }
+        ],
+        placeholder: 'Ask about conflicts...',
+        responses: { 
+          'worst': 'Button.tsx is the main offender with 8 conflicting tokens.',
+          'default': 'The coherence graph traces token inheritance through your component tree.' 
+        }
+      },
+      '3': {
+        color: 'green',
+        title: 'Drift Reducible',
+        stat: '70%',
+        statTarget: 70,
+        statSup: '',
+        suffix: '%',
+        isDecimal: false,
+        ticker: ['consistency', 'predictability', 'coherence', 'stability', 'uniformity', 'structure', 'alignment', 'tokens'],
+        prose: 'Estimated reduction in visual drift. <strong>47 components</strong> auto-correct once tokens are unified.',
+        actions: [
+          { key: 'F', label: 'Apply now', primary: true },
+          { key: 'S', label: 'Simulate' }
+        ],
+        placeholder: 'Ask about impact...',
+        responses: { 
+          'why 70': 'The 70% comes from cascade analysis — tracking how changes propagate.',
+          'default': 'Impact is calculated by tracing token dependencies.' 
+        }
+      },
+      '4': {
+        color: 'purple',
+        title: 'Bundle Savings',
+        stat: '12%',
+        statTarget: 12,
+        statSup: '',
+        suffix: '%',
+        isDecimal: false,
+        ticker: ['treeshake', 'deadcode', 'unused', 'exports', 'imports', 'chunks', 'size', 'optimize'],
+        prose: 'Identified <strong>8 unused exports</strong> and <em>redundant CSS</em> contributing to bundle size. Safe to remove.',
+        actions: [
+          { key: 'R', label: 'Review removals' },
+          { key: 'F', label: 'Apply all', primary: true }
+        ],
+        placeholder: 'Ask about bundle...',
+        responses: { 
+          'safe': 'Yes — static analysis confirms these exports are unreachable from entry points.',
+          'default': 'Bundle analysis traces import graphs to find dead code.' 
+        }
+      }
+    };
 
     // Fix actions with agent dialogue, prose, and ticker keywords
     const fixActions = [
@@ -5017,7 +5491,8 @@
           </div>
         </div>
         <div class="stats-row">
-          <div class="stat-card green" id="stat-coverage">
+          <div class="stat-card neutral" id="stat-coverage" data-hotkey="1">
+            <span class="stat-hotkey">1</span>
             <span class="stat-expand-icon">+</span>
             <div class="stat-main">
               <div class="stat-value">8.4</div>
@@ -5027,16 +5502,23 @@
               </div>
             </div>
             <div class="stat-expanded">
-              <div class="stat-detail">
-                Strong coverage on core logic. Consider adding edge case tests for error handling paths.
+              <div class="stat-summary">
+                Your test coverage is strong at 84% line coverage. All behavior types are tested including edge cases.
+              </div>
+              <div class="stat-qa">
+                <div class="stat-qa-item">
+                  <div class="stat-qa-question"><span class="arrow">→</span> What needs attention?</div>
+                  <div class="stat-qa-answer">Error handling paths in useEffect hooks could use additional coverage.</div>
+                </div>
               </div>
               <div class="stat-actions">
-                <button class="stat-action-btn primary"><kbd>G</kbd> Generate tests</button>
-                <button class="stat-action-btn"><kbd>V</kbd> View gaps</button>
+                <button class="stat-action-btn primary" onclick="handleStatAction('coverage', 'generate')"><kbd>F</kbd> Improve coverage</button>
+                <button class="stat-action-btn" onclick="handleStatAction('coverage', 'open')"><kbd>↵</kbd> Open full view</button>
               </div>
             </div>
           </div>
-          <div class="stat-card green" id="stat-quality">
+          <div class="stat-card neutral" id="stat-quality" data-hotkey="2">
+            <span class="stat-hotkey">2</span>
             <span class="stat-expand-icon">+</span>
             <div class="stat-main">
               <div class="stat-value">7.8</div>
@@ -5046,12 +5528,18 @@
               </div>
             </div>
             <div class="stat-expanded">
-              <div class="stat-detail">
-                Minor improvements available: type annotations, error boundaries, and naming consistency.
+              <div class="stat-summary">
+                This file has good code quality with some areas for improvement. Maintainability scores lowest at 7/10.
+              </div>
+              <div class="stat-qa">
+                <div class="stat-qa-item">
+                  <div class="stat-qa-question"><span class="arrow">→</span> What are the main issues?</div>
+                  <div class="stat-qa-answer">Type annotations could be more explicit. Consider adding error boundaries for robustness.</div>
+                </div>
               </div>
               <div class="stat-actions">
-                <button class="stat-action-btn primary"><kbd>A</kbd> Apply all fixes</button>
-                <button class="stat-action-btn"><kbd>R</kbd> Review each</button>
+                <button class="stat-action-btn primary" onclick="handleStatAction('quality', 'fix')"><kbd>F</kbd> Fix top issue</button>
+                <button class="stat-action-btn" onclick="handleStatAction('quality', 'open')"><kbd>↵</kbd> Open full view</button>
               </div>
             </div>
           </div>
@@ -5123,15 +5611,24 @@
 
           <div class="insight-stats">
             <div class="insight-stat">
-              <div class="insight-stat-value amber">7.5</div>
+              <div class="insight-stat-value-row">
+                <div class="insight-stat-value amber">7.5</div>
+                <span class="insight-stat-desc">clarity, completeness, cohesion</span>
+              </div>
               <div class="insight-stat-label">Avg Score</div>
             </div>
             <div class="insight-stat">
-              <div class="insight-stat-value green">4</div>
+              <div class="insight-stat-value-row">
+                <div class="insight-stat-value green">4</div>
+                <span class="insight-stat-desc">detected in codebase</span>
+              </div>
               <div class="insight-stat-label">Features</div>
             </div>
             <div class="insight-stat">
-              <div class="insight-stat-value">12</div>
+              <div class="insight-stat-value-row">
+                <div class="insight-stat-value">12</div>
+                <span class="insight-stat-desc">contributing to features</span>
+              </div>
               <div class="insight-stat-label">Files</div>
             </div>
           </div>
@@ -5232,15 +5729,24 @@
 
           <div class="insight-stats">
             <div class="insight-stat">
-              <div class="insight-stat-value amber">5.0</div>
+              <div class="insight-stat-value-row">
+                <div class="insight-stat-value amber">5.0</div>
+                <span class="insight-stat-desc">maintainability, extensibility</span>
+              </div>
               <div class="insight-stat-label">Avg Score</div>
             </div>
             <div class="insight-stat">
-              <div class="insight-stat-value red">2</div>
+              <div class="insight-stat-value-row">
+                <div class="insight-stat-value red">2</div>
+                <span class="insight-stat-desc">issues to fix</span>
+              </div>
               <div class="insight-stat-label">Critical</div>
             </div>
             <div class="insight-stat">
-              <div class="insight-stat-value">4</div>
+              <div class="insight-stat-value-row">
+                <div class="insight-stat-value">4</div>
+                <span class="insight-stat-desc">analyzed for debt</span>
+              </div>
               <div class="insight-stat-label">Files</div>
             </div>
           </div>
@@ -5334,15 +5840,24 @@
 
           <div class="insight-stats">
             <div class="insight-stat">
-              <div class="insight-stat-value green">71%</div>
+              <div class="insight-stat-value-row">
+                <div class="insight-stat-value green">71%</div>
+                <span class="insight-stat-desc">lines executed by tests</span>
+              </div>
               <div class="insight-stat-label">Overall</div>
             </div>
             <div class="insight-stat">
-              <div class="insight-stat-value">93</div>
+              <div class="insight-stat-value-row">
+                <div class="insight-stat-value">93</div>
+                <span class="insight-stat-desc">passing</span>
+              </div>
               <div class="insight-stat-label">Tests</div>
             </div>
             <div class="insight-stat">
-              <div class="insight-stat-value green">4</div>
+              <div class="insight-stat-value-row">
+                <div class="insight-stat-value green">4</div>
+                <span class="insight-stat-desc">test files</span>
+              </div>
               <div class="insight-stat-label">Suites</div>
             </div>
           </div>
@@ -5996,12 +6511,16 @@
       });
     }
     
-    // Report badge clicks
+    // Report badge clicks - toggle annotation cards
     document.querySelectorAll('.report-badge').forEach(badge => {
-      badge.addEventListener('click', () => {
-        showScreen('editor');
-        playSound('decide');
-        switchTab('tech-debt');
+      badge.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const key = badge.dataset.key;
+        if (activeDashboardAnnotation === key) {
+          closeDashboardAnnotation(key);
+        } else {
+          openDashboardAnnotation(key);
+        }
       });
     });
     
@@ -6015,7 +6534,24 @@
           skipAnalysis();
         }
       } else if (currentScreen === 'dashboard') {
-        if (e.key === 'e' || e.key === 'E') {
+        // Ignore if typing in annotation input
+        if (e.target.closest('.annotation-input-field')) {
+          return;
+        }
+        
+        // Hotkeys 1-4 toggle annotation cards
+        if (e.key === '1' || e.key === '2' || e.key === '3' || e.key === '4') {
+          e.preventDefault();
+          toggleDashboardAnnotation(e.key);
+        } else if (e.key === 'Escape') {
+          // Close annotation if open, otherwise go back to analysis
+          if (activeDashboardAnnotation) {
+            closeDashboardAnnotation(activeDashboardAnnotation);
+          } else {
+            showScreen('analysis');
+            playSound('cancel');
+          }
+        } else if (e.key === 'e' || e.key === 'E') {
           showScreen('editor');
           playSound('decide');
           switchTab('editor');
@@ -6033,11 +6569,55 @@
           switchTab('tests');
         }
       } else if (currentScreen === 'editor') {
+        // Ignore if user is typing in an input
+        if (e.target.closest('input, textarea')) {
+          return;
+        }
+        
         if (e.key === 'Escape') {
+          // First check if a stat card is expanded
+          const expandedCard = document.querySelector('.stat-card.expanded');
+          if (expandedCard) {
+            expandedCard.classList.remove('expanded');
+            playSound('cancel');
+            return;
+          }
           showScreen('dashboard');
           playSound('cancel');
-        } else if ((e.key === 'f' || e.key === 'F') && !e.target.closest('input, textarea')) {
-          // Trigger Fix All Issues
+        } else if (e.key === '1') {
+          // Toggle Test Coverage card
+          e.preventDefault();
+          toggleStatCard('stat-coverage');
+        } else if (e.key === '2') {
+          // Toggle Code Quality card
+          e.preventDefault();
+          toggleStatCard('stat-quality');
+        } else if (e.key === 'Enter') {
+          // Open full view if a card is expanded
+          const expandedCard = document.querySelector('.stat-card.expanded');
+          if (expandedCard) {
+            e.preventDefault();
+            const cardId = expandedCard.id;
+            if (cardId === 'stat-coverage') {
+              switchTab('tests');
+            } else if (cardId === 'stat-quality') {
+              switchTab('tech-debt');
+            }
+            expandedCard.classList.remove('expanded');
+            playSound('decide');
+          }
+        } else if (e.key === 'f' || e.key === 'F') {
+          // Check if a stat card is expanded - if so, trigger primary action
+          const expandedCard = document.querySelector('.stat-card.expanded');
+          if (expandedCard) {
+            e.preventDefault();
+            const primaryBtn = expandedCard.querySelector('.stat-action-btn.primary');
+            if (primaryBtn) {
+              primaryBtn.click();
+            }
+            return;
+          }
+          // Otherwise, trigger Fix All Issues
           const fixAllBtn = document.getElementById('fix-all-btn');
           if (fixAllBtn && !fixAllInProgress) {
             fixAllBtn.click();
@@ -6045,6 +6625,199 @@
         }
       }
     });
+    
+    // ===========================================
+    // DASHBOARD ANNOTATION CARD FUNCTIONS
+    // ===========================================
+    
+    function createDashboardAnnotation(key) {
+      const data = dashboardCardData[key];
+      const tickerItems = [...data.ticker, ...data.ticker].map(t => `<span>${t}</span>`).join('');
+      const actionsHtml = data.actions.map(a => 
+        `<div class="annotation-action ${a.primary ? 'primary' : ''}" data-action="${a.key}">
+          <span class="key">${a.key}</span> ${a.label}
+        </div>`
+      ).join('');
+
+      const div = document.createElement('div');
+      div.className = `dashboard-annotation ${data.color}`;
+      div.dataset.key = key;
+      div.innerHTML = `
+        <div class="annotation-left">
+          <div class="annotation-header"><span class="header-key">${key}</span>${data.title}</div>
+          <div class="annotation-stat"><span class="stat-value">0</span><sup>${data.statSup}</sup></div>
+          <div class="annotation-ticker"><div class="annotation-ticker-inner">${tickerItems}</div></div>
+        </div>
+        <div class="annotation-right">
+          <div class="card-conversation"></div>
+          <div class="annotation-prose">${data.prose}</div>
+          <div class="annotation-actions">${actionsHtml}</div>
+          <div class="annotation-input">
+            <span class="input-arrow">→</span>
+            <input type="text" class="annotation-input-field" placeholder="${data.placeholder}">
+            <span class="input-hint"><kbd>↵</kbd></span>
+          </div>
+        </div>
+      `;
+
+      // Animate the stat number
+      const statEl = div.querySelector('.stat-value');
+      setTimeout(() => {
+        animateDashboardNumber(statEl, data.statTarget, 1000, data.isDecimal, data.suffix || '');
+      }, 150);
+
+      // Wire up input field for in-card questions
+      const inputField = div.querySelector('.annotation-input-field');
+      if (inputField) {
+        inputField.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' && inputField.value.trim()) {
+            e.preventDefault();
+            handleDashboardCardQuery(key, inputField.value.trim(), div);
+            inputField.value = '';
+            playSound('cursor');
+          }
+        });
+      }
+
+      // Wire up action buttons
+      div.querySelectorAll('.annotation-action').forEach(action => {
+        action.addEventListener('click', () => {
+          playSound('decide');
+          closeDashboardAnnotation(key, () => {
+            showScreen('editor');
+            switchTab('tech-debt');
+          });
+        });
+      });
+
+      return div;
+    }
+
+    function animateDashboardNumber(element, target, duration = 1000, isDecimal = false, suffix = '') {
+      const startTime = performance.now();
+      function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = target * eased;
+        element.textContent = isDecimal ? current.toFixed(2) + suffix : Math.round(current) + suffix;
+        if (progress < 1) requestAnimationFrame(update);
+      }
+      requestAnimationFrame(update);
+    }
+
+    function handleDashboardCardQuery(key, query, element) {
+      const data = dashboardCardData[key];
+      const convArea = element.querySelector('.card-conversation');
+      let response = data.responses.default;
+      for (const [trigger, resp] of Object.entries(data.responses)) {
+        if (trigger !== 'default' && query.toLowerCase().includes(trigger)) { 
+          response = resp; 
+          break; 
+        }
+      }
+      const exchange = document.createElement('div');
+      exchange.className = 'card-exchange';
+      exchange.innerHTML = `<div class="card-query"><span class="arrow">→</span>${query}</div><div class="card-response">${response}</div>`;
+      convArea.appendChild(exchange);
+    }
+
+    function openDashboardAnnotation(key) {
+      playSound('category');
+      const badge = document.querySelector(`.report-badge[data-key="${key}"]`);
+      if (!badge) return;
+      
+      if (activeDashboardAnnotation) {
+        closeDashboardAnnotation(activeDashboardAnnotation, () => { 
+          if (activeDashboardAnnotation !== key) insertDashboardAnnotation(key, badge); 
+        });
+        return;
+      }
+      insertDashboardAnnotation(key, badge);
+    }
+
+    function insertDashboardAnnotation(key, badge) {
+      const annotation = createDashboardAnnotation(key);
+      badge.insertAdjacentElement('afterend', annotation);
+      badge.classList.add('active');
+      activeDashboardAnnotation = key;
+      activeDashboardElement = annotation;
+      const input = annotation.querySelector('.annotation-input-field');
+      if (input) setTimeout(() => input.focus(), 100);
+    }
+
+    function closeDashboardAnnotation(key, callback) {
+      const badge = document.querySelector(`.report-badge[data-key="${key}"]`);
+      if (activeDashboardElement) {
+        activeDashboardElement.classList.add('closing');
+        setTimeout(() => {
+          if (activeDashboardElement?.parentNode) activeDashboardElement.parentNode.removeChild(activeDashboardElement);
+          activeDashboardElement = null;
+          activeDashboardAnnotation = null;
+          if (callback) callback();
+        }, 200);
+      }
+      if (badge) badge.classList.remove('active');
+      playSound('cancel');
+    }
+
+    function toggleDashboardAnnotation(key) {
+      if (activeDashboardAnnotation === key) {
+        closeDashboardAnnotation(key);
+      } else {
+        openDashboardAnnotation(key);
+      }
+    }
+
+    // ===========================================
+    // EDITOR STAT CARD FUNCTIONS
+    // ===========================================
+    
+    // Toggle stat card expansion
+    function toggleStatCard(cardId) {
+      const card = document.getElementById(cardId);
+      if (!card) return;
+      
+      // Close other expanded cards
+      document.querySelectorAll('.stat-card.expanded').forEach(c => {
+        if (c.id !== cardId) {
+          c.classList.remove('expanded');
+        }
+      });
+      
+      // Toggle this card
+      card.classList.toggle('expanded');
+      playSound(card.classList.contains('expanded') ? 'category' : 'cursor');
+    }
+    
+    // Handle stat card action button clicks
+    function handleStatAction(cardType, action) {
+      const card = document.getElementById(cardType === 'coverage' ? 'stat-coverage' : 'stat-quality');
+      
+      if (action === 'open') {
+        // Navigate to full view
+        if (cardType === 'coverage') {
+          switchTab('tests');
+        } else {
+          switchTab('tech-debt');
+        }
+        if (card) card.classList.remove('expanded');
+        playSound('decide');
+      } else if (action === 'generate' || action === 'fix') {
+        // Inject prompt into chat
+        const chatInput = document.querySelector('.chat-input');
+        if (chatInput) {
+          if (cardType === 'coverage') {
+            chatInput.value = 'Improve test coverage for ChatPanel.tsx:\n- Add edge case tests for error handling\n- Test loading states and error boundaries';
+          } else {
+            chatInput.value = 'Fix code quality issues in ChatPanel.tsx:\n- Add explicit type annotations\n- Implement error boundaries';
+          }
+          chatInput.focus();
+        }
+        if (card) card.classList.remove('expanded');
+        playSound('confirm');
+      }
+    }
   </script>
 </body>
 </html>
