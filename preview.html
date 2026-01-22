@@ -1473,18 +1473,16 @@
       flex-shrink: 0;
     }
 
-    /* Gradient fade lines above and below - fade on right edge only */
-    .stats-row::before,
+    /* Single gradient fade line below cards only */
     .stats-row::after {
       content: '';
       position: absolute;
+      bottom: 0;
       left: 20px;
-      right: 15%;
+      right: 20%;
       height: 1px;
-      background: linear-gradient(90deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.06) 70%, transparent 100%);
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.06) 75%, transparent 100%);
     }
-    .stats-row::before { top: 0; }
-    .stats-row::after { bottom: 0; }
 
     .stat-card {
       position: relative;
@@ -2482,7 +2480,7 @@
       line-height: 1.6;
     }
 
-    /* Chat Input - L5ttice airy style, backwards L layout */
+    /* Chat Input - L5ttice airy style */
     .chat-input {
       display: flex;
       align-items: center;
@@ -2491,15 +2489,14 @@
       flex-shrink: 0;
       background: transparent;
       position: relative;
-      margin-left: 24px;
     }
 
-    /* Line above input - extends further left than text (backwards L) */
+    /* Line above input - aligns with arrow/text start */
     .chat-input::before {
       content: '';
       position: absolute;
       top: 0;
-      left: -24px;
+      left: 24px;
       right: 32px;
       height: 1px;
       background: rgba(255, 255, 255, 0.05);
@@ -2509,10 +2506,28 @@
       color: #555;
       font-size: 1rem;
       transition: color 0.15s ease;
+      animation: arrowPulse 4s ease-in-out infinite;
+    }
+
+    /* Subtle cyberpunk arrow scroll animation */
+    @keyframes arrowPulse {
+      0%, 85%, 100% {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      90% {
+        transform: translateX(4px);
+        opacity: 0.7;
+      }
+      95% {
+        transform: translateX(0);
+        opacity: 1;
+      }
     }
 
     .chat-input:focus-within .arrow {
       color: #888;
+      animation: none;
     }
 
     .chat-input input {
