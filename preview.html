@@ -2699,20 +2699,269 @@
       font-family: var(--font-mono);
     }
 
-    /* Activity Stream - Agent Messages */
+    /* Activity Stream - Enhanced with gradient shadow divider */
     .activity-stream {
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
       overflow-y: auto;
-      padding-right: 8px;
-      mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
+      padding: 0 8px 16px 0;
+      position: relative;
+      /* Gradient fade at both edges for smooth scroll indication */
+      mask-image: linear-gradient(
+        to bottom,
+        transparent 0%,
+        black 24px,
+        black calc(100% - 24px),
+        transparent 100%
+      );
     }
 
     .activity-stream::-webkit-scrollbar { width: 4px; }
     .activity-stream::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.08); border-radius: 2px; }
 
+    /* Sticky gradient shadow at top when scrolling */
+    .activity-stream-shadow {
+      position: sticky;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 20px;
+      background: linear-gradient(to bottom, rgba(10, 10, 10, 0.95), transparent);
+      pointer-events: none;
+      z-index: 5;
+      margin-bottom: -20px;
+      flex-shrink: 0;
+    }
+
+    /* Task Card - Individual fix item with progress */
+    .activity-task {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(8px);
+      animation: taskSlideIn 0.4s var(--ease-out-expo) forwards;
+      animation-delay: calc(var(--index, 0) * 80ms);
+      cursor: pointer;
+      transition: border-color 0.3s ease, background 0.3s ease;
+    }
+
+    @keyframes taskSlideIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .activity-task:hover {
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .activity-task.pending {
+      opacity: 0.5;
+    }
+
+    .activity-task.pending .task-progress-fill {
+      width: 0% !important;
+    }
+
+    .activity-task.active {
+      border-color: rgba(251, 191, 36, 0.3);
+      background: rgba(251, 191, 36, 0.03);
+      opacity: 1;
+    }
+
+    .activity-task.complete {
+      border-color: rgba(74, 222, 128, 0.2);
+      background: rgba(74, 222, 128, 0.02);
+      opacity: 1;
+    }
+
+    /* Task Header - Always visible */
+    .task-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+    }
+
+    .task-status-icon {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 6px;
+      flex-shrink: 0;
+      color: var(--text-tertiary);
+      transition: all 0.3s ease;
+    }
+
+    .activity-task.active .task-status-icon {
+      background: rgba(251, 191, 36, 0.1);
+      color: var(--amber);
+    }
+
+    .activity-task.complete .task-status-icon {
+      background: rgba(74, 222, 128, 0.1);
+      color: var(--green);
+    }
+
+    .task-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .task-title {
+      font-size: 0.8rem;
+      color: var(--text-primary);
+      margin-bottom: 3px;
+    }
+
+    .task-file {
+      font-size: 0.65rem;
+      font-family: var(--font-mono);
+      color: var(--text-tertiary);
+    }
+
+    .task-expand-btn {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      color: var(--text-tertiary);
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 300;
+      transition: transform 0.3s var(--ease-out-expo), color 0.2s;
+    }
+
+    .activity-task.expanded .task-expand-btn {
+      transform: rotate(45deg);
+      color: var(--text-secondary);
+    }
+
+    /* Task Progress Bar (per-task) */
+    .task-progress {
+      padding: 0 16px 12px;
+    }
+
+    .task-progress-bar {
+      height: 3px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .task-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--amber), #f59e0b);
+      border-radius: 2px;
+      transition: width 0.15s linear;
+    }
+
+    .activity-task.complete .task-progress-fill {
+      width: 100% !important;
+      background: var(--green);
+    }
+
+    /* Expandable Agent Dialogue Section */
+    .task-dialogue {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s var(--ease-out-expo), opacity 0.3s;
+      opacity: 0;
+      border-top: 1px solid transparent;
+    }
+
+    .activity-task.expanded .task-dialogue {
+      max-height: 220px;
+      opacity: 1;
+      border-top-color: var(--border-subtle);
+    }
+
+    .task-dialogue-inner {
+      padding: 12px 16px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .task-dialogue-inner::-webkit-scrollbar { width: 3px; }
+    .task-dialogue-inner::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.06); }
+
+    /* Agent Message */
+    .agent-msg {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      opacity: 0;
+      animation: agentMsgFadeIn 0.25s ease forwards;
+      padding: 4px 0;
+    }
+
+    @keyframes agentMsgFadeIn {
+      to { opacity: 1; }
+    }
+
+    /* Fade older messages */
+    .agent-msg:nth-last-child(1) { opacity: 1; }
+    .agent-msg:nth-last-child(2) { opacity: 0.75; }
+    .agent-msg:nth-last-child(3) { opacity: 0.55; }
+    .agent-msg:nth-last-child(n+4) { opacity: 0.35; }
+
+    .agent-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 6px;
+    }
+
+    .agent-msg.agent-1 .agent-dot { background: var(--purple); }
+    .agent-msg.agent-2 .agent-dot { background: var(--blue); }
+    .agent-msg.agent-3 .agent-dot { background: var(--green); }
+
+    .agent-msg-text {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .agent-msg-text code {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-family: var(--font-mono);
+      font-size: 0.9em;
+      color: var(--text-prose);
+    }
+
+    /* Typing Cursor */
+    .typing-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1.1em;
+      background: var(--text-secondary);
+      margin-left: 2px;
+      animation: typingBlink 0.8s step-end infinite;
+      vertical-align: text-bottom;
+    }
+
+    @keyframes typingBlink {
+      50% { opacity: 0; }
+    }
+
+    /* Legacy activity-item styles for backwards compatibility */
     .activity-item {
       display: flex;
       gap: 14px;
@@ -3777,6 +4026,7 @@
           break;
         case 'activity':
           panelCenter.innerHTML = getActivityContent();
+          setupTaskCardInteractions();
           break;
       }
       
@@ -3788,26 +4038,173 @@
     // ===========================================
     let activityItems = [];
     let fixAllInProgress = false;
+    let activityTaskStates = {}; // Track individual task states: { taskIndex: { progress: 0, status: 'pending' } }
 
+    // Fix actions with agent dialogue for each
     const fixActions = [
-      { title: 'Adding type annotations', file: 'src/utils/formatters.ts', desc: 'Adding explicit return types to 3 functions' },
-      { title: 'Adding error boundaries', file: 'src/components/App.tsx', desc: 'Wrapping component tree with ErrorBoundary' },
-      { title: 'Removing unused imports', file: 'src/services/api.ts', desc: 'Cleaned 4 unused imports' },
-      { title: 'Consolidating color tokens', file: 'src/styles/theme.ts', desc: 'Unified 14 redundant color definitions' },
-      { title: 'Adding null checks', file: 'src/hooks/useAuth.ts', desc: 'Added optional chaining to prevent runtime errors' },
-      { title: 'Updating deprecated APIs', file: 'src/services/auth.ts', desc: 'Migrated to new authentication patterns' },
-      { title: 'Fixing spacing inconsistencies', file: 'src/components/Button.tsx', desc: 'Applied consistent 8px grid spacing' },
-      { title: 'Adding missing tests', file: 'src/utils/validators.ts', desc: 'Generated 6 unit tests for edge cases' },
-      { title: 'Optimizing bundle', file: 'package.json', desc: 'Tree-shaking removed 12% of dead code' },
-      { title: 'Fixing accessibility', file: 'src/components/Form.tsx', desc: 'Added aria-labels to form inputs' },
-      { title: 'Updating dependencies', file: 'package.json', desc: 'Updated 3 packages with security fixes' },
-      { title: 'Extracting shared component', file: 'src/components/Card.tsx', desc: 'Created reusable CardBase component' },
-      { title: 'Adding JSDoc comments', file: 'src/services/api.ts', desc: 'Documented public API methods' },
-      { title: 'Fixing memory leak', file: 'src/hooks/useWebSocket.ts', desc: 'Added cleanup on component unmount' },
+      { 
+        title: 'Adding type annotations', 
+        file: 'src/utils/formatters.ts', 
+        desc: 'Adding explicit return types to 3 functions',
+        dialogue: [
+          { agent: 1, text: 'Scanning function signatures...' },
+          { agent: 2, text: 'Found 3 functions missing return types' },
+          { agent: 1, text: 'Inferring types from usage patterns' },
+          { agent: 3, text: 'Verified - no type conflicts detected' },
+          { agent: 1, text: 'Applying annotations' },
+        ]
+      },
+      { 
+        title: 'Adding error boundaries', 
+        file: 'src/components/App.tsx', 
+        desc: 'Wrapping component tree with ErrorBoundary',
+        dialogue: [
+          { agent: 1, text: 'Analyzing component tree...' },
+          { agent: 2, text: 'Found 3 error-prone render patterns' },
+          { agent: 1, text: 'Creating ErrorBoundary wrapper' },
+          { agent: 3, text: 'Testing fallback UI rendering' },
+          { agent: 2, text: 'Boundaries applied successfully' },
+        ]
+      },
+      { 
+        title: 'Removing unused imports', 
+        file: 'src/services/api.ts', 
+        desc: 'Cleaned 4 unused imports',
+        dialogue: [
+          { agent: 2, text: 'Tracing import dependencies...' },
+          { agent: 1, text: 'Found 4 unused imports' },
+          { agent: 3, text: 'Confirming no side effects' },
+          { agent: 2, text: 'Safe to remove' },
+        ]
+      },
+      { 
+        title: 'Consolidating color tokens', 
+        file: 'src/styles/theme.ts', 
+        desc: 'Unified 14 redundant color definitions',
+        dialogue: [
+          { agent: 2, text: 'Cross-referencing <code>theme.ts</code>' },
+          { agent: 1, text: 'Found 14 instances of <code>#3b82f6</code> inline' },
+          { agent: 3, text: 'Safe to consolidate - no runtime deps' },
+          { agent: 2, text: 'Extracting to <code>--color-primary</code>' },
+          { agent: 1, text: 'Updated 14 files, 0 breaking changes' },
+        ]
+      },
+      { 
+        title: 'Adding null checks', 
+        file: 'src/hooks/useAuth.ts', 
+        desc: 'Added optional chaining to prevent runtime errors',
+        dialogue: [
+          { agent: 1, text: 'Scanning for potential null references...' },
+          { agent: 3, text: 'Found 2 unsafe property accesses' },
+          { agent: 2, text: 'Adding optional chaining operators' },
+          { agent: 1, text: 'Runtime safety improved' },
+        ]
+      },
+      { 
+        title: 'Updating deprecated APIs', 
+        file: 'src/services/auth.ts', 
+        desc: 'Migrated to new authentication patterns',
+        dialogue: [
+          { agent: 2, text: 'Checking for deprecated API calls...' },
+          { agent: 1, text: 'Found legacy <code>onAuthStateChange</code>' },
+          { agent: 3, text: 'Migrating to new subscription pattern' },
+          { agent: 2, text: 'API updated, tests passing' },
+        ]
+      },
+      { 
+        title: 'Fixing spacing inconsistencies', 
+        file: 'src/components/Button.tsx', 
+        desc: 'Applied consistent 8px grid spacing',
+        dialogue: [
+          { agent: 1, text: 'Analyzing spacing patterns...' },
+          { agent: 2, text: 'Found 2px variance from grid' },
+          { agent: 3, text: 'Normalizing to 8px baseline' },
+          { agent: 1, text: 'Visual consistency restored' },
+        ]
+      },
+      { 
+        title: 'Adding missing tests', 
+        file: 'src/utils/validators.ts', 
+        desc: 'Generated 6 unit tests for edge cases',
+        dialogue: [
+          { agent: 3, text: 'Analyzing code coverage gaps...' },
+          { agent: 1, text: 'Found 6 uncovered edge cases' },
+          { agent: 2, text: 'Generating test scaffolds' },
+          { agent: 3, text: 'Tests written and passing' },
+          { agent: 1, text: 'Coverage increased to 94%' },
+        ]
+      },
+      { 
+        title: 'Optimizing bundle', 
+        file: 'package.json', 
+        desc: 'Tree-shaking removed 12% of dead code',
+        dialogue: [
+          { agent: 2, text: 'Analyzing bundle composition...' },
+          { agent: 1, text: 'Found 8 unused exports' },
+          { agent: 3, text: 'Running tree-shaking analysis' },
+          { agent: 2, text: 'Bundle reduced by 12%' },
+        ]
+      },
+      { 
+        title: 'Fixing accessibility', 
+        file: 'src/components/Form.tsx', 
+        desc: 'Added aria-labels to form inputs',
+        dialogue: [
+          { agent: 1, text: 'Running a11y audit...' },
+          { agent: 3, text: 'Found 5 inputs missing labels' },
+          { agent: 2, text: 'Adding aria-label attributes' },
+          { agent: 1, text: 'WCAG 2.1 AA compliance achieved' },
+        ]
+      },
+      { 
+        title: 'Updating dependencies', 
+        file: 'package.json', 
+        desc: 'Updated 3 packages with security fixes',
+        dialogue: [
+          { agent: 2, text: 'Checking for security advisories...' },
+          { agent: 1, text: 'Found 3 vulnerable packages' },
+          { agent: 3, text: 'Verifying compatibility with updates' },
+          { agent: 2, text: 'Packages updated, no breaking changes' },
+        ]
+      },
+      { 
+        title: 'Extracting shared component', 
+        file: 'src/components/Card.tsx', 
+        desc: 'Created reusable CardBase component',
+        dialogue: [
+          { agent: 1, text: 'Analyzing component patterns...' },
+          { agent: 2, text: 'Found 3 similar card implementations' },
+          { agent: 3, text: 'Extracting common CardBase' },
+          { agent: 1, text: 'DRY principle applied, 47 lines saved' },
+        ]
+      },
+      { 
+        title: 'Adding JSDoc comments', 
+        file: 'src/services/api.ts', 
+        desc: 'Documented public API methods',
+        dialogue: [
+          { agent: 3, text: 'Scanning public methods...' },
+          { agent: 1, text: 'Found 8 undocumented functions' },
+          { agent: 2, text: 'Generating JSDoc from signatures' },
+          { agent: 3, text: 'Documentation complete' },
+        ]
+      },
+      { 
+        title: 'Fixing memory leak', 
+        file: 'src/hooks/useWebSocket.ts', 
+        desc: 'Added cleanup on component unmount',
+        dialogue: [
+          { agent: 2, text: 'Tracing subscription lifecycle...' },
+          { agent: 1, text: 'Found missing cleanup in useEffect' },
+          { agent: 3, text: 'Adding return cleanup function' },
+          { agent: 2, text: 'Memory leak patched' },
+          { agent: 1, text: 'Verified with React DevTools' },
+        ]
+      },
     ];
 
     function getActivityContent() {
-      if (activityItems.length === 0 && !fixAllInProgress) {
+      if (!fixAllInProgress && Object.keys(activityTaskStates).length === 0) {
         return `
           <div class="activity-view">
             <div class="activity-header">
@@ -3830,10 +4227,9 @@
         `;
       }
 
-      const completedCount = activityItems.filter(i => i.status === 'complete').length;
-      const totalCount = fixAllInProgress ? fixActions.length : activityItems.length;
+      const completedCount = Object.values(activityTaskStates).filter(s => s.status === 'complete').length;
+      const totalCount = fixActions.length;
       const progressPercent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
-      const currentAction = activityItems.find(i => i.status === 'in-progress');
 
       return `
         <div class="activity-view">
@@ -3865,31 +4261,113 @@
             <div class="activity-progress-bar">
               <div class="activity-progress-fill" style="width: ${progressPercent}%"></div>
             </div>
-            ${currentAction ? `<div class="activity-progress-detail">${currentAction.file}</div>` : ''}
           </div>
 
           <div class="activity-stream" id="activity-stream">
-            ${activityItems.map(item => `
-              <div class="activity-item ${item.status}">
-                <div class="activity-item-icon">
-                  ${item.status === 'complete' ? 
-                    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>' :
-                    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'
-                  }
-                </div>
-                <div class="activity-item-content">
-                  <div class="activity-item-title">${item.title}</div>
-                  <div class="activity-item-desc">${item.desc}</div>
-                  <div class="activity-item-meta">
-                    <span class="activity-item-file">${item.file}</span>
-                    ${item.time ? `<span class="activity-item-time">${item.time}</span>` : ''}
+            <div class="activity-stream-shadow"></div>
+            ${fixActions.map((action, i) => {
+              const state = activityTaskStates[i] || { status: 'pending', progress: 0 };
+              const statusClass = state.status;
+              const isExpanded = state.status === 'active' || (state.expanded && state.status === 'complete');
+              
+              return `
+                <div class="activity-task ${statusClass} ${isExpanded ? 'expanded' : ''}" 
+                     data-task-index="${i}" 
+                     style="--index: ${i}">
+                  <div class="task-header">
+                    <div class="task-status-icon">
+                      ${state.status === 'complete' 
+                        ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>'
+                        : state.status === 'active'
+                          ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'
+                          : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/></svg>'
+                      }
+                    </div>
+                    <div class="task-info">
+                      <div class="task-title">${action.title}</div>
+                      <div class="task-file">${action.file}</div>
+                    </div>
+                    <button class="task-expand-btn">+</button>
+                  </div>
+                  <div class="task-progress">
+                    <div class="task-progress-bar">
+                      <div class="task-progress-fill" style="width: ${state.progress || 0}%"></div>
+                    </div>
+                  </div>
+                  <div class="task-dialogue">
+                    <div class="task-dialogue-inner" id="dialogue-${i}">
+                      <!-- Agent messages will be streamed here -->
+                    </div>
                   </div>
                 </div>
-              </div>
-            `).reverse().join('')}
+              `;
+            }).join('')}
           </div>
         </div>
       `;
+    }
+
+    // Setup task card click handlers for expand/collapse
+    function setupTaskCardInteractions() {
+      document.querySelectorAll('.activity-task').forEach(task => {
+        const expandBtn = task.querySelector('.task-expand-btn');
+        if (expandBtn) {
+          expandBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const index = parseInt(task.dataset.taskIndex);
+            const state = activityTaskStates[index];
+            if (state) {
+              state.expanded = !state.expanded;
+              task.classList.toggle('expanded', state.expanded || state.status === 'active');
+              playSound(state.expanded ? 'tab' : 'cancel');
+            }
+          });
+        }
+      });
+    }
+
+    // Word-by-word typing with cursor (L5ttice style)
+    async function typeAgentMessage(dialogueEl, agent, text, speed = 45) {
+      const msgEl = document.createElement('div');
+      msgEl.className = `agent-msg agent-${agent}`;
+      msgEl.innerHTML = `<span class="agent-dot"></span><span class="agent-msg-text"></span>`;
+      dialogueEl.appendChild(msgEl);
+      
+      const textEl = msgEl.querySelector('.agent-msg-text');
+      textEl.innerHTML = '<span class="typing-cursor"></span>';
+      const cursor = textEl.querySelector('.typing-cursor');
+      
+      // Parse HTML and type word by word
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = text;
+      const plainText = tempDiv.textContent || tempDiv.innerText;
+      const words = plainText.split(' ');
+      
+      for (let i = 0; i < words.length; i++) {
+        cursor.insertAdjacentText('beforebegin', (i > 0 ? ' ' : '') + words[i]);
+        await new Promise(r => setTimeout(r, speed + Math.random() * 20));
+      }
+      
+      cursor.remove();
+      // Restore HTML formatting
+      textEl.innerHTML = text;
+      
+      // Scroll to bottom
+      dialogueEl.scrollTop = dialogueEl.scrollHeight;
+    }
+
+    // Stream all agent messages for a task
+    async function streamTaskDialogue(taskIndex) {
+      const action = fixActions[taskIndex];
+      const dialogueEl = document.getElementById(`dialogue-${taskIndex}`);
+      if (!dialogueEl || !action.dialogue) return;
+      
+      dialogueEl.innerHTML = '';
+      
+      for (const msg of action.dialogue) {
+        await typeAgentMessage(dialogueEl, msg.agent, msg.text);
+        await new Promise(r => setTimeout(r, 300 + Math.random() * 200));
+      }
     }
 
     // ===========================================
@@ -5077,9 +5555,14 @@
         
         playSound('startup');
         fixAllInProgress = true;
-        activityItems = [];
         
-        // Switch to Activity tab
+        // Initialize all tasks as pending
+        activityTaskStates = {};
+        fixActions.forEach((_, i) => {
+          activityTaskStates[i] = { status: 'pending', progress: 0, expanded: false };
+        });
+        
+        // Switch to Activity tab - this renders all task cards at once with staggered animation
         switchTab('activity');
         
         // Update button state with inline progress
@@ -5096,44 +5579,111 @@
         const activityTab = document.getElementById('tab-activity');
         if (activityTab) activityTab.classList.add('has-activity');
         
-        // Process each fix action
+        // Setup task card interactions
+        setupTaskCardInteractions();
+        
+        // Brief pause to let all cards animate in (~1.2s for 14 cards at 80ms stagger)
+        await new Promise(r => setTimeout(r, 1500));
+        
+        // Process each fix action (~4s each = ~56s total)
+        const TASK_DURATION = 4000; // 4 seconds per task
+        const PROGRESS_INTERVAL = 50; // Update progress every 50ms
+        
         for (let i = 0; i < fixActions.length; i++) {
-          const action = fixActions[i];
-          const progress = ((i + 1) / fixActions.length) * 100;
+          const overallProgress = ((i) / fixActions.length) * 100;
+          fixAllBtn.style.setProperty('--progress', `${overallProgress}%`);
+          if (fixText) fixText.innerHTML = `<span class="fix-progress-text">${Math.round(overallProgress)}%</span>`;
           
-          // Add item as in-progress
-          activityItems.push({
-            ...action,
-            status: 'in-progress',
-            time: 'now'
+          // Activate this task
+          activityTaskStates[i].status = 'active';
+          activityTaskStates[i].expanded = true;
+          
+          // Update the DOM for this specific task
+          const taskEl = document.querySelector(`.activity-task[data-task-index="${i}"]`);
+          if (taskEl) {
+            taskEl.classList.remove('pending');
+            taskEl.classList.add('active', 'expanded');
+            playSound('cursor');
+          }
+          
+          // Animate progress bar for this task (over ~2.5s)
+          const progressDuration = TASK_DURATION * 0.65;
+          const progressSteps = progressDuration / PROGRESS_INTERVAL;
+          let progressStep = 0;
+          
+          const progressPromise = new Promise(resolve => {
+            const progressInterval = setInterval(() => {
+              progressStep++;
+              const taskProgress = Math.min((progressStep / progressSteps) * 100, 100);
+              activityTaskStates[i].progress = taskProgress;
+              
+              const progressFill = taskEl?.querySelector('.task-progress-fill');
+              if (progressFill) {
+                progressFill.style.width = `${taskProgress}%`;
+              }
+              
+              if (progressStep >= progressSteps) {
+                clearInterval(progressInterval);
+                resolve();
+              }
+            }, PROGRESS_INTERVAL);
           });
           
-          // Update Activity view
-          const panelCenter = document.getElementById('panel-center');
-          if (currentTab === 'activity') {
-            panelCenter.innerHTML = getActivityContent();
+          // Stream agent dialogue (starts shortly after progress begins, overlaps)
+          await new Promise(r => setTimeout(r, 500));
+          const dialoguePromise = streamTaskDialogue(i);
+          
+          // Wait for both progress and dialogue to complete
+          await Promise.all([progressPromise, dialoguePromise]);
+          
+          // Small pause before marking complete
+          await new Promise(r => setTimeout(r, 300));
+          
+          // Mark task as complete
+          activityTaskStates[i].status = 'complete';
+          activityTaskStates[i].progress = 100;
+          
+          if (taskEl) {
+            taskEl.classList.remove('active');
+            taskEl.classList.add('complete');
+            
+            // Update icon to checkmark
+            const iconEl = taskEl.querySelector('.task-status-icon');
+            if (iconEl) {
+              iconEl.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
+            }
+            
+            // Collapse after a moment (unless user expanded manually)
+            setTimeout(() => {
+              if (activityTaskStates[i].status === 'complete' && !activityTaskStates[i].expanded) {
+                taskEl.classList.remove('expanded');
+              }
+            }, 500);
           }
           
-          // Update inline progress
-          fixAllBtn.style.setProperty('--progress', `${progress}%`);
-          if (fixText) fixText.innerHTML = `<span class="fix-progress-text">${Math.round(progress)}%</span>`;
+          // Update header stats
+          const completedCount = Object.values(activityTaskStates).filter(s => s.status === 'complete').length;
+          const remainingCount = fixActions.length - completedCount;
           
-          // Play sound for each action
-          playSound('cursor');
+          const completeStatEl = document.querySelector('.activity-stat-value.green');
+          const remainingStatEl = document.querySelector('.activity-stat:nth-child(2) .activity-stat-value');
+          const headerProgressFill = document.querySelector('.activity-progress-fill');
+          const headerProgressPercent = document.querySelector('.activity-progress-percent');
           
-          // Wait for "processing"
-          await new Promise(r => setTimeout(r, 800 + Math.random() * 600));
+          if (completeStatEl) completeStatEl.textContent = completedCount;
+          if (remainingStatEl) remainingStatEl.textContent = remainingCount;
           
-          // Mark as complete
-          activityItems[i].status = 'complete';
-          activityItems[i].time = 'just now';
-          
-          // Update view again
-          if (currentTab === 'activity') {
-            panelCenter.innerHTML = getActivityContent();
-          }
+          const headerProgress = Math.round((completedCount / fixActions.length) * 100);
+          if (headerProgressFill) headerProgressFill.style.width = `${headerProgress}%`;
+          if (headerProgressPercent) headerProgressPercent.textContent = `${headerProgress}%`;
           
           playSound('confirm');
+          
+          // Scroll to keep next task visible
+          const nextTaskEl = document.querySelector(`.activity-task[data-task-index="${i + 1}"]`);
+          if (nextTaskEl) {
+            nextTaskEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
         }
         
         // Complete!
@@ -5142,23 +5692,24 @@
         fixAllBtn.classList.add('complete');
         
         if (fixText) fixText.textContent = 'All Fixed';
+        fixAllBtn.style.setProperty('--progress', '100%');
         if (pulseDot) {
           pulseDot.style.display = '';
           pulseDot.style.background = 'var(--green)';
           pulseDot.style.animation = 'none';
         }
         
+        // Update header to show complete state
+        const workingDot = document.querySelector('.activity-progress-title .working-dot');
+        const processingText = document.querySelector('.activity-progress-title span:last-child');
+        if (workingDot) workingDot.style.display = 'none';
+        if (processingText) processingText.textContent = 'Complete';
+        
         // Update stats in command bar
         const issuesValue = document.getElementById('issues-value');
         const healthValue = document.getElementById('health-value');
         if (issuesValue) issuesValue.textContent = '0';
         if (healthValue) healthValue.textContent = '94%';
-        
-        // Update Activity view one final time
-        if (currentTab === 'activity') {
-          const panelCenter = document.getElementById('panel-center');
-          panelCenter.innerHTML = getActivityContent();
-        }
         
         // Remove activity indicator after a delay
         setTimeout(() => {
