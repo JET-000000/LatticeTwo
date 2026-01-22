@@ -1435,12 +1435,12 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 8px 16px;
+      padding: 6px 12px;
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 8px;
+      border-radius: 6px;
       color: var(--text-secondary);
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       font-weight: 500;
       cursor: pointer;
       transition: all 0.25s var(--ease-out-expo);
@@ -2028,6 +2028,11 @@
       max-width: 500px;
     }
 
+    .insight-summary .highlight {
+      color: var(--text-bright);
+      font-weight: 500;
+    }
+
     /* Filter/Sort Bar */
     .insight-toolbar {
       display: flex;
@@ -2263,6 +2268,26 @@
       letter-spacing: 0.12em;
       color: var(--text-secondary);
       font-weight: 500;
+    }
+
+    /* Number count-up animation for first tab open */
+    @keyframes countUpFade {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .insight-stat-value.animate-in {
+      animation: countUpFade 0.5s ease-out forwards;
+    }
+
+    .insight-stat-value.pre-animate {
+      opacity: 0;
     }
 
     .insight-section-label {
@@ -2805,7 +2830,6 @@
       margin: 16px 0 20px;
       padding: 3px 0;
       width: 100%;
-      mask-image: linear-gradient(90deg, transparent 0%, black 1%, black 99%, transparent 100%);
       opacity: 0;
       transition: opacity 0.4s ease 0.2s;
       box-sizing: border-box;
@@ -2930,13 +2954,11 @@
       overflow: hidden;
       transition: max-height 0.5s var(--ease-out-expo), opacity 0.3s;
       opacity: 0;
-      border-top: 1px solid transparent;
     }
 
     .activity-task.expanded .task-dialogue {
       max-height: 450px;
       opacity: 1;
-      border-top-color: rgba(255, 255, 255, 0.04);
     }
 
     .task-dialogue-inner {
@@ -3487,6 +3509,9 @@
     let currentTab = 'editor';
     let demoTimeouts = [];
     let expandedCards = new Set();
+    
+    // Track which insight tabs have been opened (for first-open animation)
+    const tabsFirstOpened = { features: false, 'tech-debt': false, tests: false };
     
     // Analysis state
     let currentScreen = 'analysis';
@@ -4121,6 +4146,62 @@
       }
       
       playSound('tab');
+      
+      // Trigger first-open animation for insight tabs
+      if (['features', 'tech-debt', 'tests'].includes(tabName) && !tabsFirstOpened[tabName]) {
+        tabsFirstOpened[tabName] = true;
+        animateInsightStats();
+      }
+    }
+
+    // Animate insight stat numbers on first tab open
+    function animateInsightStats() {
+      const statValues = document.querySelectorAll('.insight-stat-value');
+      
+      statValues.forEach((el, index) => {
+        const originalText = el.textContent;
+        const targetValue = parseFloat(originalText.replace(/[^0-9.]/g, ''));
+        const suffix = originalText.replace(/[0-9.]/g, ''); // Extract %, etc.
+        const isDecimal = originalText.includes('.');
+        
+        // Start with 0 and hidden
+        el.textContent = '0' + suffix;
+        el.classList.add('pre-animate');
+        
+        // Stagger the animations
+        setTimeout(() => {
+          el.classList.remove('pre-animate');
+          el.classList.add('animate-in');
+          
+          // Animate the number counting up
+          const duration = 800;
+          const startTime = performance.now();
+          
+          function updateNumber(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            // Ease out cubic
+            const eased = 1 - Math.pow(1 - progress, 3);
+            const currentValue = targetValue * eased;
+            
+            if (isDecimal) {
+              el.textContent = currentValue.toFixed(1) + suffix;
+            } else {
+              el.textContent = Math.round(currentValue) + suffix;
+            }
+            
+            if (progress < 1) {
+              requestAnimationFrame(updateNumber);
+            } else {
+              // Ensure final value is exact
+              el.textContent = originalText;
+            }
+          }
+          
+          requestAnimationFrame(updateNumber);
+        }, index * 150); // Stagger by 150ms
+      });
     }
 
     // ===========================================
@@ -5000,8 +5081,8 @@
       return `
         <div class="insight-container">
           <div class="insight-header">
-            <h2 class="insight-title">Feature Surface</h2>
-            <p class="insight-summary">4 distinct features detected. Click any card to explore, ask questions, or apply fixes.</p>
+            <h2 class="insight-title">Features</h2>
+            <p class="insight-summary"><span class="highlight">Four</span> distinct features detected. Click any card to explore, ask questions, or apply fixes.</p>
           </div>
           
           <div class="insight-toolbar">
@@ -5039,16 +5120,16 @@
 
           <div class="insight-stats">
             <div class="insight-stat">
+              <div class="insight-stat-value amber">7.5</div>
+              <div class="insight-stat-label">Avg Score</div>
+            </div>
+            <div class="insight-stat">
               <div class="insight-stat-value green">4</div>
               <div class="insight-stat-label">Features</div>
             </div>
             <div class="insight-stat">
               <div class="insight-stat-value">12</div>
               <div class="insight-stat-label">Files</div>
-            </div>
-            <div class="insight-stat">
-              <div class="insight-stat-value amber">74.5</div>
-              <div class="insight-stat-label">Avg Score</div>
             </div>
           </div>
 
@@ -5058,7 +5139,7 @@
               <div class="insight-card" data-id="${f.id}">
                 <div class="insight-card-main">
                   <div class="insight-score ${f.color}">
-                    <span class="insight-score-num">${f.score}</span>
+                    <span class="insight-score-num">${f.score}</span><span class="insight-score-unit">/10</span>
                   </div>
                   <div class="insight-card-content">
                     <div class="insight-card-title">${f.name}</div>
