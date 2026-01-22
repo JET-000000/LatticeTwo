@@ -1436,12 +1436,12 @@
       align-items: center;
       gap: 8px;
       padding: 6px 12px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-subtle);
       border-radius: 6px;
       color: var(--text-secondary);
       font-size: 0.65rem;
-      font-weight: 500;
+      line-height: 1;
       cursor: pointer;
       transition: all 0.25s var(--ease-out-expo);
       overflow: hidden;
@@ -1497,11 +1497,12 @@
     }
 
     .fix-all-btn kbd {
-      padding: 3px 6px;
+      padding: 2px 5px;
       background: rgba(255, 255, 255, 0.08);
-      border-radius: 4px;
-      font-size: 0.6rem;
+      border-radius: 3px;
+      font-size: 0.55rem;
       color: var(--text-tertiary);
+      line-height: 1;
     }
 
     .fix-all-btn .fix-text {
@@ -2518,12 +2519,12 @@
       color: var(--text-tertiary);
     }
 
-    /* Scroll indicator - bouncing arrow */
+    /* Scroll indicator - bouncing arrow (hidden) */
     .scroll-indicator {
+      display: none;
       position: absolute;
       bottom: 12px;
       right: 12px;
-      display: flex;
       align-items: center;
       justify-content: center;
       width: 32px;
@@ -2826,14 +2827,17 @@
     .task-ticker {
       position: relative;
       overflow: hidden;
-      height: 20px;
-      margin: 16px 0 20px;
-      padding: 3px 0;
+      height: 24px;
+      margin: 20px 0;
+      padding: 5px 0;
       width: 100%;
+      mask-image: linear-gradient(90deg, transparent 0%, black 2%, black 98%, transparent 100%);
       opacity: 0;
       transition: opacity 0.4s ease 0.2s;
       box-sizing: border-box;
-      background: transparent;
+      background: rgba(255, 255, 255, 0.02);
+      border-top: 1px solid rgba(255, 255, 255, 0.03);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
     }
 
     .activity-task.expanded .task-ticker {
@@ -2842,9 +2846,10 @@
 
     .ticker-track {
       display: flex;
-      gap: 40px;
+      gap: 48px;
       width: max-content;
-      animation: tickerScroll 35s linear infinite;
+      animation: tickerScroll 50s linear infinite;
+      padding: 0;
     }
 
     @keyframes tickerScroll {
@@ -2853,13 +2858,13 @@
     }
 
     .ticker-track span {
-      font-size: 0.5rem;
+      font-size: 0.55rem;
       text-transform: uppercase;
-      letter-spacing: 0.15em;
+      letter-spacing: 0.2em;
       color: var(--text-muted);
-      opacity: 0.4;
+      opacity: 0.5;
       white-space: nowrap;
-      font-weight: 400;
+      font-weight: 300;
     }
 
     /* Task Prose - Plain English description */
@@ -3436,8 +3441,8 @@
           <span class="command-stat-value" id="issues-value">14</span>
         </div>
         <button class="fix-all-btn" id="fix-all-btn">
-          <span class="fix-text">Fix All Issues</span>
           <kbd id="fix-kbd">F</kbd>
+          <span class="fix-text">Fix All Issues</span>
         </button>
       </div>
     </nav>
@@ -3609,7 +3614,7 @@
         desc: 'OAuth 2.0 with Google and GitHub providers, JWT session management',
         files: ['src/services/auth.ts', 'src/utils/session.ts', 'src/components/AuthPage.tsx'],
         meta: ['OAuth 2.0', 'JWT', '3 files'],
-        ticker: ['security', 'session', 'tokens', 'providers'],
+        ticker: ['security', 'session', 'tokens', 'oauth', 'jwt', 'identity', 'refresh', 'claims'],
         prose: 'Handles user identity with <strong>OAuth 2.0</strong> flows. Sessions persist via JWT tokens stored in httpOnly cookies.',
         actions: [{ key: 'D', label: 'View diagram', primary: false }, { key: 'T', label: 'Run tests', primary: true }]
       },
@@ -3621,7 +3626,7 @@
         desc: 'Upload, preview, and organize files with drag-and-drop support',
         files: ['src/components/FilePanel.tsx', 'src/services/storage.ts'],
         meta: ['Drag & Drop', '2 files'],
-        ticker: ['upload', 'preview', 'organize', 'storage'],
+        ticker: ['upload', 'preview', 's3', 'blob', 'mime', 'drag', 'bucket', 'stream'],
         prose: 'Complete file handling with <strong>drag-and-drop</strong> uploads and real-time preview.',
         actions: [{ key: 'F', label: 'Open FilePanel', primary: true }]
       },
@@ -3633,7 +3638,7 @@
         desc: 'WebSocket-based live editing with conflict resolution',
         files: ['src/services/websocket.ts', 'src/utils/crdt.ts', 'src/hooks/useCollaboration.ts'],
         meta: ['WebSocket', 'CRDT', '3 files'],
-        ticker: ['sync', 'collab', 'crdt', 'websocket'],
+        ticker: ['sync', 'collab', 'crdt', 'websocket', 'yjs', 'merge', 'cursor', 'presence'],
         prose: 'Live collaboration via <strong>WebSocket</strong>. CRDT ensures conflict-free merges.',
         actions: [{ key: 'I', label: 'Improve score', primary: true }, { key: '?', label: 'Why 72%' }]
       },
@@ -3645,7 +3650,7 @@
         desc: 'Export data in various formats, limited error handling',
         files: ['src/services/export.ts'],
         meta: ['Needs work', '1 file'],
-        ticker: ['json', 'csv', 'pdf', 'export'],
+        ticker: ['json', 'csv', 'pdf', 'xlsx', 'format', 'download', 'serialize', 'blob'],
         prose: 'Basic export functionality. Missing <strong>error boundaries</strong> and format validation.',
         actions: [{ key: 'F', label: 'Fix issues', primary: true }, { key: 'R', label: 'Refactor' }]
       },
@@ -3659,7 +3664,7 @@
         color: 'red',
         desc: 'No type safety, uses any extensively, missing error boundaries',
         issues: ['any types', 'no tests', 'dead code'],
-        ticker: ['types', 'safety', 'testing', 'coverage'],
+        ticker: ['types', 'safety', 'testing', 'coverage', 'any', 'infer', 'generic', 'strict'],
         prose: 'Heavy use of <code>any</code> types bypasses TypeScript safety. <strong>12 functions</strong> lack proper typing.',
         actions: [{ key: 'F', label: 'Add types', primary: true }, { key: 'D', label: 'View diff' }]
       },
@@ -3670,7 +3675,7 @@
         color: 'amber',
         desc: 'Deprecated OAuth flow, should migrate to next-auth',
         issues: ['deprecated API', 'sync calls'],
-        ticker: ['oauth', 'migration', 'async', 'next-auth'],
+        ticker: ['oauth', 'migration', 'async', 'nextauth', 'callback', 'session', 'provider', 'refresh'],
         prose: 'Using <strong>deprecated OAuth 1.0</strong> patterns. Migrate to <code>next-auth</code> for better security.',
         actions: [{ key: 'M', label: 'Migrate', primary: true }, { key: '?', label: 'Why migrate' }]
       },
@@ -3681,7 +3686,7 @@
         color: 'amber',
         desc: 'Modal accessibility issues, missing ARIA labels',
         issues: ['a11y', 'large component'],
-        ticker: ['aria', 'a11y', 'modal', 'focus'],
+        ticker: ['aria', 'a11y', 'modal', 'focus', 'trap', 'escape', 'label', 'role'],
         prose: 'Missing <strong>ARIA labels</strong> on interactive elements. Modal lacks proper focus management.',
         actions: [{ key: 'A', label: 'Fix a11y', primary: true }]
       },
@@ -3692,7 +3697,7 @@
         color: 'green',
         desc: 'Good structure, minor performance optimizations possible',
         issues: ['memo opportunities'],
-        ticker: ['memo', 'perf', 'render', 'optimize'],
+        ticker: ['memo', 'perf', 'render', 'usecallback', 'virtual', 'profiler', 'batch', 'lazy'],
         prose: 'Well structured. Consider <code>useMemo</code> for message list to reduce re-renders.',
         actions: [{ key: 'O', label: 'Optimize', primary: true }]
       },
@@ -4216,7 +4221,7 @@
       { 
         title: 'Adding type annotations', 
         file: 'src/utils/formatters.ts', 
-        ticker: ['types', 'inference', 'strict', 'safety', 'typescript'],
+        ticker: ['typescript', 'inference', 'strict', 'generics', 'annotations', 'params', 'return', 'compile'],
         prose: 'Three utility functions lacked explicit return types. Adding annotations improves IDE support and catches potential type mismatches at compile time.',
         dialogue: [
           { agent: 1, text: 'Scanning <code>formatDate()</code>, <code>formatCurrency()</code>, and <code>formatNumber()</code>...' },
@@ -4228,7 +4233,7 @@
       { 
         title: 'Adding error boundaries', 
         file: 'src/components/App.tsx', 
-        ticker: ['react', 'error', 'boundary', 'fallback', 'recovery'],
+        ticker: ['boundary', 'fallback', 'recovery', 'crashguard', 'graceful', 'catchall', 'suspend', 'wrap'],
         prose: 'The component tree had no crash protection. Wrapping with ErrorBoundary ensures graceful degradation instead of white-screen failures.',
         dialogue: [
           { agent: 1, text: 'Analyzing render patterns in <code>App.tsx</code>...' },
@@ -4240,7 +4245,7 @@
       { 
         title: 'Removing unused imports', 
         file: 'src/services/api.ts', 
-        ticker: ['imports', 'treeshake', 'clean', 'bundle', 'lint'],
+        ticker: ['treeshake', 'unused', 'deadcode', 'bundle', 'optimize', 'purge', 'slim', 'remove'],
         prose: 'Dead imports add noise and slightly increase bundle size. Removing them keeps the codebase clean and helps tooling work faster.',
         dialogue: [
           { agent: 2, text: 'Tracing import graph for <code>api.ts</code>...' },
@@ -4252,7 +4257,7 @@
       { 
         title: 'Consolidating color tokens', 
         file: 'src/styles/theme.ts', 
-        ticker: ['tokens', 'design', 'colors', 'consistency', 'theme'],
+        ticker: ['tokens', 'palette', 'variables', 'brand', 'hex', 'unify', 'css', 'semantic'],
         prose: 'Fourteen instances of the same blue were hardcoded across files. Unifying to a single token makes future changes trivial.',
         dialogue: [
           { agent: 2, text: 'Cross-referencing <code>theme.ts</code> with component styles...' },
@@ -4264,7 +4269,7 @@
       { 
         title: 'Adding null checks', 
         file: 'src/hooks/useAuth.ts', 
-        ticker: ['null', 'safety', 'optional', 'chaining', 'runtime'],
+        ticker: ['optional', 'chaining', 'guard', 'nullish', 'coalesce', 'runtime', 'undefined', 'safe'],
         prose: 'Two property accesses could fail if the auth state was null. Optional chaining prevents "Cannot read property of undefined" errors.',
         dialogue: [
           { agent: 1, text: 'Scanning <code>useAuth</code> for nullable access patterns...' },
@@ -4276,7 +4281,7 @@
       { 
         title: 'Updating deprecated APIs', 
         file: 'src/services/auth.ts', 
-        ticker: ['api', 'migration', 'deprecation', 'supabase', 'auth'],
+        ticker: ['migration', 'supabase', 'nextauth', 'deprecation', 'legacy', 'upgrade', 'v2', 'breaking'],
         prose: 'The old subscription API will be removed in the next major version. Migrating now prevents breaking changes.',
         dialogue: [
           { agent: 2, text: 'Checking <code>auth.ts</code> for deprecated patterns...' },
@@ -4288,7 +4293,7 @@
       { 
         title: 'Fixing spacing inconsistencies', 
         file: 'src/components/Button.tsx', 
-        ticker: ['spacing', 'grid', 'pixels', 'layout', 'design'],
+        ticker: ['baseline', 'grid', 'padding', 'margin', 'align', 'visual', 'rhythm', 'normalize'],
         prose: 'Button padding was 14px instead of the 16px grid baseline. Small inconsistencies compound into visual jankiness.',
         dialogue: [
           { agent: 1, text: 'Analyzing spacing in <code>Button.tsx</code>...' },
@@ -4300,7 +4305,7 @@
       { 
         title: 'Adding missing tests', 
         file: 'src/utils/validators.ts', 
-        ticker: ['tests', 'coverage', 'jest', 'edge', 'cases'],
+        ticker: ['jest', 'coverage', 'assertions', 'unit', 'mock', 'expect', 'describe', 'edge'],
         prose: 'Six edge cases had no test coverage. Generating tests now catches regressions before they reach production.',
         dialogue: [
           { agent: 3, text: 'Analyzing coverage for <code>validators.ts</code>...' },
@@ -4312,7 +4317,7 @@
       { 
         title: 'Optimizing bundle', 
         file: 'package.json', 
-        ticker: ['bundle', 'webpack', 'treeshake', 'optimize', 'size'],
+        ticker: ['webpack', 'vite', 'esbuild', 'minify', 'split', 'chunk', 'lazy', 'preload'],
         prose: 'Eight exported functions were never imported anywhere. Tree-shaking them reduces the final bundle by 12%.',
         dialogue: [
           { agent: 2, text: 'Analyzing bundle with <code>webpack-bundle-analyzer</code>...' },
@@ -4324,7 +4329,7 @@
       { 
         title: 'Fixing accessibility', 
         file: 'src/components/Form.tsx', 
-        ticker: ['a11y', 'wcag', 'aria', 'screen', 'reader'],
+        ticker: ['wcag', 'aria', 'screenreader', 'focus', 'contrast', 'label', 'role', 'navigate'],
         prose: 'Five form inputs had no accessible labels. Screen readers couldn\'t identify what each field was for.',
         dialogue: [
           { agent: 1, text: 'Running <code>axe-core</code> audit on <code>Form.tsx</code>...' },
@@ -4336,7 +4341,7 @@
       { 
         title: 'Updating dependencies', 
         file: 'package.json', 
-        ticker: ['security', 'npm', 'audit', 'patch', 'versions'],
+        ticker: ['audit', 'patch', 'cve', 'advisory', 'semver', 'lockfile', 'deps', 'secure'],
         prose: 'Three packages had known vulnerabilities. Updating to patched versions closes these security holes.',
         dialogue: [
           { agent: 2, text: 'Running <code>npm audit</code>...' },
@@ -4348,7 +4353,7 @@
       { 
         title: 'Extracting shared component', 
         file: 'src/components/Card.tsx', 
-        ticker: ['dry', 'component', 'refactor', 'reuse', 'abstract'],
+        ticker: ['abstract', 'compose', 'reuse', 'extract', 'base', 'props', 'shared', 'dry'],
         prose: 'Three card variants duplicated the same structure. Extracting a base component saves 47 lines and centralizes styling.',
         dialogue: [
           { agent: 1, text: 'Analyzing <code>ProductCard</code>, <code>UserCard</code>, <code>ProjectCard</code>...' },
@@ -4360,7 +4365,7 @@
       { 
         title: 'Adding JSDoc comments', 
         file: 'src/services/api.ts', 
-        ticker: ['jsdoc', 'docs', 'intellisense', 'comments', 'types'],
+        ticker: ['jsdoc', 'intellisense', 'tooltip', 'readme', 'params', 'returns', 'example', 'comment'],
         prose: 'Eight public functions had no documentation. JSDoc comments enable better IDE tooltips and generated docs.',
         dialogue: [
           { agent: 3, text: 'Scanning exports in <code>api.ts</code>...' },
@@ -4372,7 +4377,7 @@
       { 
         title: 'Fixing memory leak', 
         file: 'src/hooks/useWebSocket.ts', 
-        ticker: ['memory', 'cleanup', 'useEffect', 'unmount', 'leak'],
+        ticker: ['cleanup', 'unmount', 'dispose', 'listener', 'gc', 'retain', 'subscribe', 'abort'],
         prose: 'The WebSocket subscription wasn\'t cleaned up on unmount. This caused listeners to accumulate and memory to leak.',
         dialogue: [
           { agent: 2, text: 'Tracing <code>useEffect</code> in <code>useWebSocket</code>...' },
@@ -4837,7 +4842,7 @@
         <div class="insight-card" data-id="${f.id}">
           <div class="insight-card-main">
             <div class="insight-score ${f.color}">
-              <span class="insight-score-num">${f.score}</span>
+              <span class="insight-score-num">${f.score}</span><span class="insight-score-unit">/10</span>
             </div>
             <div class="insight-card-content">
               <div class="insight-card-title">${f.name}</div>
