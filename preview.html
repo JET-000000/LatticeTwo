@@ -574,70 +574,61 @@
       text-shadow: 0 0 15px rgba(255, 255, 255, 0.25);
     }
 
-    .report-badges {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin: 32px 0;
-    }
-
-    .report-badge {
+    /* Inline topic badges - flow naturally in paragraph text */
+    .inline-badge {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 8px 14px;
-      border-radius: 8px;
-      font-size: 0.9rem;
+      gap: 5px;
+      padding: 3px 10px 3px 5px;
+      border-radius: 5px;
+      font-size: inherit;
       font-weight: 400;
       cursor: pointer;
       transition: all 0.2s var(--ease-out-expo);
+      vertical-align: baseline;
+      line-height: inherit;
     }
 
-    .report-badge:hover {
-      transform: translateY(-2px);
+    .inline-badge:hover {
+      transform: translateY(-1px);
     }
 
-    .report-badge.active {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    .inline-badge.active {
+      transform: translateY(-1px);
     }
 
-    .badge-key {
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 4px;
-      padding: 3px 7px;
-      font-size: 0.65rem;
+    .inline-badge .badge-key {
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 3px;
+      padding: 2px 5px;
+      font-size: 0.6em;
       font-weight: 600;
       line-height: 1;
     }
 
-    .report-badge.warning {
-      background: rgba(251, 191, 36, 0.12);
-      border: 1px solid rgba(251, 191, 36, 0.25);
+    .inline-badge.amber {
+      background: rgba(251, 191, 36, 0.1);
+      border: 1px solid rgba(251, 191, 36, 0.2);
       color: #fde68a;
     }
-    .report-badge.warning .badge-key { background: rgba(251, 191, 36, 0.25); color: #fbbf24; }
+    .inline-badge.amber .badge-key { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
+    .inline-badge.amber:hover { background: rgba(251, 191, 36, 0.15); }
 
-    .report-badge.blue {
-      background: rgba(59, 130, 246, 0.12);
-      border: 1px solid rgba(59, 130, 246, 0.25);
+    .inline-badge.blue {
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.2);
       color: #93c5fd;
     }
-    .report-badge.blue .badge-key { background: rgba(59, 130, 246, 0.25); color: #60a5fa; }
+    .inline-badge.blue .badge-key { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+    .inline-badge.blue:hover { background: rgba(59, 130, 246, 0.15); }
 
-    .report-badge.success {
-      background: rgba(34, 197, 94, 0.12);
-      border: 1px solid rgba(34, 197, 94, 0.25);
+    .inline-badge.green {
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.2);
       color: #86efac;
     }
-    .report-badge.success .badge-key { background: rgba(34, 197, 94, 0.25); color: #4ade80; }
-
-    .report-badge.primary {
-      background: rgba(139, 92, 246, 0.15);
-      border: 1px solid rgba(139, 92, 246, 0.3);
-      color: #c4b5fd;
-    }
-    .report-badge.primary .badge-key { background: rgba(139, 92, 246, 0.3); color: #a78bfa; }
+    .inline-badge.green .badge-key { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
+    .inline-badge.green:hover { background: rgba(34, 197, 94, 0.15); }
 
     .report-actions {
       display: flex;
@@ -1285,9 +1276,9 @@
       display: flex;
       align-items: center;
       gap: 4px;
-      padding: 10px 12px;
+      padding: 0 12px;
       border-bottom: 1px solid var(--border-subtle);
-      min-height: 44px; /* Fixed height for alignment */
+      height: 44px; /* Fixed height for alignment */
       flex-shrink: 0;
     }
 
@@ -1396,7 +1387,7 @@
       align-items: center;
       gap: 2px;
       padding: 0 12px;
-      height: 36px;
+      height: 44px; /* Match panel-header min-height for horizontal line alignment */
       border-bottom: 1px solid var(--border-subtle);
       flex-shrink: 0;
     }
@@ -1536,29 +1527,34 @@
       background: rgba(255, 255, 255, 0.04);
     }
 
-    /* Hotkey badge for stat cards */
+    /* Hotkey badge for stat cards - inline with label */
     .stat-hotkey {
-      position: absolute;
-      top: 10px;
-      left: 10px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 3px 7px;
+      padding: 2px 6px;
       background: rgba(255, 255, 255, 0.06);
       border-radius: 4px;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 600;
-      color: #666;
-      min-width: 20px;
+      color: #555;
+      min-width: 16px;
       text-align: center;
-      opacity: 0.7;
       transition: all 0.2s ease;
+      flex-shrink: 0;
     }
     .stat-card:hover .stat-hotkey,
     .stat-card.expanded .stat-hotkey {
-      opacity: 1;
-      color: #888;
+      color: #777;
+      background: rgba(255, 255, 255, 0.08);
+    }
+    
+    /* Stat card header row for hotkey + label */
+    .stat-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
     }
 
     .stat-card.amber {
@@ -1726,26 +1722,174 @@
       transform: translateY(-1px);
     }
 
-    .stat-action-btn.primary {
-      background: rgba(74, 222, 128, 0.1);
-      border-color: rgba(74, 222, 128, 0.2);
-      color: var(--green);
-    }
-
-    .stat-action-btn.primary:hover {
-      background: rgba(74, 222, 128, 0.18);
-      border-color: rgba(74, 222, 128, 0.3);
-    }
-
+    /* All action buttons use neutral grey - no green */
     .stat-action-btn kbd {
       padding: 2px 5px;
       background: rgba(255, 255, 255, 0.1);
       border-radius: 3px;
       font-size: 0.55rem;
+      color: #777;
     }
 
-    .stat-action-btn.primary kbd {
-      background: rgba(74, 222, 128, 0.2);
+    /* In-line chat input for stat cards */
+    .stat-input {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 8px;
+      margin: 12px 0;
+    }
+
+    .stat-input .input-arrow {
+      color: var(--text-tertiary);
+      font-size: 0.8rem;
+    }
+
+    .stat-input-field {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: inherit;
+      font-size: 0.8rem;
+      color: var(--text-primary);
+    }
+
+    .stat-input-field::placeholder {
+      color: #444;
+    }
+
+    .stat-input .input-hint {
+      font-size: 0.55rem;
+      color: #333;
+    }
+
+    .stat-input .input-hint kbd {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 2px 5px;
+      border-radius: 3px;
+    }
+
+    /* Conversation area for stat card Q&A */
+    .stat-conversation {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .stat-exchange {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 8px 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.03);
+      animation: fadeIn 0.3s ease;
+    }
+
+    .stat-query {
+      font-size: 0.72rem;
+      color: var(--text-tertiary);
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .stat-query .arrow {
+      color: var(--text-tertiary);
+    }
+
+    .stat-response {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      padding-left: 14px;
+    }
+
+    /* Aesthetic text formatting for stat summaries */
+    .stat-summary {
+      font-size: 0.85rem;
+      line-height: 1.7;
+      font-weight: 300;
+      color: var(--text-prose);
+      margin-bottom: 12px;
+    }
+
+    .stat-summary strong {
+      color: var(--text-white);
+      font-weight: 400;
+    }
+
+    .stat-summary em {
+      font-style: normal;
+      color: var(--text-primary);
+    }
+
+    .stat-summary code {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 0.85em;
+      color: #999;
+    }
+
+    .stat-qa-answer {
+      font-size: 0.78rem;
+      line-height: 1.6;
+      font-weight: 300;
+      color: var(--text-prose);
+    }
+
+    .stat-qa-answer code {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-family: var(--font-mono);
+      font-size: 0.9em;
+      color: #999;
+    }
+
+    /* Hold-to-confirm green fill animation */
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, rgba(34, 197, 94, 0.08), rgba(34, 197, 94, 0.15));
+      transition: width 0.1s linear;
+      z-index: 0;
+      pointer-events: none;
+      border-radius: 10px;
+    }
+
+    .stat-card.filling::after {
+      transition: width 1.5s linear 0.25s;
+      width: 100%;
+    }
+
+    .stat-card.confirmed {
+      border-color: rgba(34, 197, 94, 0.2);
+      background: rgba(34, 197, 94, 0.04);
+    }
+
+    .stat-card.confirmed::after {
+      width: 100%;
+      background: rgba(34, 197, 94, 0.1);
+    }
+
+    .stat-card.confirmed .stat-hotkey {
+      background: rgba(34, 197, 94, 0.2);
+      color: var(--green);
+    }
+
+    .stat-card > * {
+      position: relative;
+      z-index: 1;
     }
 
     /* Command Bar (global actions in nav) */
@@ -3725,45 +3869,22 @@
           <div class="report-title">Analysis Complete</div>
         </div>
         
-        <!-- Main Report Text -->
+        <!-- Main Report Text with inline topic badges -->
         <p class="analysis-text">
-          Scanned <span class="highlight">47 files</span> across your React codebase. 
-          Overall health score is <span class="highlight">78%</span>, which is above average for projects of this size.
+          Scanned <span class="highlight">47 files</span> across your React codebase and identified a 
+          <span class="inline-badge amber" data-key="1"><span class="badge-key">1</span>fragmentation index</span> 
+          of 0.73 in your visual layer. Cross-referencing against the 
+          <span class="inline-badge blue" data-key="2"><span class="badge-key">2</span>coherence graph</span> 
+          revealed <span class="highlight">14 redundant color definitions</span> and 
+          <span class="highlight">23 spacing inconsistencies</span> propagating through nested structures.
         </p>
         
         <p class="analysis-text">
-          Found <span class="highlight">14 issues</span> that could benefit from attention, 
-          including <span class="highlight">4 quick wins</span> that can be resolved automatically.
-        </p>
-        
-        <!-- Insights as badges -->
-        <div class="report-badges">
-          <div class="report-badge warning" data-key="1" id="btn-fragmentation">
-            <span class="badge-key">1</span>
-            Fragmentation: 0.73
-          </div>
-          <div class="report-badge blue" data-key="2" id="btn-coherence">
-            <span class="badge-key">2</span>
-            37 style conflicts
-          </div>
-          <div class="report-badge success" data-key="3" id="btn-opportunity">
-            <span class="badge-key">3</span>
-            70% drift reducible
-          </div>
-          <div class="report-badge primary" data-key="4" id="btn-performance">
-            <span class="badge-key">4</span>
-            12% bundle savings
-          </div>
-        </div>
-        
-        <p class="analysis-text" style="margin-top: 32px;">
-          <span class="highlight">14 redundant color definitions</span> could be unified into shared tokens. 
-          Duplicate patterns in Button, Form, and Card suggest opportunities for component extraction.
-        </p>
-        
-        <p class="analysis-text">
-          <span class="highlight">47 components</span> would auto-correct if you consolidate these patterns. 
-          Bundle analysis shows <span class="highlight">8 unused exports</span> contributing to unnecessary size.
+          Based on entropy scoring and downstream impact analysis, consolidating your design primitives 
+          into a single source of truth would reduce 
+          <span class="inline-badge green" data-key="3"><span class="badge-key">3</span>visual drift</span> 
+          by an estimated <span class="highlight">70%</span>. 
+          <span class="highlight">47 components</span> would auto-correct once tokens are unified.
         </p>
         
         <!-- Action Buttons -->
@@ -3789,7 +3910,7 @@
     </div>
     
     <div class="dashboard-hint-bar">
-      <span><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> Explore insights</span>
+      <span><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> Explore topics</span>
       <span><kbd>E</kbd> Editor</span>
       <span><kbd>esc</kbd> Close</span>
     </div>
@@ -3839,7 +3960,6 @@
       <div class="panel panel-left" id="panel-left">
         <div class="panel-header">
           <button class="panel-tab active">All Files</button>
-          <button class="panel-tab">App Code</button>
         </div>
         <div class="panel-content" id="file-tree">
           <!-- File tree content -->
@@ -4606,7 +4726,7 @@
     let activeDashboardAnnotation = null;
     let activeDashboardElement = null;
 
-    // Dashboard card data for hotkey annotations
+    // Dashboard card data for inline topic badges (3 topics)
     const dashboardCardData = {
       '1': {
         color: 'amber',
@@ -4629,7 +4749,7 @@
       },
       '2': {
         color: 'blue',
-        title: 'Style Conflicts',
+        title: 'Coherence Graph',
         stat: '37',
         statTarget: 37,
         statSup: 'conflicts',
@@ -4648,10 +4768,10 @@
       },
       '3': {
         color: 'green',
-        title: 'Drift Reducible',
+        title: 'Visual Drift',
         stat: '70%',
         statTarget: 70,
-        statSup: '',
+        statSup: 'reducible',
         suffix: '%',
         isDecimal: false,
         ticker: ['consistency', 'predictability', 'coherence', 'stability', 'uniformity', 'structure', 'alignment', 'tokens'],
@@ -4664,26 +4784,6 @@
         responses: { 
           'why 70': 'The 70% comes from cascade analysis — tracking how changes propagate.',
           'default': 'Impact is calculated by tracing token dependencies.' 
-        }
-      },
-      '4': {
-        color: 'purple',
-        title: 'Bundle Savings',
-        stat: '12%',
-        statTarget: 12,
-        statSup: '',
-        suffix: '%',
-        isDecimal: false,
-        ticker: ['treeshake', 'deadcode', 'unused', 'exports', 'imports', 'chunks', 'size', 'optimize'],
-        prose: 'Identified <strong>8 unused exports</strong> and <em>redundant CSS</em> contributing to bundle size. Safe to remove.',
-        actions: [
-          { key: 'R', label: 'Review removals' },
-          { key: 'F', label: 'Apply all', primary: true }
-        ],
-        placeholder: 'Ask about bundle...',
-        responses: { 
-          'safe': 'Yes — static analysis confirms these exports are unreachable from entry points.',
-          'default': 'Bundle analysis traces import graphs to find dead code.' 
         }
       }
     };
@@ -5492,53 +5592,67 @@
         </div>
         <div class="stats-row">
           <div class="stat-card neutral" id="stat-coverage" data-hotkey="1">
-            <span class="stat-hotkey">1</span>
-            <span class="stat-expand-icon">+</span>
+            <div class="stat-header">
+              <span class="stat-hotkey">1</span>
+              <span class="stat-label">Test Coverage</span>
+            </div>
             <div class="stat-main">
               <div class="stat-value">8.4</div>
               <div class="stat-info">
-                <div class="stat-label">Test Coverage</div>
                 <div class="stat-sublabel">12 tests passing</div>
               </div>
             </div>
             <div class="stat-expanded">
               <div class="stat-summary">
-                Your test coverage is strong at 84% line coverage. All behavior types are tested including edge cases.
+                Your test coverage is <strong>strong at 84%</strong> line coverage. All behavior types are tested including <em>edge cases</em>.
               </div>
               <div class="stat-qa">
                 <div class="stat-qa-item">
                   <div class="stat-qa-question"><span class="arrow">→</span> What needs attention?</div>
-                  <div class="stat-qa-answer">Error handling paths in useEffect hooks could use additional coverage.</div>
+                  <div class="stat-qa-answer">Error handling paths in <code>useEffect</code> hooks could use additional coverage.</div>
                 </div>
               </div>
+              <div class="stat-conversation" id="stat-conversation-coverage"></div>
+              <div class="stat-input">
+                <span class="input-arrow">→</span>
+                <input type="text" class="stat-input-field" data-card="coverage" placeholder="Ask about coverage...">
+                <span class="input-hint"><kbd>↵</kbd></span>
+              </div>
               <div class="stat-actions">
-                <button class="stat-action-btn primary" onclick="handleStatAction('coverage', 'generate')"><kbd>F</kbd> Improve coverage</button>
+                <button class="stat-action-btn" onclick="handleStatAction('coverage', 'generate')"><kbd>F</kbd> Improve coverage</button>
                 <button class="stat-action-btn" onclick="handleStatAction('coverage', 'open')"><kbd>↵</kbd> Open full view</button>
               </div>
             </div>
           </div>
           <div class="stat-card neutral" id="stat-quality" data-hotkey="2">
-            <span class="stat-hotkey">2</span>
-            <span class="stat-expand-icon">+</span>
+            <div class="stat-header">
+              <span class="stat-hotkey">2</span>
+              <span class="stat-label">Code Quality</span>
+            </div>
             <div class="stat-main">
               <div class="stat-value">7.8</div>
               <div class="stat-info">
-                <div class="stat-label">Code Quality</div>
                 <div class="stat-sublabel">3 suggestions</div>
               </div>
             </div>
             <div class="stat-expanded">
               <div class="stat-summary">
-                This file has good code quality with some areas for improvement. Maintainability scores lowest at 7/10.
+                This file has <strong>good code quality</strong> with some areas for improvement. <em>Maintainability</em> scores lowest at <code>7/10</code>.
               </div>
               <div class="stat-qa">
                 <div class="stat-qa-item">
                   <div class="stat-qa-question"><span class="arrow">→</span> What are the main issues?</div>
-                  <div class="stat-qa-answer">Type annotations could be more explicit. Consider adding error boundaries for robustness.</div>
+                  <div class="stat-qa-answer">Type annotations could be more explicit. Consider adding <code>ErrorBoundary</code> for robustness.</div>
                 </div>
               </div>
+              <div class="stat-conversation" id="stat-conversation-quality"></div>
+              <div class="stat-input">
+                <span class="input-arrow">→</span>
+                <input type="text" class="stat-input-field" data-card="quality" placeholder="Ask about quality...">
+                <span class="input-hint"><kbd>↵</kbd></span>
+              </div>
               <div class="stat-actions">
-                <button class="stat-action-btn primary" onclick="handleStatAction('quality', 'fix')"><kbd>F</kbd> Fix top issue</button>
+                <button class="stat-action-btn" onclick="handleStatAction('quality', 'fix')"><kbd>F</kbd> Fix top issue</button>
                 <button class="stat-action-btn" onclick="handleStatAction('quality', 'open')"><kbd>↵</kbd> Open full view</button>
               </div>
             </div>
@@ -6238,24 +6352,17 @@
     // ===========================================
     document.querySelectorAll('.stat-card').forEach(card => {
       card.addEventListener('click', (e) => {
-        // Don't toggle if clicking an action button
-        if (e.target.closest('.stat-action-btn')) return;
+        // Don't toggle if clicking an action button or input
+        if (e.target.closest('.stat-action-btn') || e.target.closest('.stat-input')) return;
         
         const isExpanded = card.classList.contains('expanded');
-        const expandIcon = card.querySelector('.stat-expand-icon');
         
-        // Close other stat cards
-        document.querySelectorAll('.stat-card').forEach(c => {
-          c.classList.remove('expanded');
-          const icon = c.querySelector('.stat-expand-icon');
-          if (icon) icon.textContent = '+';
-        });
-        
+        // Toggle this card independently (don't close others)
         if (!isExpanded) {
           card.classList.add('expanded');
-          if (expandIcon) expandIcon.textContent = '×';
           playSound('tab');
         } else {
+          card.classList.remove('expanded');
           playSound('cancel');
         }
       });
@@ -6511,8 +6618,9 @@
       });
     }
     
-    // Report badge clicks - toggle annotation cards
-    document.querySelectorAll('.report-badge').forEach(badge => {
+    // Inline badge clicks - toggle annotation cards (double-click to open)
+    document.querySelectorAll('.inline-badge').forEach(badge => {
+      // Single click - open annotation
       badge.addEventListener('click', (e) => {
         e.stopPropagation();
         const key = badge.dataset.key;
@@ -6539,8 +6647,8 @@
           return;
         }
         
-        // Hotkeys 1-4 toggle annotation cards
-        if (e.key === '1' || e.key === '2' || e.key === '3' || e.key === '4') {
+        // Hotkeys 1-3 toggle annotation cards
+        if (e.key === '1' || e.key === '2' || e.key === '3') {
           e.preventDefault();
           toggleDashboardAnnotation(e.key);
         } else if (e.key === 'Escape') {
@@ -6584,14 +6692,10 @@
           }
           showScreen('dashboard');
           playSound('cancel');
-        } else if (e.key === '1') {
-          // Toggle Test Coverage card
+        } else if (e.key === '1' || e.key === '2') {
+          // Hold-to-confirm handled by separate listener
+          // Toggle happens on keyup if not confirmed
           e.preventDefault();
-          toggleStatCard('stat-coverage');
-        } else if (e.key === '2') {
-          // Toggle Code Quality card
-          e.preventDefault();
-          toggleStatCard('stat-quality');
         } else if (e.key === 'Enter') {
           // Open full view if a card is expanded
           const expandedCard = document.querySelector('.stat-card.expanded');
@@ -6724,7 +6828,7 @@
 
     function openDashboardAnnotation(key) {
       playSound('category');
-      const badge = document.querySelector(`.report-badge[data-key="${key}"]`);
+      const badge = document.querySelector(`.inline-badge[data-key="${key}"]`);
       if (!badge) return;
       
       if (activeDashboardAnnotation) {
@@ -6747,7 +6851,7 @@
     }
 
     function closeDashboardAnnotation(key, callback) {
-      const badge = document.querySelector(`.report-badge[data-key="${key}"]`);
+      const badge = document.querySelector(`.inline-badge[data-key="${key}"]`);
       if (activeDashboardElement) {
         activeDashboardElement.classList.add('closing');
         setTimeout(() => {
@@ -6773,19 +6877,12 @@
     // EDITOR STAT CARD FUNCTIONS
     // ===========================================
     
-    // Toggle stat card expansion
+    // Toggle stat card expansion (independent - doesn't close other cards)
     function toggleStatCard(cardId) {
       const card = document.getElementById(cardId);
       if (!card) return;
       
-      // Close other expanded cards
-      document.querySelectorAll('.stat-card.expanded').forEach(c => {
-        if (c.id !== cardId) {
-          c.classList.remove('expanded');
-        }
-      });
-      
-      // Toggle this card
+      // Toggle this card independently
       card.classList.toggle('expanded');
       playSound(card.classList.contains('expanded') ? 'category' : 'cursor');
     }
@@ -6818,6 +6915,239 @@
         playSound('confirm');
       }
     }
+    
+    // ===========================================
+    // HOLD-TO-CONFIRM FOR STAT CARDS
+    // ===========================================
+    
+    let statCardHoldTimer = null;
+    let statCardHoldDelayTimer = null;
+    let statCardHoldingKey = null;
+    
+    // Stat card data for hold-to-confirm actions
+    const statCardFixData = {
+      '1': {
+        title: 'Improving test coverage',
+        file: 'src/components/ChatPanel.tsx',
+        ticker: ['coverage', 'tests', 'hooks', 'edge', 'cases', 'assertions', 'mocks', 'async'],
+        prose: 'Adding comprehensive tests for edge cases and error handling paths in useEffect hooks.',
+        dialogue: [
+          { agent: 1, text: 'Analyzing test gaps in <code>ChatPanel.tsx</code>...' },
+          { agent: 2, text: 'Found 3 useEffect hooks without coverage' },
+          { agent: 3, text: 'Generating tests for error boundaries and loading states' },
+          { agent: 1, text: 'Applied new test file: <code>ChatPanel.test.tsx</code>' },
+        ]
+      },
+      '2': {
+        title: 'Fixing code quality issues',
+        file: 'src/components/ChatPanel.tsx',
+        ticker: ['types', 'annotations', 'boundaries', 'patterns', 'lint', 'refactor', 'clean', 'strict'],
+        prose: 'Adding explicit type annotations and implementing error boundaries for improved robustness.',
+        dialogue: [
+          { agent: 1, text: 'Scanning for type annotation opportunities...' },
+          { agent: 2, text: 'Found 5 implicit <code>any</code> types to annotate' },
+          { agent: 3, text: 'Wrapping async components with ErrorBoundary' },
+          { agent: 1, text: 'Applied type fixes and error boundaries' },
+        ]
+      }
+    };
+    
+    // Responses for in-line chat
+    const statCardResponses = {
+      'coverage': {
+        'why': 'The 84% threshold ensures critical paths are tested while allowing flexibility for UI code.',
+        'how': 'Add tests for useEffect cleanup, error states, and loading transitions.',
+        'what': 'Missing coverage in error handling paths and async state transitions.',
+        'default': 'Test coverage measures how much of your code is exercised by automated tests.'
+      },
+      'quality': {
+        'why': 'Type annotations catch bugs at compile time and improve IDE support.',
+        'how': 'Run the fix to add explicit types and wrap components in ErrorBoundary.',
+        'what': 'Three implicit any types and missing error boundaries detected.',
+        'default': 'Code quality measures adherence to best practices and maintainability.'
+      }
+    };
+    
+    function startStatCardHold(hotkey) {
+      const cardId = hotkey === '1' ? 'stat-coverage' : 'stat-quality';
+      const card = document.getElementById(cardId);
+      if (!card || card.classList.contains('confirmed')) return;
+      
+      statCardHoldingKey = hotkey;
+      
+      // 0.25s delay before gradient starts filling
+      statCardHoldDelayTimer = setTimeout(() => {
+        card.classList.add('filling');
+        
+        // Confirm after 1.5 more seconds (1.75s total)
+        statCardHoldTimer = setTimeout(() => {
+          card.classList.remove('filling');
+          card.classList.add('confirmed');
+          
+          // Change hotkey badge to checkmark
+          const hotkeyBadge = card.querySelector('.stat-hotkey');
+          if (hotkeyBadge) hotkeyBadge.textContent = '✓';
+          
+          // Collapse the card
+          card.classList.remove('expanded');
+          
+          statCardHoldingKey = null;
+          playSound('confirm');
+          
+          // Add task to activity page and switch to it
+          addStatCardFixToActivity(hotkey);
+        }, 1500);
+      }, 250);
+    }
+    
+    function cancelStatCardHold() {
+      if (statCardHoldDelayTimer) {
+        clearTimeout(statCardHoldDelayTimer);
+        statCardHoldDelayTimer = null;
+      }
+      if (statCardHoldTimer) {
+        clearTimeout(statCardHoldTimer);
+        statCardHoldTimer = null;
+      }
+      
+      if (statCardHoldingKey) {
+        const cardId = statCardHoldingKey === '1' ? 'stat-coverage' : 'stat-quality';
+        const card = document.getElementById(cardId);
+        if (card) {
+          card.classList.remove('filling');
+        }
+        statCardHoldingKey = null;
+      }
+    }
+    
+    function addStatCardFixToActivity(hotkey) {
+      const data = statCardFixData[hotkey];
+      if (!data) return;
+      
+      // Add to fixActions array dynamically
+      const newAction = {
+        title: data.title,
+        file: data.file,
+        ticker: data.ticker,
+        prose: data.prose,
+        dialogue: data.dialogue
+      };
+      
+      // Add to beginning of array
+      fixActions.unshift(newAction);
+      
+      // Reset activity task states for new action
+      const newStates = { 0: { status: 'active', progress: 0, expanded: true } };
+      Object.keys(activityTaskStates).forEach(key => {
+        newStates[parseInt(key) + 1] = activityTaskStates[key];
+      });
+      activityTaskStates = newStates;
+      
+      // Switch to activity tab
+      switchTab('activity');
+      
+      // Start processing the new task
+      setTimeout(() => {
+        processActivityTask(0);
+      }, 500);
+    }
+    
+    async function processActivityTask(taskIndex) {
+      const taskEl = document.querySelector(`.activity-task[data-task-index="${taskIndex}"]`);
+      if (!taskEl) return;
+      
+      activityTaskStates[taskIndex] = { status: 'active', progress: 0, expanded: true };
+      taskEl.classList.remove('pending');
+      taskEl.classList.add('active', 'expanded');
+      
+      // Stream dialogue
+      await streamTaskDialogue(taskIndex);
+      
+      // Animate progress
+      for (let p = 0; p <= 100; p += 5) {
+        activityTaskStates[taskIndex].progress = p;
+        const fill = taskEl.querySelector('.task-progress-fill');
+        if (fill) fill.style.width = `${p}%`;
+        await new Promise(r => setTimeout(r, 80));
+      }
+      
+      // Mark complete
+      activityTaskStates[taskIndex].status = 'complete';
+      taskEl.classList.remove('active');
+      taskEl.classList.add('complete');
+      playSound('confirm');
+    }
+    
+    // Handle in-line chat queries
+    function handleStatCardQuery(cardType, query) {
+      const convEl = document.getElementById(`stat-conversation-${cardType}`);
+      if (!convEl) return;
+      
+      const responses = statCardResponses[cardType] || {};
+      let response = responses.default || 'I can help you understand this metric.';
+      
+      // Check for keyword matches
+      const lowerQuery = query.toLowerCase();
+      for (const [trigger, resp] of Object.entries(responses)) {
+        if (trigger !== 'default' && lowerQuery.includes(trigger)) {
+          response = resp;
+          break;
+        }
+      }
+      
+      // Add exchange to conversation
+      const exchange = document.createElement('div');
+      exchange.className = 'stat-exchange';
+      exchange.innerHTML = `
+        <div class="stat-query"><span class="arrow">→</span> ${query}</div>
+        <div class="stat-response">${response}</div>
+      `;
+      convEl.appendChild(exchange);
+      playSound('cursor');
+    }
+    
+    // Wire up stat card input fields
+    document.addEventListener('DOMContentLoaded', () => {
+      document.addEventListener('keydown', (e) => {
+        if (e.target.classList.contains('stat-input-field')) {
+          if (e.key === 'Enter' && e.target.value.trim()) {
+            e.preventDefault();
+            const cardType = e.target.dataset.card;
+            handleStatCardQuery(cardType, e.target.value.trim());
+            e.target.value = '';
+          }
+        }
+      });
+    });
+    
+    // Add keydown/keyup handlers for hold-to-confirm in editor screen
+    document.addEventListener('keydown', (e) => {
+      if (currentScreen !== 'editor') return;
+      if (e.target.closest('input, textarea')) return;
+      if (e.repeat) return; // Ignore key repeat
+      
+      if (e.key === '1' || e.key === '2') {
+        startStatCardHold(e.key);
+      }
+    });
+    
+    document.addEventListener('keyup', (e) => {
+      if (currentScreen !== 'editor') return;
+      
+      if (e.key === '1' || e.key === '2') {
+        const cardId = e.key === '1' ? 'stat-coverage' : 'stat-quality';
+        const card = document.getElementById(cardId);
+        
+        // If we were holding this key and haven't confirmed yet, toggle the card
+        if (statCardHoldingKey === e.key) {
+          cancelStatCardHold();
+          // Only toggle if not already confirmed
+          if (card && !card.classList.contains('confirmed')) {
+            toggleStatCard(cardId);
+          }
+        }
+      }
+    });
   </script>
 </body>
 </html>
