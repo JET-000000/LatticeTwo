@@ -1196,57 +1196,274 @@
     .code-number { color: #d19a66; }
 
     /* ===========================================
-       STATS ROW
+       STATS ROW (Enhanced L5ttice-style)
        =========================================== */
     .stats-row {
       display: flex;
-      gap: 16px;
+      gap: 12px;
       padding: 16px 20px;
       border-bottom: 1px solid var(--border-subtle);
       flex-shrink: 0;
     }
 
     .stat-card {
-      padding: 16px 20px;
+      position: relative;
+      padding: 14px 18px;
       background: var(--bg-elevated);
       border: 1px solid var(--border-subtle);
       border-radius: 10px;
-      transition: all 0.3s ease;
+      cursor: pointer;
+      transition: all 0.25s var(--ease-out-expo);
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 10px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .stat-card:hover::before {
+      opacity: 1;
     }
 
     .stat-card.green {
-      border-color: rgba(74, 222, 128, 0.15);
-      background: rgba(74, 222, 128, 0.02);
+      border-color: rgba(74, 222, 128, 0.2);
+      background: rgba(74, 222, 128, 0.03);
+    }
+    .stat-card.green::before {
+      box-shadow: 0 0 25px rgba(74, 222, 128, 0.15);
     }
 
     .stat-card.amber {
-      border-color: rgba(251, 191, 36, 0.15);
-      background: rgba(251, 191, 36, 0.02);
+      border-color: rgba(251, 191, 36, 0.2);
+      background: rgba(251, 191, 36, 0.03);
+    }
+    .stat-card.amber::before {
+      box-shadow: 0 0 25px rgba(251, 191, 36, 0.15);
     }
 
     .stat-card.red {
-      border-color: rgba(248, 113, 113, 0.15);
-      background: rgba(248, 113, 113, 0.02);
+      border-color: rgba(248, 113, 113, 0.2);
+      background: rgba(248, 113, 113, 0.03);
+    }
+    .stat-card.red::before {
+      box-shadow: 0 0 25px rgba(248, 113, 113, 0.15);
     }
 
-    .stat-label {
-      font-size: 9px;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--text-secondary);
-      margin-bottom: 6px;
+    .stat-main {
+      display: flex;
+      align-items: center;
+      gap: 14px;
     }
 
     .stat-value {
-      font-size: 2rem;
+      font-size: 2.2rem;
       font-weight: 200;
       font-variant-numeric: tabular-nums;
       letter-spacing: -0.02em;
+      line-height: 1;
     }
 
     .stat-card.green .stat-value { color: var(--green); }
     .stat-card.amber .stat-value { color: var(--amber); }
     .stat-card.red .stat-value { color: var(--red); }
+
+    .stat-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .stat-label {
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .stat-sublabel {
+      font-size: 0.65rem;
+      color: var(--text-tertiary);
+    }
+
+    .stat-expand-icon {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      color: var(--text-tertiary);
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.25s var(--ease-out-expo);
+    }
+
+    .stat-card:hover .stat-expand-icon {
+      opacity: 1;
+    }
+
+    .stat-card.expanded .stat-expand-icon {
+      opacity: 1;
+      transform: rotate(45deg);
+    }
+
+    /* Expanded stat card content */
+    .stat-expanded {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: all 0.3s var(--ease-out-expo);
+    }
+
+    .stat-card.expanded .stat-expanded {
+      max-height: 150px;
+      opacity: 1;
+      padding-top: 14px;
+      margin-top: 12px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .stat-detail {
+      font-size: 0.72rem;
+      color: var(--text-prose);
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    .stat-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .stat-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      font-size: 0.65rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s var(--ease-out-expo);
+    }
+
+    .stat-action-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--border-visible);
+      color: var(--text-primary);
+      transform: translateY(-1px);
+    }
+
+    .stat-action-btn.primary {
+      background: rgba(74, 222, 128, 0.1);
+      border-color: rgba(74, 222, 128, 0.2);
+      color: var(--green);
+    }
+
+    .stat-action-btn.primary:hover {
+      background: rgba(74, 222, 128, 0.18);
+      border-color: rgba(74, 222, 128, 0.3);
+    }
+
+    .stat-action-btn kbd {
+      padding: 2px 5px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      font-size: 0.55rem;
+    }
+
+    .stat-action-btn.primary kbd {
+      background: rgba(74, 222, 128, 0.2);
+    }
+
+    /* Command Bar (global actions in nav) */
+    .command-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+      margin-right: 12px;
+    }
+
+    .command-stat {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      font-size: 0.65rem;
+      color: var(--text-secondary);
+    }
+
+    .command-stat-value {
+      font-weight: 500;
+      color: var(--text-primary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .command-stat.warning .command-stat-value {
+      color: var(--amber);
+    }
+
+    .command-stat.success .command-stat-value {
+      color: var(--green);
+    }
+
+    .fix-all-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      background: linear-gradient(135deg, rgba(74, 222, 128, 0.12), rgba(74, 222, 128, 0.06));
+      border: 1px solid rgba(74, 222, 128, 0.25);
+      border-radius: 8px;
+      color: var(--green);
+      font-size: 0.7rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.25s var(--ease-out-expo);
+    }
+
+    .fix-all-btn:hover {
+      background: linear-gradient(135deg, rgba(74, 222, 128, 0.2), rgba(74, 222, 128, 0.1));
+      border-color: rgba(74, 222, 128, 0.4);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px rgba(74, 222, 128, 0.15);
+    }
+
+    .fix-all-btn kbd {
+      padding: 3px 6px;
+      background: rgba(74, 222, 128, 0.2);
+      border-radius: 4px;
+      font-size: 0.6rem;
+    }
+
+    .fix-all-btn .pulse-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: pulse 2s ease infinite;
+    }
 
     .stat-change {
       font-size: 10px;
@@ -2337,9 +2554,26 @@
       <button class="nav-tab" id="tab-features" data-tab="features">Features</button>
       <button class="nav-tab" id="tab-tech-debt" data-tab="tech-debt">Tech Debt</button>
       <button class="nav-tab" id="tab-tests" data-tab="tests">Tests</button>
-      <div class="spacer"></div>
+      
+      <!-- Command Bar: Project-wide stats and actions -->
+      <div class="command-bar">
+        <div class="command-stat success">
+          <span>Health</span>
+          <span class="command-stat-value">78%</span>
+        </div>
+        <div class="command-stat warning">
+          <span>Issues</span>
+          <span class="command-stat-value">14</span>
+        </div>
+        <button class="fix-all-btn" id="fix-all-btn">
+          <span class="pulse-dot"></span>
+          Fix All Issues
+          <kbd>F</kbd>
+        </button>
+      </div>
+      
       <button class="calculate-btn" id="calculate-btn">
-        <kbd>⌘P</kbd>
+        <kbd>P</kbd>
         Calculate
       </button>
     </nav>
@@ -3135,13 +3369,43 @@
           </div>
         </div>
         <div class="stats-row">
-          <div class="stat-card green">
-            <div class="stat-label">Test Coverage</div>
-            <div class="stat-value">8.4</div>
+          <div class="stat-card green" id="stat-coverage">
+            <span class="stat-expand-icon">+</span>
+            <div class="stat-main">
+              <div class="stat-value">8.4</div>
+              <div class="stat-info">
+                <div class="stat-label">Test Coverage</div>
+                <div class="stat-sublabel">12 tests passing</div>
+              </div>
+            </div>
+            <div class="stat-expanded">
+              <div class="stat-detail">
+                Strong coverage on core logic. Consider adding edge case tests for error handling paths.
+              </div>
+              <div class="stat-actions">
+                <button class="stat-action-btn primary"><kbd>G</kbd> Generate tests</button>
+                <button class="stat-action-btn"><kbd>V</kbd> View gaps</button>
+              </div>
+            </div>
           </div>
-          <div class="stat-card green">
-            <div class="stat-label">Code Quality</div>
-            <div class="stat-value">7.8</div>
+          <div class="stat-card green" id="stat-quality">
+            <span class="stat-expand-icon">+</span>
+            <div class="stat-main">
+              <div class="stat-value">7.8</div>
+              <div class="stat-info">
+                <div class="stat-label">Code Quality</div>
+                <div class="stat-sublabel">3 suggestions</div>
+              </div>
+            </div>
+            <div class="stat-expanded">
+              <div class="stat-detail">
+                Minor improvements available: type annotations, error boundaries, and naming consistency.
+              </div>
+              <div class="stat-actions">
+                <button class="stat-action-btn primary"><kbd>A</kbd> Apply all fixes</button>
+                <button class="stat-action-btn"><kbd>R</kbd> Review each</button>
+              </div>
+            </div>
           </div>
         </div>
         <div class="editor-code" id="editor-code">
@@ -3733,6 +3997,92 @@
         }
       });
     });
+
+    // ===========================================
+    // STAT CARD INTERACTIONS
+    // ===========================================
+    document.querySelectorAll('.stat-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        // Don't toggle if clicking an action button
+        if (e.target.closest('.stat-action-btn')) return;
+        
+        const isExpanded = card.classList.contains('expanded');
+        const expandIcon = card.querySelector('.stat-expand-icon');
+        
+        // Close other stat cards
+        document.querySelectorAll('.stat-card').forEach(c => {
+          c.classList.remove('expanded');
+          const icon = c.querySelector('.stat-expand-icon');
+          if (icon) icon.textContent = '+';
+        });
+        
+        if (!isExpanded) {
+          card.classList.add('expanded');
+          if (expandIcon) expandIcon.textContent = '×';
+          playSound('tab');
+        } else {
+          playSound('cancel');
+        }
+      });
+    });
+
+    // Stat action button clicks
+    document.querySelectorAll('.stat-action-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        playSound('confirm');
+        
+        // Visual feedback
+        btn.style.opacity = '0.5';
+        btn.style.pointerEvents = 'none';
+        btn.innerHTML = '<span style="color: var(--green);">Applied</span>';
+        
+        showStatus('Applying...', 0);
+        setTimeout(() => updateStatusProgress(50), 200);
+        setTimeout(() => updateStatusProgress(100), 500);
+        setTimeout(() => showStatusSuccess('Done'), 700);
+        setTimeout(() => hideStatus(), 2000);
+      });
+    });
+
+    // Fix All button
+    const fixAllBtn = document.getElementById('fix-all-btn');
+    if (fixAllBtn) {
+      fixAllBtn.addEventListener('click', () => {
+        playSound('confirm');
+        
+        // Update button state
+        fixAllBtn.innerHTML = '<span>Fixing...</span>';
+        fixAllBtn.style.pointerEvents = 'none';
+        
+        showStatus('Fixing all issues...', 0);
+        
+        // Simulate progress
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+          progress += Math.random() * 15;
+          if (progress >= 100) {
+            progress = 100;
+            clearInterval(progressInterval);
+            
+            // Update stats in command bar
+            document.querySelectorAll('.command-stat.warning .command-stat-value').forEach(el => {
+              el.textContent = '0';
+            });
+            document.querySelectorAll('.command-stat.success .command-stat-value').forEach(el => {
+              el.textContent = '94%';
+            });
+            
+            fixAllBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> All Fixed';
+            fixAllBtn.style.background = 'rgba(74, 222, 128, 0.2)';
+            
+            showStatusSuccess('14 issues fixed');
+            setTimeout(() => hideStatus(), 2500);
+          }
+          updateStatusProgress(progress);
+        }, 150);
+      });
+    }
 
     // ===========================================
     // INITIALIZE
