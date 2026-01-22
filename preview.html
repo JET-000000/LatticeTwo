@@ -6399,7 +6399,7 @@
       fixAllBtn.addEventListener('click', async () => {
         if (fixAllInProgress) return;
         
-        playSound('startup');
+        playSound('confirm');
         fixAllInProgress = true;
         
         // Populate fixActions from predefined actions
@@ -7111,6 +7111,21 @@
       activityTaskStates[taskIndex].status = 'complete';
       taskEl.classList.remove('active');
       taskEl.classList.add('complete');
+      
+      // Update icon to checkmark
+      const iconEl = taskEl.querySelector('.task-status-icon');
+      if (iconEl) {
+        iconEl.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
+      }
+      
+      // Auto-collapse after completion (like other activity cards)
+      activityTaskStates[taskIndex].expanded = false;
+      setTimeout(() => {
+        if (activityTaskStates[taskIndex].status === 'complete' && !activityTaskStates[taskIndex].expanded) {
+          taskEl.classList.remove('expanded');
+        }
+      }, 600);
+      
       playSound('confirm');
     }
     
