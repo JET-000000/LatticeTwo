@@ -2597,15 +2597,17 @@
     }
 
     .activity-title {
-      font-size: 1.4rem;
+      font-size: 1.8rem;
       font-weight: 200;
-      color: var(--text-white);
+      color: var(--text-bright);
       letter-spacing: -0.01em;
     }
 
     .activity-subtitle {
-      font-size: 0.72rem;
-      color: var(--text-tertiary);
+      font-size: 14px;
+      color: var(--text-secondary);
+      font-weight: 300;
+      line-height: 1.6;
     }
 
     .activity-stats {
@@ -2797,9 +2799,10 @@
     /* Horizontal Ticker - L5ttice decorative element */
     .task-ticker {
       overflow: hidden;
-      height: 14px;
-      margin: 4px 0 8px;
-      mask-image: linear-gradient(90deg, transparent, black 15%, black 85%, transparent);
+      height: 16px;
+      margin: 12px 0 16px;
+      width: 100%;
+      mask-image: linear-gradient(90deg, transparent 0%, black 5%, black 95%, transparent 100%);
       opacity: 0;
       transition: opacity 0.4s ease 0.2s;
     }
@@ -5709,8 +5712,8 @@
         // Brief pause to let all cards animate in (~1.2s for 14 cards at 80ms stagger)
         await new Promise(r => setTimeout(r, 1500));
         
-        // Process each fix action (~4s each = ~56s total)
-        const TASK_DURATION = 4000; // 4 seconds per task
+        // Process each fix action (~5.5s each = ~77s total)
+        const TASK_DURATION = 5500; // 5.5 seconds per task
         const PROGRESS_INTERVAL = 50; // Update progress every 50ms
         
         for (let i = 0; i < fixActions.length; i++) {
