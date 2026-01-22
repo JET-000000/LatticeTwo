@@ -2796,15 +2796,20 @@
       color: var(--text-secondary);
     }
 
-    /* Horizontal Ticker - L5ttice decorative element */
+    /* Horizontal Ticker - L5ttice decorative element - full width edge-to-edge */
     .task-ticker {
       overflow: hidden;
-      height: 16px;
-      margin: 12px 0 16px;
+      height: 24px;
+      margin: 16px 0 20px;
+      padding: 5px 0;
       width: 100%;
-      mask-image: linear-gradient(90deg, transparent 0%, black 5%, black 95%, transparent 100%);
+      mask-image: linear-gradient(90deg, transparent 0%, black 2%, black 98%, transparent 100%);
       opacity: 0;
       transition: opacity 0.4s ease 0.2s;
+      box-sizing: border-box;
+      background: rgba(255, 255, 255, 0.025);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     .activity-task.expanded .task-ticker {
@@ -2813,9 +2818,9 @@
 
     .ticker-track {
       display: flex;
-      gap: 24px;
+      gap: 40px;
       width: max-content;
-      animation: tickerScroll 25s linear infinite;
+      animation: tickerScroll 35s linear infinite;
     }
 
     @keyframes tickerScroll {
