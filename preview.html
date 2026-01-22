@@ -1261,7 +1261,6 @@
 
     .panel-center {
       flex: 1;
-      border-right: 1px solid var(--border-subtle);
       display: flex;
       flex-direction: column;
     }
@@ -2042,12 +2041,16 @@
     .stat-change.negative { color: var(--red); }
 
     /* ===========================================
-       CHAT PANEL - L5ttice Style
+       CHAT PANEL - L5ttice Airy Style
        =========================================== */
+    .panel-right {
+      padding-top: 20px;
+    }
+
     .chat-messages {
       flex: 1;
       overflow-y: auto;
-      padding: 16px 20px;
+      padding: 20px 24px;
       display: flex;
       flex-direction: column;
       gap: 8px;
@@ -2056,24 +2059,25 @@
     .chat-empty {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      align-items: flex-start;
+      justify-content: flex-start;
       height: 100%;
-      gap: 12px;
+      gap: 8px;
+      padding-top: 8px;
     }
 
     .chat-empty-label {
-      font-size: 11px;
+      font-size: 0.6rem;
       font-weight: 500;
       text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--text-muted);
+      letter-spacing: 0.15em;
+      color: var(--text-tertiary);
     }
 
     .chat-empty-hint {
-      font-size: 13px;
+      font-size: 0.85rem;
       font-weight: 300;
-      color: var(--text-secondary);
+      color: var(--text-muted);
     }
 
     /* Exchange (query/response) */
@@ -2463,38 +2467,60 @@
       line-height: 1.6;
     }
 
-    /* Chat Input */
+    /* Chat Input - L5ttice airy style */
     .chat-input {
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 16px 20px;
-      border-top: 1px solid var(--border-subtle);
+      padding: 18px 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
       flex-shrink: 0;
+      background: transparent;
     }
 
     .chat-input .arrow {
-      color: var(--text-tertiary);
-      font-size: 14px;
+      color: #333;
+      font-size: 0.85rem;
+      transition: color 0.15s ease;
+    }
+
+    .chat-input:focus-within .arrow {
+      color: #666;
     }
 
     .chat-input input {
       flex: 1;
       background: transparent;
       border: none;
-      color: var(--text-prose);
-      font-size: 14px;
+      color: #999;
+      font-size: 0.9rem;
       font-weight: 300;
       outline: none;
     }
 
+    .chat-input input:focus {
+      color: #ccc;
+    }
+
     .chat-input input::placeholder {
-      color: var(--text-muted);
+      color: #333;
     }
 
     .chat-input .hint {
-      font-size: 10px;
-      color: var(--text-muted);
+      font-size: 0.6rem;
+      color: #333;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+
+    .chat-input:focus-within .hint {
+      opacity: 1;
+    }
+
+    .chat-input .hint kbd {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 2px 5px;
+      border-radius: 3px;
     }
 
     /* ===========================================
@@ -3973,10 +3999,6 @@
 
       <!-- Right Panel: Chat -->
       <div class="panel panel-right" id="panel-right">
-        <div class="panel-header">
-          <div class="status-dot active"></div>
-          <span style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); margin-left: 8px;">Agent Active</span>
-        </div>
         <div class="chat-messages" id="chat-messages">
           <div class="chat-empty">
             <div class="chat-empty-label">Lattice Agent</div>
