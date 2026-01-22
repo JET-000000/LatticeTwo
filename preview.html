@@ -6,22 +6,18 @@
   <title>LatticeTwo — Interactive Demo</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
   <style>
-    /* ===========================================
-       DESIGN TOKENS
-       =========================================== */
+
     :root {
-      /* Backgrounds */
+
       --bg-deep: #0a0a0a;
       --bg-surface: #111;
       --bg-elevated: rgba(255, 255, 255, 0.02);
       --bg-hover: rgba(255, 255, 255, 0.04);
       --bg-active: rgba(255, 255, 255, 0.06);
 
-      /* Borders */
       --border-subtle: rgba(255, 255, 255, 0.04);
       --border-visible: rgba(255, 255, 255, 0.08);
 
-      /* Text */
       --text-muted: #333;
       --text-tertiary: #444;
       --text-secondary: #555;
@@ -30,7 +26,6 @@
       --text-bright: #e5e5e5;
       --text-white: #fff;
 
-      /* Semantic colors */
       --amber: #fbbf24;
       --amber-bg: rgba(251, 191, 36, 0.12);
       --amber-border: rgba(251, 191, 36, 0.25);
@@ -46,17 +41,12 @@
       --red: #f87171;
       --red-bg: rgba(248, 113, 113, 0.12);
 
-      /* Typography */
       --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-mono: 'SF Mono', Menlo, Monaco, monospace;
 
-      /* Transitions */
       --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    /* ===========================================
-       ANIMATIONS
-       =========================================== */
     @keyframes slideIn {
       from { opacity: 0; transform: translateY(6px); }
     }
@@ -167,9 +157,6 @@
       100% { transform: translateY(-100vh) translateX(var(--drift, 50px)); opacity: 0; }
     }
 
-    /* ===========================================
-       SCREEN SYSTEM
-       =========================================== */
     .screen {
       position: fixed;
       inset: 0;
@@ -185,9 +172,6 @@
       pointer-events: auto;
     }
 
-    /* ===========================================
-       ANALYSIS SCREEN
-       =========================================== */
     #analysis-screen {
       background: var(--bg-surface);
     }
@@ -267,7 +251,6 @@
       font-family: var(--font-mono);
     }
 
-    /* Stream Ticker Background */
     .stream-ticker {
       position: fixed;
       top: 50%;
@@ -327,7 +310,6 @@
     .ticker-item.agent-2 .agent-dot { background: var(--blue); }
     .ticker-item.agent-3 .agent-dot { background: var(--green); }
 
-    /* Center Agent Messages */
     .agent-center {
       position: fixed;
       top: 50%;
@@ -400,7 +382,6 @@
       color: var(--text-bright);
     }
 
-    /* Concepts Bar */
     .concepts-bar {
       position: fixed;
       bottom: 48px;
@@ -438,7 +419,6 @@
       animation: conceptIn 0.3s ease;
     }
 
-    /* Hint Bar */
     .hint-bar {
       position: fixed;
       bottom: 48px;
@@ -457,7 +437,6 @@
       color: var(--text-tertiary);
     }
 
-    /* Play Demo Button (Analysis) */
     .analysis-play-btn {
       position: fixed;
       bottom: 48px;
@@ -494,7 +473,6 @@
       pointer-events: none;
     }
 
-    /* Ambient Particles */
     .ambient-particle {
       position: fixed;
       width: 2px;
@@ -516,9 +494,6 @@
       overflow: hidden;
     }
 
-    /* ===========================================
-       DASHBOARD SCREEN - TEXT-BASED REPORT
-       =========================================== */
     #dashboard-screen {
       background: var(--bg-deep);
       display: flex;
@@ -574,7 +549,6 @@
       text-shadow: 0 0 15px rgba(255, 255, 255, 0.25);
     }
 
-    /* Inline topic badges - flow naturally in paragraph text */
     .inline-badge {
       display: inline-flex;
       align-items: center;
@@ -694,9 +668,6 @@
       color: #555;
     }
 
-    /* ===========================================
-       DASHBOARD ANNOTATION CARDS - L5ttice Style
-       =========================================== */
     .dashboard-annotation {
       display: flex;
       gap: 28px;
@@ -723,7 +694,6 @@
       to { opacity: 0; transform: scaleY(0.95) translateY(-8px); }
     }
 
-    /* Color variants */
     .dashboard-annotation.amber { border-color: rgba(251, 191, 36, 0.12); background: rgba(251, 191, 36, 0.02); }
     .dashboard-annotation.blue { border-color: rgba(59, 130, 246, 0.12); background: rgba(59, 130, 246, 0.02); }
     .dashboard-annotation.purple { border-color: rgba(139, 92, 246, 0.12); background: rgba(139, 92, 246, 0.02); }
@@ -826,7 +796,6 @@
       color: #888;
     }
 
-    /* White-only highlights in prose */
     .annotation-prose strong {
       color: #fff;
       font-weight: 400;
@@ -960,9 +929,6 @@
       padding-left: 14px;
     }
 
-    /* ===========================================
-       BASE STYLES
-       =========================================== */
     * {
       margin: 0;
       padding: 0;
@@ -1006,9 +972,6 @@
       color: var(--text-secondary);
     }
 
-    /* ===========================================
-       MOCK CURSOR
-       =========================================== */
     .mock-cursor {
       position: fixed;
       width: 20px;
@@ -1040,9 +1003,6 @@
       animation: clickRipple 0.4s ease-out forwards;
     }
 
-    /* ===========================================
-       NARRATION BAR
-       =========================================== */
     .narration-bar {
       position: fixed;
       bottom: 40px;
@@ -1076,9 +1036,6 @@
       font-style: normal;
     }
 
-    /* ===========================================
-       STATUS ISLAND
-       =========================================== */
     .status-island {
       position: fixed;
       top: 16px;
@@ -1140,9 +1097,6 @@
       transition: width 0.3s ease;
     }
 
-    /* ===========================================
-       LAYOUT
-       =========================================== */
     .app {
       display: flex;
       flex-direction: column;
@@ -1160,9 +1114,6 @@
       flex-shrink: 0;
     }
 
-    /* ===========================================
-       NAV TABS - Cursor-tracking glow
-       =========================================== */
     .nav-tab {
       padding: 8px 14px;
       border: none;
@@ -1245,9 +1196,6 @@
       min-height: 0;
     }
 
-    /* ===========================================
-       PANELS - Fixed alignment
-       =========================================== */
     .panel {
       display: flex;
       flex-direction: column;
@@ -1277,7 +1225,7 @@
       gap: 4px;
       padding: 0 12px;
       border-bottom: 1px solid var(--border-subtle);
-      height: 44px; /* Fixed height for alignment */
+      height: 44px; 
       flex-shrink: 0;
     }
 
@@ -1311,9 +1259,6 @@
       padding: 8px 0;
     }
 
-    /* ===========================================
-       FILE TREE
-       =========================================== */
     .file-item {
       display: flex;
       align-items: center;
@@ -1378,20 +1323,16 @@
       color: var(--red);
     }
 
-    /* ===========================================
-       EDITOR AREA
-       =========================================== */
     .editor-tabs {
       display: flex;
       align-items: center;
       gap: 2px;
       padding: 0 12px;
-      height: 44px; /* Match panel-header min-height for horizontal line alignment */
+      height: 44px; 
       flex-shrink: 0;
       position: relative;
     }
 
-    /* Gradient fade line below tabs - matches stats-row line */
     .editor-tabs::after {
       content: '';
       position: absolute;
@@ -1473,9 +1414,6 @@
     .code-type { color: #e5c07b; }
     .code-number { color: #d19a66; }
 
-    /* ===========================================
-       STATS ROW (Enhanced L5ttice-style)
-       =========================================== */
     .stats-row {
       position: relative;
       display: flex;
@@ -1484,7 +1422,6 @@
       flex-shrink: 0;
     }
 
-    /* Single gradient fade line below cards only */
     .stats-row::after {
       content: '';
       position: absolute;
@@ -1534,7 +1471,6 @@
       box-shadow: 0 0 25px rgba(74, 222, 128, 0.15);
     }
 
-    /* Neutral grey variant - no score-based coloring */
     .stat-card.neutral {
       border-color: rgba(255, 255, 255, 0.06);
       background: rgba(255, 255, 255, 0.02);
@@ -1550,7 +1486,6 @@
       background: rgba(255, 255, 255, 0.04);
     }
 
-    /* Hotkey badge for stat cards - inline with label */
     .stat-hotkey {
       display: inline-flex;
       align-items: center;
@@ -1571,8 +1506,7 @@
       color: #777;
       background: rgba(255, 255, 255, 0.08);
     }
-    
-    /* Stat card header row for hotkey + label */
+
     .stat-header {
       display: flex;
       align-items: center;
@@ -1657,7 +1591,6 @@
       transform: rotate(45deg);
     }
 
-    /* Expanded stat card content */
     .stat-expanded {
       max-height: 0;
       opacity: 0;
@@ -1745,7 +1678,6 @@
       transform: translateY(-1px);
     }
 
-    /* All action buttons use neutral grey - no green */
     .stat-action-btn kbd {
       padding: 2px 5px;
       background: rgba(255, 255, 255, 0.1);
@@ -1754,7 +1686,6 @@
       color: #777;
     }
 
-    /* In-line chat input for stat cards */
     .stat-input {
       display: flex;
       align-items: center;
@@ -1796,7 +1727,6 @@
       border-radius: 3px;
     }
 
-    /* Conversation area for stat card Q&A */
     .stat-conversation {
       display: flex;
       flex-direction: column;
@@ -1831,7 +1761,6 @@
       padding-left: 14px;
     }
 
-    /* Aesthetic text formatting for stat summaries */
     .stat-summary {
       font-size: 0.85rem;
       line-height: 1.7;
@@ -1875,7 +1804,6 @@
       color: #999;
     }
 
-    /* Hold-to-confirm green fill animation */
     .stat-card::after {
       content: '';
       position: absolute;
@@ -1915,7 +1843,6 @@
       z-index: 1;
     }
 
-    /* Command Bar (global actions in nav) */
     .command-bar {
       display: flex;
       align-items: center;
@@ -2033,7 +1960,6 @@
       font-variant-numeric: tabular-nums;
     }
 
-    /* Activity Tab specific nav styling */
     .nav-tab[data-tab="activity"] {
       position: relative;
     }
@@ -2064,9 +1990,6 @@
     .stat-change.positive { color: var(--green); }
     .stat-change.negative { color: var(--red); }
 
-    /* ===========================================
-       CHAT PANEL - L5ttice Airy Style
-       =========================================== */
     .panel-right {
       padding-top: 20px;
     }
@@ -2104,7 +2027,6 @@
       color: var(--text-muted);
     }
 
-    /* Exchange (query/response) */
     .exchange {
       padding: 12px 0;
       border-bottom: 1px solid var(--border-subtle);
@@ -2164,7 +2086,6 @@
       font-weight: 300;
     }
 
-    /* Thinking */
     .thinking {
       display: flex;
       align-items: center;
@@ -2194,9 +2115,6 @@
       font-weight: 300;
     }
 
-    /* ===========================================
-       ANNOTATION CARDS - L5ttice Style
-       =========================================== */
     .annotation-card {
       display: flex;
       gap: 20px;
@@ -2301,7 +2219,6 @@
       margin-left: 4px;
     }
 
-    /* Ticker */
     .stat-ticker {
       overflow: hidden;
       height: 16px;
@@ -2422,7 +2339,6 @@
       font-weight: 500;
     }
 
-    /* In-card chat input */
     .annotation-input {
       display: flex;
       align-items: center;
@@ -2461,7 +2377,6 @@
       color: var(--text-muted);
     }
 
-    /* Card conversation */
     .card-conversation {
       display: flex;
       flex-direction: column;
@@ -2491,7 +2406,6 @@
       line-height: 1.6;
     }
 
-    /* Chat Input - L5ttice airy style */
     .chat-input {
       display: flex;
       align-items: center;
@@ -2502,7 +2416,6 @@
       position: relative;
     }
 
-    /* Line above input - aligns with arrow/text start */
     .chat-input::before {
       content: '';
       position: absolute;
@@ -2523,7 +2436,6 @@
       width: 1em;
     }
 
-    /* Cyberpunk wrap-around scroll animation */
     @keyframes arrowScroll {
       0%, 80% {
         transform: translateX(0);
@@ -2587,7 +2499,6 @@
       border-radius: 3px;
     }
 
-    /* Chat Messages - Interactive */
     .chat-user-message {
       display: flex;
       align-items: flex-start;
@@ -2720,9 +2631,6 @@
       background: rgba(74, 222, 128, 0.2);
     }
 
-    /* ===========================================
-       INSIGHT VIEWS - L5ttice Style
-       =========================================== */
     .insight-container {
       padding: 32px 40px;
       height: 100%;
@@ -2754,7 +2662,6 @@
       font-weight: 500;
     }
 
-    /* Filter/Sort Bar */
     .insight-toolbar {
       display: flex;
       align-items: center;
@@ -2786,13 +2693,13 @@
       font-size: 11px;
       font-weight: 300;
     }
-    
+
     .search-icon {
       display: flex;
       align-items: center;
       justify-content: center;
     }
-    
+
     .search-icon svg {
       width: 14px;
       height: 14px;
@@ -2842,7 +2749,6 @@
       color: var(--text-primary);
     }
 
-    /* Sort dropdown container */
     .sort-dropdown-container {
       position: relative;
     }
@@ -2900,7 +2806,6 @@
       flex: 1;
     }
 
-    /* Sort dropdown menu */
     .sort-menu {
       position: absolute;
       top: calc(100% + 6px);
@@ -2991,13 +2896,11 @@
       font-weight: 500;
     }
 
-    /* Stat value row - flex container for value + description */
     .insight-stat-value-row {
       display: flex;
       align-items: baseline;
     }
 
-    /* Description that appears on hover */
     .insight-stat-desc {
       display: inline-flex;
       align-items: baseline;
@@ -3020,7 +2923,6 @@
       margin-left: 12px;
     }
 
-    /* Number count-up animation for first tab open */
     @keyframes countUpFade {
       from {
         opacity: 0;
@@ -3055,9 +2957,6 @@
       gap: 12px;
     }
 
-    /* ===========================================
-       INSIGHT CARDS - Expandable L5ttice Style
-       =========================================== */
     .insight-card {
       display: flex;
       flex-direction: column;
@@ -3087,7 +2986,6 @@
       padding: 16px 20px;
     }
 
-    /* Score indicator - L5ttice typography style */
     .insight-score {
       display: flex;
       align-items: baseline;
@@ -3174,7 +3072,6 @@
       color: var(--text-prose);
     }
 
-    /* Expanded section - smooth expand/collapse */
     .insight-expanded {
       padding: 0 20px 0;
       border-top: 1px solid var(--border-subtle);
@@ -3237,7 +3134,6 @@
       border-top: 1px solid var(--border-subtle);
     }
 
-    /* In-card input */
     .expanded-input {
       display: flex;
       align-items: center;
@@ -3268,7 +3164,6 @@
       color: var(--text-tertiary);
     }
 
-    /* Scroll indicator - bouncing arrow (hidden) */
     .scroll-indicator {
       display: none;
       position: absolute;
@@ -3317,7 +3212,6 @@
       }
     }
 
-    /* Fade gradient to indicate more content */
     .insight-expanded.has-more::after {
       content: '';
       position: absolute;
@@ -3335,19 +3229,14 @@
       opacity: 0.6;
     }
 
-    /* Update expanded section for scroll indicator positioning */
     .insight-expanded {
       position: relative;
     }
 
-    /* Insight list transition for sort animation */
     .insight-list {
       transition: opacity 0.15s ease, transform 0.15s ease;
     }
 
-    /* ===========================================
-       ACTIVITY VIEW (Agent Work Tab)
-       =========================================== */
     .activity-view {
       display: flex;
       flex-direction: column;
@@ -3402,8 +3291,6 @@
       line-height: 1;
     }
 
-    /* Keep stats neutral - using primary text color */
-
     .activity-stat-label {
       font-size: 0.6rem;
       color: var(--text-tertiary);
@@ -3412,7 +3299,6 @@
       margin-top: 4px;
     }
 
-    /* Activity Progress Section */
     .activity-progress {
       display: flex;
       flex-direction: column;
@@ -3476,7 +3362,6 @@
       font-family: var(--font-mono);
     }
 
-    /* Activity Stream - Ultra-soft gradient shadow for scroll */
     .activity-stream {
       flex: 1;
       display: flex;
@@ -3485,7 +3370,7 @@
       overflow-y: auto;
       padding: 12px 8px 32px 0;
       position: relative;
-      /* Very soft translucent gradient at edges */
+
       mask-image: linear-gradient(
         to bottom,
         rgba(0,0,0,0.3) 0%,
@@ -3498,9 +3383,6 @@
     .activity-stream::-webkit-scrollbar { width: 4px; }
     .activity-stream::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.06); border-radius: 2px; }
 
-    /* Removed gradient shadow element - using mask-image only */
-
-    /* Task Card - Individual fix item with progress */
     .activity-task {
       position: relative;
       background: rgba(255, 255, 255, 0.015);
@@ -3545,7 +3427,6 @@
       opacity: 0.6;
     }
 
-    /* Task Header - Always visible */
     .task-header {
       display: flex;
       align-items: center;
@@ -3572,7 +3453,6 @@
       color: var(--text-secondary);
     }
 
-    /* Horizontal Ticker - L5ttice decorative element - full bleed edge-to-edge */
     .task-ticker {
       position: relative;
       overflow: hidden;
@@ -3614,7 +3494,6 @@
       font-weight: 300;
     }
 
-    /* Task Prose - Plain English description */
     .task-prose {
       font-size: 0.8rem;
       font-weight: 300;
@@ -3675,7 +3554,6 @@
       color: var(--text-secondary);
     }
 
-    /* Task Progress Bar (per-task) */
     .task-progress {
       padding: 0 18px 14px;
     }
@@ -3700,7 +3578,6 @@
       background: rgba(255, 255, 255, 0.4);
     }
 
-    /* Expandable Agent Dialogue Section - L5ttice Inspired */
     .task-dialogue {
       max-height: 0;
       overflow: hidden;
@@ -3726,7 +3603,6 @@
     .task-dialogue-inner::-webkit-scrollbar { width: 3px; }
     .task-dialogue-inner::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.04); }
 
-    /* Task Input - L5ttice hotkeyable style */
     .task-input-area {
       display: flex;
       align-items: center;
@@ -3769,7 +3645,6 @@
       border-radius: 3px;
     }
 
-    /* Agent Message - L5ttice Typography with breathing room */
     .agent-msg {
       display: flex;
       align-items: flex-start;
@@ -3788,7 +3663,6 @@
       to { opacity: 1; }
     }
 
-    /* Fade older messages gently */
     .agent-msg:nth-last-child(1) { opacity: 1; }
     .agent-msg:nth-last-child(2) { opacity: 0.7; }
     .agent-msg:nth-last-child(3) { opacity: 0.5; }
@@ -3820,7 +3694,6 @@
       color: var(--text-primary);
     }
 
-    /* Typing Cursor */
     .typing-cursor {
       display: inline-block;
       width: 1px;
@@ -3835,7 +3708,6 @@
       50% { opacity: 0; }
     }
 
-    /* Legacy activity-item styles for backwards compatibility */
     .activity-item {
       display: flex;
       gap: 14px;
@@ -3918,7 +3790,6 @@
       color: var(--text-muted);
     }
 
-    /* Empty State */
     .activity-empty {
       flex: 1;
       display: flex;
@@ -3950,9 +3821,6 @@
       color: var(--text-tertiary);
     }
 
-    /* ===========================================
-       DEMO CONTROLS
-       =========================================== */
     .demo-controls {
       position: fixed;
       bottom: 20px;
@@ -3990,22 +3858,22 @@
       border-color: rgba(255, 255, 255, 0.15);
       color: var(--text-bright);
     }
-    
+
     .demo-btn.sound-btn {
       padding: 8px 10px;
       display: flex;
       align-items: center;
       justify-content: center;
     }
-    
+
     .demo-btn.sound-btn svg {
       transition: opacity 0.2s ease;
     }
-    
+
     .demo-btn.sound-btn.muted svg .sound-wave {
       opacity: 0;
     }
-    
+
     .demo-btn.sound-btn.muted::after {
       content: '';
       position: absolute;
@@ -4015,30 +3883,26 @@
       transform: rotate(-45deg);
       border-radius: 1px;
     }
-    
+
     .demo-btn.sound-btn {
       position: relative;
     }
   </style>
 </head>
 <body>
-  <!-- Mock Cursor -->
+
   <div class="mock-cursor" id="mock-cursor" style="left: -50px; top: -50px;">
     <svg viewBox="0 0 24 24" fill="none">
       <path d="M4 4L12 20L14 14L20 12L4 4Z" fill="white" stroke="black" stroke-width="1"/>
     </svg>
   </div>
 
-  <!-- Narration Bar -->
   <div class="narration-bar" id="narration-bar">
     <div class="narration-text" id="narration-text"></div>
   </div>
 
-  <!-- ==========================================
-       ANALYSIS SCREEN (Landing Page)
-       ========================================== -->
   <div class="screen active" id="analysis-screen">
-    <!-- Status Area (Top Left) -->
+
     <div class="analysis-status">
       <div class="logo">Lattice</div>
       <div class="status-headline visible" id="status-headline">
@@ -4052,47 +3916,38 @@
       </div>
     </div>
 
-    <!-- Stream Ticker (Background) -->
     <div class="stream-ticker" id="stream-ticker">
       <div class="ticker-row" id="ticker-row-1" style="--duration: 80s;"></div>
       <div class="ticker-row reverse" id="ticker-row-2" style="--duration: 70s;"></div>
       <div class="ticker-row" id="ticker-row-3" style="--duration: 90s;"></div>
     </div>
 
-    <!-- Agent Messages (Center) -->
     <div class="agent-center" id="agent-center"></div>
 
-    <!-- Concepts Bar (Bottom Right) -->
     <div class="concepts-bar" id="concepts-bar">
       <span class="concepts-label">Detected</span>
       <div class="concepts-list" id="concepts-list"></div>
     </div>
 
-    <!-- Hint Bar (Bottom Left) -->
     <div class="hint-bar">
       <span><kbd>Space</kbd> Skip</span>
     </div>
 
-    <!-- Begin Analysis Button -->
     <button class="analysis-play-btn" id="analysis-play-btn">
       <kbd>Enter</kbd>
       Begin Analysis
     </button>
   </div>
 
-  <!-- ==========================================
-       DASHBOARD SCREEN - Text-Based L5ttice Report
-       ========================================== -->
   <div class="screen" id="dashboard-screen">
     <div class="report-container">
       <div class="report-document">
-        <!-- Header -->
+
         <div class="report-header">
           <div class="report-logo">Lattice</div>
           <div class="report-title">Analysis Complete</div>
         </div>
-        
-        <!-- Main Report Text with inline topic badges -->
+
         <p class="analysis-text">
           Scanned <span class="highlight">47 files</span> across your React codebase and identified a 
           <span class="inline-badge amber" data-key="1"><span class="badge-key">1</span>fragmentation index</span> 
@@ -4101,7 +3956,7 @@
           revealed <span class="highlight">14 redundant color definitions</span> and 
           <span class="highlight">23 spacing inconsistencies</span> propagating through nested structures.
         </p>
-        
+
         <p class="analysis-text">
           Based on entropy scoring and downstream impact analysis, consolidating your design primitives 
           into a single source of truth would reduce 
@@ -4109,8 +3964,7 @@
           by an estimated <span class="highlight">70%</span>. 
           <span class="highlight">47 components</span> would auto-correct once tokens are unified.
         </p>
-        
-        <!-- Action Buttons -->
+
         <div class="report-actions">
           <button class="report-action-btn" id="report-btn-editor">
             <span>Open Editor</span>
@@ -4131,7 +3985,7 @@
         </div>
       </div>
     </div>
-    
+
     <div class="dashboard-hint-bar">
       <span><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> Explore topics</span>
       <span><kbd>E</kbd> Editor</span>
@@ -4139,11 +3993,8 @@
     </div>
   </div>
 
-  <!-- ==========================================
-       EDITOR SCREEN
-       ========================================== -->
   <div class="screen" id="editor-screen">
-    <!-- Status Island -->
+
     <div class="status-island" id="status-island">
       <div class="status-dot" id="status-dot"></div>
       <span class="status-text" id="status-text">Ready</span>
@@ -4153,7 +4004,7 @@
     </div>
 
     <div class="app">
-    <!-- Navigation Bar -->
+
     <nav class="nav-bar">
       <button class="nav-tab active" id="tab-editor" data-tab="editor">Editor</button>
       <button class="nav-tab" id="tab-features" data-tab="features">Features</button>
@@ -4163,8 +4014,7 @@
         Activity
         <span class="activity-indicator"></span>
       </button>
-      
-      <!-- Command Bar: Project-wide stats and actions -->
+
       <div class="command-bar">
         <div class="command-stat warning">
           <span>Issues</span>
@@ -4177,24 +4027,21 @@
       </div>
     </nav>
 
-    <!-- Main Content -->
     <div class="content">
-      <!-- Left Panel: File Tree -->
+
       <div class="panel panel-left" id="panel-left">
         <div class="panel-header">
           <button class="panel-tab active">All Files</button>
         </div>
         <div class="panel-content" id="file-tree">
-          <!-- File tree content -->
+
         </div>
       </div>
 
-      <!-- Center Panel: Dynamic Content -->
       <div class="panel panel-center" id="panel-center">
-        <!-- Content changes based on tab -->
+
       </div>
 
-      <!-- Right Panel: Chat -->
       <div class="panel panel-right" id="panel-right">
         <div class="chat-messages" id="chat-messages">
           <div class="chat-empty">
@@ -4211,15 +4058,13 @@
     </div>
   </div>
 
-    <!-- Demo Controls (inside editor screen) -->
     <div class="demo-controls">
       <button class="demo-btn primary" id="play-demo-btn">Play Demo</button>
       <button class="demo-btn" id="restart-btn">Restart</button>
       <button class="demo-btn sound-btn" id="sound-toggle"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path class="sound-wave" d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button>
     </div>
-  </div><!-- End editor-screen -->
+  </div>
 
-  <!-- Audio Elements -->
   <audio id="sound-startup" src="client/public/sounds/01 Startup.mp3" preload="auto"></audio>
   <audio id="sound-cursor" src="client/public/sounds/05 SFX Cursor.mp3" preload="auto"></audio>
   <audio id="sound-decide" src="client/public/sounds/06 SFX Decide.mp3" preload="auto"></audio>
@@ -4230,29 +4075,22 @@
   <audio id="sound-option" src="client/public/sounds/07 SFX Option.mp3" preload="auto"></audio>
 
   <script>
-    // ===========================================
-    // STATE
-    // ===========================================
+
     let soundEnabled = true;
     let demoRunning = false;
     let demoPaused = false;
     let currentTab = 'editor';
     let demoTimeouts = [];
     let expandedCards = new Set();
-    
-    // Track which insight tabs have been opened (for first-open animation)
+
     const tabsFirstOpened = { features: false, 'tech-debt': false, tests: false };
-    
-    // Analysis state
+
     let currentScreen = 'analysis';
     let analysisRunning = false;
     let analysisComplete = false;
     let analysisInterval = null;
     let agentMessageIndex = 0;
 
-    // ===========================================
-    // ANALYSIS DATA
-    // ===========================================
     const analysisFiles = [
       'package.json', 'tsconfig.json', 'src/index.tsx', 'src/App.tsx',
       'src/components/ChatPanel.tsx', 'src/components/FilePanel.tsx',
@@ -4305,9 +4143,6 @@
 
     const detectedConcepts = ['React', 'TypeScript', 'OAuth', 'Redux', 'JWT', 'REST API'];
 
-    // ===========================================
-    // REALISTIC DATA
-    // ===========================================
     const fileTree = [
       { name: 'src', type: 'folder', expanded: true, children: [
         { name: 'components', type: 'folder', expanded: true, children: [
@@ -4443,29 +4278,25 @@
         files: ['useCollaboration.test.ts'] },
     ];
 
-    // ===========================================
-    // SOUND
-    // ===========================================
     let lastSoundTime = {};
     const SOUND_DEBOUNCE = 80; // ms
-    
+
     function playSound(name) {
       if (!soundEnabled) return;
-      
-      // Debounce rapid sounds
+
       const now = Date.now();
       if (lastSoundTime[name] && now - lastSoundTime[name] < SOUND_DEBOUNCE) {
         return;
       }
       lastSoundTime[name] = now;
-      
+
       const audio = document.getElementById(`sound-${name}`);
       if (audio) {
-        // Clone audio for overlapping sounds
+
         const clone = audio.cloneNode();
         clone.volume = 0.12;
         clone.play().catch(() => {});
-        // Clean up clone after playing
+
         clone.onended = () => clone.remove();
       }
     }
@@ -4476,18 +4307,12 @@
       btn.classList.toggle('muted', !soundEnabled);
     }
 
-    // ===========================================
-    // SCREEN NAVIGATION
-    // ===========================================
     function showScreen(screenId) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById(`${screenId}-screen`).classList.add('active');
       currentScreen = screenId;
     }
 
-    // ===========================================
-    // STREAM TICKER
-    // ===========================================
     function initStreamTicker() {
       const rows = [
         document.getElementById('ticker-row-1'),
@@ -4499,8 +4324,7 @@
         if (!row) return;
         const content = document.createElement('div');
         content.className = 'ticker-content';
-        
-        // Double the content for seamless loop
+
         for (let i = 0; i < 2; i++) {
           streamDialogue.forEach(item => {
             const tickerItem = document.createElement('span');
@@ -4509,14 +4333,11 @@
             content.appendChild(tickerItem);
           });
         }
-        
+
         row.appendChild(content);
       });
     }
 
-    // ===========================================
-    // ANALYSIS SEQUENCE
-    // ===========================================
     const ANALYSIS_DURATION = 22000; // 22 seconds
     const BAR_WIDTH = 20;
     let analysisStartTime = null;
@@ -4525,15 +4346,15 @@
       const asciiBar = document.getElementById('ascii-bar');
       const currentFile = document.getElementById('current-file');
       if (!asciiBar || !currentFile) return;
-      
+
       const percent = Math.round(progress * 100);
       const filled = Math.round(progress * BAR_WIDTH);
-      
+
       const filledStr = '\u2588'.repeat(filled);
       const emptyStr = '\u2591'.repeat(BAR_WIDTH - filled);
-      
+
       asciiBar.innerHTML = `<span class="filled">${filledStr}</span>${emptyStr} ${percent}%`;
-      
+
       const fileIndex = Math.floor(progress * analysisFiles.length);
       if (fileIndex < analysisFiles.length) {
         currentFile.textContent = analysisFiles[fileIndex];
@@ -4559,13 +4380,12 @@
 
     async function addAgentMessage() {
       if (agentMessageIndex >= agentMessages.length) return;
-      
+
       const container = document.getElementById('agent-center');
       if (!container) return;
       const msg = agentMessages[agentMessageIndex];
       agentMessageIndex++;
-      
-      // Remove old messages if too many
+
       const messages = container.querySelectorAll('.agent-message');
       if (messages.length >= 4) {
         const oldest = messages[0];
@@ -4573,7 +4393,7 @@
         await new Promise(r => setTimeout(r, 300));
         oldest.remove();
       }
-      
+
       const msgEl = document.createElement('div');
       msgEl.className = `agent-message agent-${msg.agent}`;
       msgEl.innerHTML = `
@@ -4598,43 +4418,37 @@
       analysisRunning = true;
       analysisComplete = false;
       agentMessageIndex = 0;
-      
-      // Hide play button
+
       const playBtn = document.getElementById('analysis-play-btn');
       if (playBtn) playBtn.classList.add('hidden');
-      
-      // Show progress elements
+
       const asciiProgress = document.getElementById('ascii-progress');
       const streamTicker = document.getElementById('stream-ticker');
       if (asciiProgress) asciiProgress.classList.add('visible');
       if (streamTicker) streamTicker.classList.add('visible');
-      
-      // Play startup sound
+
       playSound('startup');
-      
+
       analysisStartTime = Date.now();
-      
-      // Schedule agent messages with sounds
+
       for (let i = 0; i < agentMessages.length; i++) {
         setTimeout(() => {
           addAgentMessage();
         }, 2000 + i * 1800);
       }
-      
-      // Schedule concepts
+
       setTimeout(() => {
         const conceptsBar = document.getElementById('concepts-bar');
         if (conceptsBar) conceptsBar.classList.add('visible');
         detectedConcepts.forEach((c, i) => setTimeout(() => addConcept(c), i * 400));
       }, 8000);
-      
-      // Progress bar update
+
       analysisInterval = setInterval(() => {
         const elapsed = Date.now() - analysisStartTime;
         const progress = Math.min(elapsed / ANALYSIS_DURATION, 1);
         updateAsciiBar(progress);
         updateHeadline(progress);
-        
+
         if (progress >= 1) {
           clearInterval(analysisInterval);
           finishAnalysis();
@@ -4645,8 +4459,7 @@
     function finishAnalysis() {
       analysisComplete = true;
       analysisRunning = false;
-      
-      // Transition to dashboard after a moment
+
       setTimeout(() => {
         showScreen('dashboard');
         playSound('category');
@@ -4661,17 +4474,14 @@
       playSound('category');
     }
 
-    // ===========================================
-    // AMBIENT PARTICLES
-    // ===========================================
     function createParticles() {
       const analysisScreen = document.getElementById('analysis-screen');
       if (!analysisScreen) return;
-      
+
       const container = document.createElement('div');
       container.className = 'particles-container';
       analysisScreen.appendChild(container);
-      
+
       for (let i = 0; i < 30; i++) {
         const particle = document.createElement('div');
         particle.className = 'ambient-particle';
@@ -4683,24 +4493,18 @@
       }
     }
 
-    // ===========================================
-    // CURSOR-TRACKING GLOW FOR TABS
-    // ===========================================
     document.querySelectorAll('.nav-tab').forEach(tab => {
       tab.addEventListener('mousemove', (e) => {
         const rect = tab.getBoundingClientRect();
         const x = ((e.clientX - rect.left) / rect.width) * 100;
         tab.style.setProperty('--glow-x', `${x}%`);
       });
-      
+
       tab.addEventListener('mouseleave', () => {
         tab.style.setProperty('--glow-x', '50%');
       });
     });
 
-    // ===========================================
-    // MOCK CURSOR
-    // ===========================================
     function moveCursor(x, y, duration = 800) {
       return new Promise(resolve => {
         const cursor = document.getElementById('mock-cursor');
@@ -4725,16 +4529,13 @@
       return new Promise(resolve => {
         const cursor = document.getElementById('mock-cursor');
         cursor.classList.add('clicking');
-        
-        // Create ripple
+
         const ripple = document.createElement('div');
         ripple.className = 'click-ripple';
         ripple.style.left = `${parseInt(cursor.style.left) - 5}px`;
         ripple.style.top = `${parseInt(cursor.style.top) - 5}px`;
         document.body.appendChild(ripple);
-        
-        // No sound on demo clicks - visual feedback only
-        
+
         setTimeout(() => {
           cursor.classList.remove('clicking');
           ripple.remove();
@@ -4743,16 +4544,13 @@
       });
     }
 
-    // ===========================================
-    // NARRATION
-    // ===========================================
     function showNarration(text, duration = 3000) {
       return new Promise(resolve => {
         const bar = document.getElementById('narration-bar');
         const textEl = document.getElementById('narration-text');
         textEl.innerHTML = text;
         bar.classList.add('visible');
-        
+
         setTimeout(() => {
           bar.classList.remove('visible');
           setTimeout(resolve, 500);
@@ -4764,21 +4562,18 @@
       document.getElementById('narration-bar').classList.remove('visible');
     }
 
-    // ===========================================
-    // STATUS ISLAND
-    // ===========================================
     function showStatus(text, progress = null) {
       const island = document.getElementById('status-island');
       const dot = document.getElementById('status-dot');
       const textEl = document.getElementById('status-text');
       const progressBar = document.getElementById('status-progress');
       const progressFill = document.getElementById('status-progress-fill');
-      
+
       textEl.textContent = text;
       dot.classList.add('active');
       island.classList.add('visible');
       island.classList.remove('success');
-      
+
       if (progress !== null) {
         progressBar.style.display = 'block';
         progressFill.style.width = `${progress}%`;
@@ -4803,9 +4598,6 @@
       document.getElementById('status-island').classList.remove('visible');
     }
 
-    // ===========================================
-    // FILE TREE RENDERING
-    // ===========================================
     function renderFileTree() {
       const container = document.getElementById('file-tree');
       container.innerHTML = renderFileNode(fileTree, 0);
@@ -4836,17 +4628,14 @@
       }).join('');
     }
 
-    // ===========================================
-    // TAB SWITCHING
-    // ===========================================
     function switchTab(tabName) {
       document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
       document.getElementById(`tab-${tabName}`).classList.add('active');
       currentTab = tabName;
       expandedCards.clear();
-      
+
       const panelCenter = document.getElementById('panel-center');
-      
+
       switch(tabName) {
         case 'editor':
           panelCenter.innerHTML = getEditorContent();
@@ -4875,78 +4664,67 @@
           setupTaskCardInteractions();
           break;
       }
-      
+
       playSound('tab');
-      
-      // Trigger first-open animation for insight tabs
+
       if (['features', 'tech-debt', 'tests'].includes(tabName) && !tabsFirstOpened[tabName]) {
         tabsFirstOpened[tabName] = true;
         animateInsightStats();
       }
     }
 
-    // Animate insight stat numbers on first tab open
     function animateInsightStats() {
       const statValues = document.querySelectorAll('.insight-stat-value');
-      
+
       statValues.forEach((el, index) => {
         const originalText = el.textContent;
         const targetValue = parseFloat(originalText.replace(/[^0-9.]/g, ''));
         const suffix = originalText.replace(/[0-9.]/g, ''); // Extract %, etc.
         const isDecimal = originalText.includes('.');
-        
-        // Start with 0 and hidden
+
         el.textContent = '0' + suffix;
         el.classList.add('pre-animate');
-        
-        // Stagger the animations
+
         setTimeout(() => {
           el.classList.remove('pre-animate');
           el.classList.add('animate-in');
-          
-          // Animate the number counting up
+
           const duration = 800;
           const startTime = performance.now();
-          
+
           function updateNumber(currentTime) {
             const elapsed = currentTime - startTime;
             const progress = Math.min(elapsed / duration, 1);
-            
-            // Ease out cubic
+
             const eased = 1 - Math.pow(1 - progress, 3);
             const currentValue = targetValue * eased;
-            
+
             if (isDecimal) {
               el.textContent = currentValue.toFixed(1) + suffix;
             } else {
               el.textContent = Math.round(currentValue) + suffix;
             }
-            
+
             if (progress < 1) {
               requestAnimationFrame(updateNumber);
             } else {
-              // Ensure final value is exact
+
               el.textContent = originalText;
             }
           }
-          
+
           requestAnimationFrame(updateNumber);
         }, index * 150); // Stagger by 150ms
       });
     }
 
-    // ===========================================
-    // ACTIVITY STATE & DATA
-    // ===========================================
     let activityItems = [];
     let fixAllInProgress = false;
     let activityTaskStates = {}; // Track individual task states: { taskIndex: { progress: 0, status: 'pending' } }
-    
-    // Dashboard annotation state
+
     let activeDashboardAnnotation = null;
     let activeDashboardElement = null;
 
-    // Dashboard card data for inline topic badges (3 topics)
     const dashboardCardData = {
       '1': {
         color: 'amber',
@@ -5008,10 +4786,8 @@
       }
     };
 
-    // Fix actions - starts empty, populated by Fix All or hold-to-confirm
     let fixActions = [];
-    
-    // Predefined fix actions for Fix All button
+
     const predefinedFixActions = [
       { 
         title: 'Adding type annotations', 
@@ -5117,7 +4893,7 @@
         dialogue: [
           { agent: 2, text: 'Analyzing bundle with <code>webpack-bundle-analyzer</code>...' },
           { agent: 1, text: 'Found 8 dead exports in <code>utils/index.ts</code>' },
-          { agent: 3, text: 'Marking as <code>/*#__PURE__*/</code> for tree-shaking' },
+          { agent: 3, text: 'Marking as <code></code> for tree-shaking' },
           { agent: 2, text: 'Bundle reduced from 847KB to 745KB (12% smaller)' },
         ]
       },
@@ -5246,11 +5022,11 @@
             ${fixActions.map((action, i) => {
               const state = activityTaskStates[i] || { status: 'pending', progress: 0, expanded: false };
               const statusClass = state.status;
-              // Cards start compact - only expand when user clicks or when actively processing
+
               const isExpanded = state.expanded === true;
               const tickerHtml = action.ticker ? 
                 [...action.ticker, ...action.ticker].map(t => `<span>${t}</span>`).join('') : '';
-              
+
               return `
                 <div class="activity-task ${statusClass} ${isExpanded ? 'expanded' : ''}" 
                      data-task-index="${i}" 
@@ -5285,7 +5061,7 @@
                       <div class="task-prose">${action.prose}</div>
                     ` : ''}
                     <div class="task-dialogue-inner" id="dialogue-${i}">
-                      <!-- Agent messages will be streamed here -->
+
                     </div>
                     <div class="task-input-area">
                       <span class="task-input-arrow">&#x2192;</span>
@@ -5301,102 +5077,90 @@
       `;
     }
 
-    // Setup task card click handlers for expand/collapse
     function setupTaskCardInteractions() {
       document.querySelectorAll('.activity-task').forEach(task => {
         const expandBtn = task.querySelector('.task-expand-btn');
         const index = parseInt(task.dataset.taskIndex);
-        
-        // Handle click on expand button
+
         if (expandBtn) {
           expandBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             toggleTaskExpansion(task, index);
           });
         }
-        
-        // Also handle click on the whole card for completed/pending tasks
+
         task.addEventListener('click', (e) => {
-          // Don't toggle if clicking on input or button
+
           if (e.target.closest('input') || e.target.closest('button')) return;
           toggleTaskExpansion(task, index);
         });
       });
     }
-    
-    // Toggle task card expansion
+
     function toggleTaskExpansion(taskEl, index) {
-      // Ensure state exists for this task
+
       if (!activityTaskStates[index]) {
         activityTaskStates[index] = { status: 'pending', progress: 0, expanded: false };
       }
-      
+
       const state = activityTaskStates[index];
       const isCurrentlyExpanded = taskEl.classList.contains('expanded');
-      
-      // Toggle expansion
+
       state.expanded = !isCurrentlyExpanded;
       taskEl.classList.toggle('expanded', state.expanded);
-      
+
       playSound(state.expanded ? 'tab' : 'cancel');
     }
 
-    // Word-by-word typing with cursor (L5ttice style)
     async function typeAgentMessage(dialogueEl, agent, text, speed = 45) {
       const msgEl = document.createElement('div');
       msgEl.className = `agent-msg agent-${agent}`;
       msgEl.innerHTML = `<span class="agent-dot"></span><span class="agent-msg-text"></span>`;
       dialogueEl.appendChild(msgEl);
-      
+
       const textEl = msgEl.querySelector('.agent-msg-text');
       textEl.innerHTML = '<span class="typing-cursor"></span>';
       const cursor = textEl.querySelector('.typing-cursor');
-      
-      // Parse HTML and type word by word
+
       const tempDiv = document.createElement('div');
       tempDiv.innerHTML = text;
       const plainText = tempDiv.textContent || tempDiv.innerText;
       const words = plainText.split(' ');
-      
+
       for (let i = 0; i < words.length; i++) {
         cursor.insertAdjacentText('beforebegin', (i > 0 ? ' ' : '') + words[i]);
         await new Promise(r => setTimeout(r, speed + Math.random() * 20));
       }
-      
+
       cursor.remove();
-      // Restore HTML formatting
+
       textEl.innerHTML = text;
-      
-      // Scroll to bottom
+
       dialogueEl.scrollTop = dialogueEl.scrollHeight;
     }
 
-    // Stream all agent messages for a task
     async function streamTaskDialogue(taskIndex) {
       const action = fixActions[taskIndex];
       const dialogueEl = document.getElementById(`dialogue-${taskIndex}`);
       if (!dialogueEl || !action.dialogue) return;
-      
+
       dialogueEl.innerHTML = '';
-      
+
       for (const msg of action.dialogue) {
         await typeAgentMessage(dialogueEl, msg.agent, msg.text);
         await new Promise(r => setTimeout(r, 300 + Math.random() * 200));
       }
     }
 
-    // ===========================================
-    // CARD INTERACTIONS
-    // ===========================================
     function setupCardInteractions() {
       document.querySelectorAll('.insight-card').forEach(card => {
         card.addEventListener('click', (e) => {
-          // Don't toggle if clicking on input or button
+
           if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON' || e.target.tagName === 'KBD') return;
-          
+
           const id = card.dataset.id;
           const isExpanding = !expandedCards.has(id);
-          
+
           if (isExpanding) {
             expandedCards.add(id);
             card.classList.add('expanded');
@@ -5408,7 +5172,6 @@
           }
         });
 
-        // Handle action button clicks
         card.querySelectorAll('.action-btn').forEach(btn => {
           btn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -5424,7 +5187,6 @@
           });
         });
 
-        // Handle in-card input
         const input = card.querySelector('.expanded-input input');
         if (input) {
           input.addEventListener('keydown', (e) => {
@@ -5441,14 +5203,14 @@
     function addCardResponse(card, query) {
       const conversationArea = card.querySelector('.card-conversation');
       if (!conversationArea) return;
-      
+
       const responses = {
         'why': 'Based on static analysis of code patterns, dependencies, and test coverage metrics.',
         'how': 'You can fix this by running the suggested action, or I can guide you through manually.',
         'safe': 'Yes, this change is safe. It\'s a pure refactor with no functional impact.',
         'default': 'I can help with that. Would you like me to apply the suggested fix?'
       };
-      
+
       let response = responses.default;
       for (const [key, val] of Object.entries(responses)) {
         if (query.toLowerCase().includes(key)) {
@@ -5456,7 +5218,7 @@
           break;
         }
       }
-      
+
       const exchange = document.createElement('div');
       exchange.className = 'card-exchange';
       exchange.innerHTML = `
@@ -5467,9 +5229,6 @@
       playSound('confirm');
     }
 
-    // ===========================================
-    // SORT FUNCTIONALITY
-    // ===========================================
     let currentSortState = {
       features: { field: 'score', dir: 'desc' },
       'tech-debt': { field: 'severity', dir: 'asc' },
@@ -5482,15 +5241,13 @@
         const menu = container.querySelector('.sort-menu');
         const sortType = container.dataset.sortType;
 
-        // Toggle menu on button click
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
           const isOpen = menu.classList.contains('open');
-          
-          // Close all other menus
+
           document.querySelectorAll('.sort-menu.open').forEach(m => m.classList.remove('open'));
           document.querySelectorAll('.sort-dropdown.active').forEach(b => b.classList.remove('active'));
-          
+
           if (!isOpen) {
             menu.classList.add('open');
             btn.classList.add('active');
@@ -5498,28 +5255,24 @@
           }
         });
 
-        // Handle menu item clicks
         menu.querySelectorAll('.sort-menu-item').forEach(item => {
           item.addEventListener('click', (e) => {
             e.stopPropagation();
             const sortField = item.dataset.sort;
             const currentField = currentSortState[sortType].field;
-            
-            // Toggle direction if same field, otherwise default direction
+
             if (sortField === currentField) {
               currentSortState[sortType].dir = currentSortState[sortType].dir === 'desc' ? 'asc' : 'desc';
             } else {
-              // Default directions: score/coverage = desc (high first), severity = asc (worst first), name = asc
+
               currentSortState[sortType].dir = (sortField === 'name') ? 'asc' : 
                 (sortField === 'severity') ? 'asc' : 'desc';
             }
             currentSortState[sortType].field = sortField;
-            
-            // Update UI
+
             menu.querySelectorAll('.sort-menu-item').forEach(i => i.classList.remove('active'));
             item.classList.add('active');
-            
-            // Update button text and direction indicator
+
             const labelMap = {
               score: 'Score', name: 'Name', files: 'File Count',
               severity: 'Severity', issues: 'Issue Count',
@@ -5527,19 +5280,16 @@
             };
             btn.querySelector('.sort-dropdown-text').textContent = labelMap[sortField] || sortField;
             btn.classList.toggle('asc', currentSortState[sortType].dir === 'asc');
-            
-            // Close menu
+
             menu.classList.remove('open');
             btn.classList.remove('active');
-            
-            // Apply sort
+
             applySorting(sortType);
             playSound('decide');
           });
         });
       });
 
-      // Close menus when clicking outside
       document.addEventListener('click', () => {
         document.querySelectorAll('.sort-menu.open').forEach(m => m.classList.remove('open'));
         document.querySelectorAll('.sort-dropdown.active').forEach(b => b.classList.remove('active'));
@@ -5549,7 +5299,7 @@
     function applySorting(sortType) {
       const { field, dir } = currentSortState[sortType];
       let listId, data;
-      
+
       if (sortType === 'features') {
         listId = 'features-list';
         data = [...featuresData];
@@ -5560,11 +5310,10 @@
         listId = 'tests-list';
         data = [...testsData];
       }
-      
-      // Sort the data
+
       data.sort((a, b) => {
         let valA, valB;
-        
+
         switch(field) {
           case 'score':
           case 'coverage':
@@ -5595,23 +5344,21 @@
             valA = a.score;
             valB = b.score;
         }
-        
+
         if (typeof valA === 'string') {
           return dir === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
         }
         return dir === 'asc' ? valA - valB : valB - valA;
       });
-      
-      // Re-render the list
+
       const list = document.getElementById(listId);
       if (!list) return;
-      
-      // Animate out
+
       list.style.opacity = '0';
       list.style.transform = 'translateY(8px)';
-      
+
       setTimeout(() => {
-        // Render sorted cards
+
         if (sortType === 'features') {
           list.innerHTML = data.map(f => renderFeatureCard(f)).join('');
         } else if (sortType === 'tech-debt') {
@@ -5619,19 +5366,16 @@
         } else if (sortType === 'tests') {
           list.innerHTML = data.map(t => renderTestCard(t)).join('');
         }
-        
-        // Re-setup interactions
+
         setupCardInteractions();
         setupScrollIndicators();
-        
-        // Animate in
+
         list.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
         list.style.opacity = '1';
         list.style.transform = 'translateY(0)';
       }, 150);
     }
 
-    // Card render functions for sorting
     function renderFeatureCard(f) {
       return `
         <div class="insight-card" data-id="${f.id}">
@@ -5774,22 +5518,17 @@
       `;
     }
 
-    // ===========================================
-    // SCROLL INDICATOR
-    // ===========================================
     function setupScrollIndicators() {
       document.querySelectorAll('.insight-card').forEach(card => {
         const expanded = card.querySelector('.insight-expanded');
         if (!expanded) return;
-        
-        // Check if card has substantial content (files list or multiple sections)
+
         const hasFiles = expanded.querySelector('.insight-file-list');
         const sectionCount = expanded.querySelectorAll('.expanded-section').length;
         const hasConversation = expanded.querySelector('.card-conversation');
-        
-        // Show indicator if there's a file list or 2+ sections (content likely overflows)
+
         const hasMoreContent = hasFiles || sectionCount >= 2;
-        
+
         if (hasMoreContent) {
           expanded.classList.add('has-more');
         } else {
@@ -5798,9 +5537,6 @@
       });
     }
 
-    // ===========================================
-    // CONTENT GENERATORS
-    // ===========================================
     function getEditorContent() {
       return `
         <div class="editor-tabs">
@@ -5912,7 +5648,7 @@
             <h2 class="insight-title">Features</h2>
             <p class="insight-summary"><span class="highlight">Four</span> distinct features detected. Click any card to explore, ask questions, or apply fixes.</p>
           </div>
-          
+
           <div class="insight-toolbar">
             <div class="search-box">
               <span class="search-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg></span>
@@ -6030,7 +5766,7 @@
             <h2 class="insight-title">Tech Debt Overview</h2>
             <p class="insight-summary"><span class="highlight">Two</span> critical issues detected across <span class="highlight">four</span> files. Fix issues with a single click.</p>
           </div>
-          
+
           <div class="insight-toolbar">
             <div class="search-box">
               <span class="search-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg></span>
@@ -6142,7 +5878,7 @@
             <h2 class="insight-title">Test Coverage</h2>
             <p class="insight-summary"><span class="highlight">Seventy-one percent</span> overall coverage across <span class="highlight">four</span> test suites. Expand to see test files and add missing tests.</p>
           </div>
-          
+
           <div class="insight-toolbar">
             <div class="search-box">
               <span class="search-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg></span>
@@ -6253,9 +5989,6 @@
       `;
     }
 
-    // ===========================================
-    // CHAT SIMULATION
-    // ===========================================
     function clearChat() {
       document.getElementById('chat-messages').innerHTML = '';
     }
@@ -6265,7 +5998,7 @@
         const input = document.getElementById('chat-input');
         let i = 0;
         input.value = '';
-        
+
         function typeChar() {
           if (i < text.length) {
             input.value += text[i];
@@ -6320,11 +6053,11 @@
       const card = document.createElement('div');
       card.className = `annotation-card ${color}`;
       card.id = 'pending-edit';
-      
+
       const tickerItems = ['refactor', 'improve', 'fix', 'update'];
       const tickerHTML = tickerItems.map(t => `<span>${t}</span>`).join('') + 
                          tickerItems.map(t => `<span>${t}</span>`).join('');
-      
+
       card.innerHTML = `
         <div class="annotation-left">
           <div class="annotation-header">
@@ -6370,46 +6103,39 @@
       });
     }
 
-    // ===========================================
-    // DEMO SEQUENCE
-    // ===========================================
     async function runDemo() {
       if (demoRunning) return;
       demoRunning = true;
-      
+
       const playBtn = document.getElementById('play-demo-btn');
       playBtn.textContent = 'Pause';
       playBtn.classList.add('active');
-      
-      // Ensure we're on the editor screen
+
       showScreen('editor');
-      
-      // Reset state
+
       switchTab('editor');
       clearChat();
       hideNarration();
       hideStatus();
-      
-      // Delay helper
+
       const wait = (ms) => new Promise(r => { 
         const t = setTimeout(r, ms); 
         demoTimeouts.push(t);
       });
-      
+
       try {
-        // Scene 1: Welcome
+
         await wait(500);
         await showNarration('<em>Lattice</em> — AI-powered codebase intelligence', 3500);
         await wait(1000);
-        
-        // Scene 2: Chat query
+
         await showNarration('Ask questions about your codebase in <em>natural language</em>', 3000);
         await moveCursorToElement('#chat-input', 0, 0);
         await clickCursor();
         await wait(300);
         await typeInChat('How does authentication work in this app?', 40);
         await wait(500);
-        
+
         const exchange = addQuery('How does authentication work in this app?');
         await wait(2000);
         await showResponse(exchange, 
@@ -6417,39 +6143,34 @@
           'Users sign in via Google or GitHub. The session is managed in Redux and persisted to local storage.'
         );
         await wait(1500);
-        
-        // Scene 3: Features tab with cursor-tracking glow
+
         await showNarration('Discover <em>what your code does</em> — click to explore', 3000);
         await moveCursorToElement('#tab-features', -20, 0, 600);
         await wait(200);
-        // Simulate cursor moving across tab
+
         await moveCursorToElement('#tab-features', 20, 0, 400);
         await clickCursor();
         switchTab('features');
         await wait(1500);
-        
-        // Scene 4: Expand a feature card
+
         await showNarration('Cards expand to reveal <em>details and actions</em>', 2500);
         await moveCursorToElement('.insight-card[data-id="auth"]', 0, 0);
         await clickCursor();
         document.querySelector('.insight-card[data-id="auth"]').classList.add('expanded');
         expandedCards.add('auth');
         await wait(2000);
-        
-        // Scene 5: Tech Debt with fix actions
+
         await showNarration('Fix issues with <em>one click</em>', 3000);
         await moveCursorToElement('#tab-tech-debt', 0, 0);
         await clickCursor();
         switchTab('tech-debt');
         await wait(1500);
-        
-        // Expand critical file
+
         await moveCursorToElement('.insight-card[data-id="formatters"]', 0, 0);
         await clickCursor();
         document.querySelector('.insight-card[data-id="formatters"]').classList.add('expanded');
         await wait(1500);
-        
-        // Click fix button
+
         await moveCursorToElement('.insight-card[data-id="formatters"] .action-btn.primary', 0, 0);
         await clickCursor();
         const fixBtn = document.querySelector('.insight-card[data-id="formatters"] .action-btn.primary');
@@ -6462,20 +6183,19 @@
         await wait(300);
         showStatusSuccess('Types added');
         await wait(1500);
-        
-        // Scene 6: Back to editor for AI edit
+
         hideStatus();
         await moveCursorToElement('#tab-editor', 0, 0);
         await clickCursor();
         switchTab('editor');
         await wait(500);
-        
+
         await moveCursorToElement('#chat-input', 0, 0);
         await clickCursor();
         await wait(300);
         await typeInChat('Refactor auth to use next-auth', 40);
         await wait(500);
-        
+
         const exchange2 = addQuery('Refactor auth to use next-auth');
         await wait(1500);
         await showResponse(exchange2,
@@ -6483,7 +6203,7 @@
           'This will update the OAuth flow and improve security.'
         );
         await wait(500);
-        
+
         const editCard = addAnnotationCard(
           'src/services/auth.ts',
           'green',
@@ -6492,8 +6212,7 @@
           [{ key: 'Y', label: 'Apply', primary: true }, { key: 'N', label: 'Reject', primary: false }]
         );
         await wait(1500);
-        
-        // Apply the edit
+
         await moveCursorToElement('#pending-edit .action-btn.primary', 0, 0);
         await clickCursor();
         showStatus('Applying...', 0);
@@ -6502,28 +6221,26 @@
         await wait(500);
         updateStatusProgress(100);
         await wait(300);
-        
+
         await applyEdit(editCard);
         showStatusSuccess('Migration complete');
-        
+
         await wait(2000);
-        
-        // Scene 7: Tests
+
         hideStatus();
         await showNarration('Track <em>test coverage</em> and generate missing tests', 3000);
         await moveCursorToElement('#tab-tests', 0, 0);
         await clickCursor();
         switchTab('tests');
         await wait(2500);
-        
-        // Scene 8: End
+
         await showNarration('Lattice — <em>Understand</em>, <em>improve</em>, and <em>ship</em> faster', 4000);
         await moveCursor(-50, -50, 500);
-        
+
       } catch (e) {
         console.log('Demo interrupted');
       }
-      
+
       demoRunning = false;
       playBtn.textContent = '▶ Play Demo';
       playBtn.classList.remove('active');
@@ -6547,9 +6264,6 @@
       moveCursor(-50, -50, 100);
     }
 
-    // ===========================================
-    // EVENT LISTENERS
-    // ===========================================
     document.getElementById('play-demo-btn').addEventListener('click', () => {
       if (demoRunning) {
         stopDemo();
@@ -6561,7 +6275,6 @@
     document.getElementById('restart-btn').addEventListener('click', restartDemo);
     document.getElementById('sound-toggle').addEventListener('click', toggleSound);
 
-    // Tab clicks (for manual interaction)
     document.querySelectorAll('.nav-tab').forEach(tab => {
       tab.addEventListener('click', () => {
         if (!demoRunning) {
@@ -6570,18 +6283,14 @@
       });
     });
 
-    // ===========================================
-    // STAT CARD INTERACTIONS
-    // ===========================================
     function setupStatCardInteractions() {
       document.querySelectorAll('.stat-card').forEach(card => {
         card.addEventListener('click', (e) => {
-          // Don't toggle if clicking an action button or input
+
           if (e.target.closest('.stat-action-btn') || e.target.closest('.stat-input')) return;
-          
+
           const isExpanded = card.classList.contains('expanded');
-          
-          // Toggle this card independently (don't close others)
+
           if (!isExpanded) {
             card.classList.add('expanded');
             playSound('tab');
@@ -6592,17 +6301,15 @@
         });
       });
 
-      // Stat action button clicks
       document.querySelectorAll('.stat-action-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
           playSound('confirm');
-        
-        // Visual feedback
+
         btn.style.opacity = '0.5';
         btn.style.pointerEvents = 'none';
         btn.innerHTML = '<span style="color: var(--green);">Applied</span>';
-        
+
         showStatus('Applying...', 0);
         setTimeout(() => updateStatusProgress(50), 200);
         setTimeout(() => updateStatusProgress(100), 500);
@@ -6612,114 +6319,96 @@
     });
     }
 
-    // Fix All button - Enhanced with inline progress and Activity tab
     const fixAllBtn = document.getElementById('fix-all-btn');
     if (fixAllBtn) {
       fixAllBtn.addEventListener('click', async () => {
         if (fixAllInProgress) return;
-        
+
         playSound('confirm');
         fixAllInProgress = true;
-        
-        // Populate fixActions from predefined actions
+
         fixActions = [...predefinedFixActions];
-        
-        // Initialize all tasks as pending
+
         activityTaskStates = {};
         fixActions.forEach((_, i) => {
           activityTaskStates[i] = { status: 'pending', progress: 0, expanded: false };
         });
-        
-        // Switch to Activity tab - this renders all task cards at once with staggered animation
+
         switchTab('activity');
-        
-        // Update button state with inline progress
+
         fixAllBtn.classList.add('working');
         const fixText = fixAllBtn.querySelector('.fix-text');
         const fixKbd = fixAllBtn.querySelector('#fix-kbd');
-        
+
         if (fixKbd) fixKbd.style.display = 'none';
         if (fixText) fixText.innerHTML = '<span class="fix-progress-text">0%</span>';
-        
-        // Mark Activity tab as having activity
+
         const activityTab = document.getElementById('tab-activity');
         if (activityTab) activityTab.classList.add('has-activity');
-        
-        // Setup task card interactions
+
         setupTaskCardInteractions();
-        
-        // Brief pause to let all cards animate in (~1.2s for 14 cards at 80ms stagger)
+
         await new Promise(r => setTimeout(r, 1500));
-        
-        // Process each fix action (~5.5s each = ~77s total)
+
         const TASK_DURATION = 5500; // 5.5 seconds per task
         const PROGRESS_INTERVAL = 50; // Update progress every 50ms
-        
+
         for (let i = 0; i < fixActions.length; i++) {
           const overallProgress = ((i) / fixActions.length) * 100;
           fixAllBtn.style.setProperty('--progress', `${overallProgress}%`);
           if (fixText) fixText.innerHTML = `<span class="fix-progress-text">${Math.round(overallProgress)}%</span>`;
-          
-          // Activate this task
+
           activityTaskStates[i].status = 'active';
           activityTaskStates[i].expanded = true;
-          
-          // Update the DOM for this specific task
+
           const taskEl = document.querySelector(`.activity-task[data-task-index="${i}"]`);
           if (taskEl) {
             taskEl.classList.remove('pending');
             taskEl.classList.add('active', 'expanded');
             playSound('cursor');
           }
-          
-          // Animate progress bar for this task (over ~2.5s)
+
           const progressDuration = TASK_DURATION * 0.65;
           const progressSteps = progressDuration / PROGRESS_INTERVAL;
           let progressStep = 0;
-          
+
           const progressPromise = new Promise(resolve => {
             const progressInterval = setInterval(() => {
               progressStep++;
               const taskProgress = Math.min((progressStep / progressSteps) * 100, 100);
               activityTaskStates[i].progress = taskProgress;
-              
+
               const progressFill = taskEl?.querySelector('.task-progress-fill');
               if (progressFill) {
                 progressFill.style.width = `${taskProgress}%`;
               }
-              
+
               if (progressStep >= progressSteps) {
                 clearInterval(progressInterval);
                 resolve();
               }
             }, PROGRESS_INTERVAL);
           });
-          
-          // Stream agent dialogue (starts shortly after progress begins, overlaps)
+
           await new Promise(r => setTimeout(r, 500));
           const dialoguePromise = streamTaskDialogue(i);
-          
-          // Wait for both progress and dialogue to complete
+
           await Promise.all([progressPromise, dialoguePromise]);
-          
-          // Small pause before marking complete
+
           await new Promise(r => setTimeout(r, 300));
-          
-          // Mark task as complete
+
           activityTaskStates[i].status = 'complete';
           activityTaskStates[i].progress = 100;
-          
+
           if (taskEl) {
             taskEl.classList.remove('active');
             taskEl.classList.add('complete');
-            
-            // Update icon to checkmark
+
             const iconEl = taskEl.querySelector('.task-status-icon');
             if (iconEl) {
               iconEl.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
             }
-            
-            // Collapse after a moment
+
             activityTaskStates[i].expanded = false;
             setTimeout(() => {
               if (activityTaskStates[i].status === 'complete' && !activityTaskStates[i].expanded) {
@@ -6727,89 +6416,68 @@
               }
             }, 600);
           }
-          
-          // Update header stats
+
           const completedCount = Object.values(activityTaskStates).filter(s => s.status === 'complete').length;
           const remainingCount = fixActions.length - completedCount;
-          
+
           const completeStatEl = document.getElementById('complete-count');
           const remainingStatEl = document.querySelector('.activity-stat:nth-child(2) .activity-stat-value');
           const headerProgressFill = document.querySelector('.activity-progress-fill');
           const headerProgressPercent = document.querySelector('.activity-progress-percent');
-          
+
           if (completeStatEl) completeStatEl.textContent = completedCount;
           if (remainingStatEl) remainingStatEl.textContent = remainingCount;
-          
+
           const headerProgress = Math.round((completedCount / fixActions.length) * 100);
           if (headerProgressFill) headerProgressFill.style.width = `${headerProgress}%`;
           if (headerProgressPercent) headerProgressPercent.textContent = `${headerProgress}%`;
-          
-          // Use 'tab' sound (04 SFX Category Decide) for each task completion
+
           playSound('tab');
-          
-          // Scroll to keep next task visible
+
           const nextTaskEl = document.querySelector(`.activity-task[data-task-index="${i + 1}"]`);
           if (nextTaskEl) {
             nextTaskEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
           }
         }
-        
-        // Complete!
+
         fixAllInProgress = false;
         fixAllBtn.classList.remove('working');
         fixAllBtn.classList.add('complete');
-        
+
         if (fixText) fixText.textContent = 'All Fixed';
         fixAllBtn.style.setProperty('--progress', '100%');
-        // Update header to show complete state
+
         const workingDot = document.querySelector('.activity-progress-title .working-dot');
         const processingText = document.querySelector('.activity-progress-title span:last-child');
         if (workingDot) workingDot.style.display = 'none';
         if (processingText) processingText.textContent = 'Complete';
-        
-        // Update stats in command bar
+
         const issuesValue = document.getElementById('issues-value');
         const healthValue = document.getElementById('health-value');
         if (issuesValue) issuesValue.textContent = '0';
         if (healthValue) healthValue.textContent = '94%';
-        
-        // Remove activity indicator after a delay
+
         setTimeout(() => {
           if (activityTab) activityTab.classList.remove('has-activity');
         }, 3000);
-        
-        // Use 'confirm' sound (09 SFX System Ok) for 100% completion
+
         playSound('confirm');
       });
     }
 
-    // ===========================================
-    // INITIALIZE
-    // ===========================================
-    
-    // Initialize stream ticker for analysis screen
     initStreamTicker();
-    
-    // Create ambient particles for analysis screen
+
     createParticles();
-    
-    // Render file tree
+
     renderFileTree();
-    
-    // Pre-render editor tab content
+
     switchTab('editor');
-    
-    // ===========================================
-    // ANALYSIS & DASHBOARD EVENT LISTENERS
-    // ===========================================
-    
-    // Begin Analysis button
+
     const analysisPlayBtn = document.getElementById('analysis-play-btn');
     if (analysisPlayBtn) {
       analysisPlayBtn.addEventListener('click', runAnalysis);
     }
-    
-    // Dashboard action buttons
+
     const reportBtnEditor = document.getElementById('report-btn-editor');
     if (reportBtnEditor) {
       reportBtnEditor.addEventListener('click', () => {
@@ -6818,7 +6486,7 @@
         switchTab('editor');
       });
     }
-    
+
     const reportBtnFeatures = document.getElementById('report-btn-features');
     if (reportBtnFeatures) {
       reportBtnFeatures.addEventListener('click', () => {
@@ -6827,7 +6495,7 @@
         switchTab('features');
       });
     }
-    
+
     const reportBtnTechDebt = document.getElementById('report-btn-tech-debt');
     if (reportBtnTechDebt) {
       reportBtnTechDebt.addEventListener('click', () => {
@@ -6836,7 +6504,7 @@
         switchTab('tech-debt');
       });
     }
-    
+
     const reportBtnTests = document.getElementById('report-btn-tests');
     if (reportBtnTests) {
       reportBtnTests.addEventListener('click', () => {
@@ -6845,10 +6513,9 @@
         switchTab('tests');
       });
     }
-    
-    // Inline badge clicks - toggle annotation cards (double-click to open)
+
     document.querySelectorAll('.inline-badge').forEach(badge => {
-      // Single click - open annotation
+
       badge.addEventListener('click', (e) => {
         e.stopPropagation();
         const key = badge.dataset.key;
@@ -6859,8 +6526,7 @@
         }
       });
     });
-    
-    // Keyboard shortcuts for analysis/dashboard screens
+
     document.addEventListener('keydown', (e) => {
       if (currentScreen === 'analysis') {
         if (e.key === 'Enter' && !analysisRunning) {
@@ -6870,17 +6536,16 @@
           skipAnalysis();
         }
       } else if (currentScreen === 'dashboard') {
-        // Ignore if typing in annotation input
+
         if (e.target.closest('.annotation-input-field')) {
           return;
         }
-        
-        // Hotkeys 1-3 toggle annotation cards
+
         if (e.key === '1' || e.key === '2' || e.key === '3') {
           e.preventDefault();
           toggleDashboardAnnotation(e.key);
         } else if (e.key === 'Escape') {
-          // Close annotation if open, otherwise go back to analysis
+
           if (activeDashboardAnnotation) {
             closeDashboardAnnotation(activeDashboardAnnotation);
           } else {
@@ -6905,13 +6570,13 @@
           switchTab('tests');
         }
       } else if (currentScreen === 'editor') {
-        // Ignore if user is typing in an input
+
         if (e.target.closest('input, textarea')) {
           return;
         }
-        
+
         if (e.key === 'Escape') {
-          // First check if a stat card is expanded
+
           const expandedCard = document.querySelector('.stat-card.expanded');
           if (expandedCard) {
             expandedCard.classList.remove('expanded');
@@ -6921,11 +6586,10 @@
           showScreen('dashboard');
           playSound('cancel');
         } else if (e.key === '1' || e.key === '2') {
-          // Hold-to-confirm handled by separate listener
-          // Toggle happens on keyup if not confirmed
+
           e.preventDefault();
         } else if (e.key === 'Enter') {
-          // Open full view if a card is expanded
+
           const expandedCard = document.querySelector('.stat-card.expanded');
           if (expandedCard) {
             e.preventDefault();
@@ -6939,7 +6603,7 @@
             playSound('decide');
           }
         } else if (e.key === 'f' || e.key === 'F') {
-          // Check if a stat card is expanded - if so, trigger primary action
+
           const expandedCard = document.querySelector('.stat-card.expanded');
           if (expandedCard) {
             e.preventDefault();
@@ -6949,7 +6613,7 @@
             }
             return;
           }
-          // Otherwise, trigger Fix All Issues
+
           const fixAllBtn = document.getElementById('fix-all-btn');
           if (fixAllBtn && !fixAllInProgress) {
             fixAllBtn.click();
@@ -6957,11 +6621,7 @@
         }
       }
     });
-    
-    // ===========================================
-    // DASHBOARD ANNOTATION CARD FUNCTIONS
-    // ===========================================
-    
+
     function createDashboardAnnotation(key) {
       const data = dashboardCardData[key];
       const tickerItems = [...data.ticker, ...data.ticker].map(t => `<span>${t}</span>`).join('');
@@ -6992,43 +6652,38 @@
         </div>
       `;
 
-      // Animate the stat number
       const statEl = div.querySelector('.stat-value');
       setTimeout(() => {
         animateDashboardNumber(statEl, data.statTarget, 1000, data.isDecimal, data.suffix || '');
       }, 150);
 
-      // Wire up input field for in-card questions
       const inputField = div.querySelector('.annotation-input-field');
       if (inputField) {
         inputField.addEventListener('keydown', (e) => {
-          // Hotkeys 1, 2, 3 switch cards even when input is focused
+
           if (e.key === '1' || e.key === '2' || e.key === '3') {
             e.preventDefault();
             if (e.key !== key) {
-              // Switch to different card
+
               closeDashboardAnnotation(key, () => {
                 openDashboardAnnotation(e.key);
               });
             }
             return;
           }
-          
-          // Escape closes the card
+
           if (e.key === 'Escape') {
             e.preventDefault();
             closeDashboardAnnotation(key);
             return;
           }
-          
-          // Backspace on empty input closes the card
+
           if (e.key === 'Backspace' && inputField.value === '') {
             e.preventDefault();
             closeDashboardAnnotation(key);
             return;
           }
-          
-          // Enter submits the query
+
           if (e.key === 'Enter' && inputField.value.trim()) {
             e.preventDefault();
             handleDashboardCardQuery(key, inputField.value.trim(), div);
@@ -7038,7 +6693,6 @@
         });
       }
 
-      // Wire up action buttons
       div.querySelectorAll('.annotation-action').forEach(action => {
         action.addEventListener('click', () => {
           playSound('decide');
@@ -7085,7 +6739,7 @@
       playSound('category');
       const badge = document.querySelector(`.inline-badge[data-key="${key}"]`);
       if (!badge) return;
-      
+
       if (activeDashboardAnnotation) {
         closeDashboardAnnotation(activeDashboardAnnotation, () => { 
           if (activeDashboardAnnotation !== key) insertDashboardAnnotation(key, badge); 
@@ -7128,26 +6782,19 @@
       }
     }
 
-    // ===========================================
-    // EDITOR STAT CARD FUNCTIONS
-    // ===========================================
-    
-    // Toggle stat card expansion (independent - doesn't close other cards)
     function toggleStatCard(cardId) {
       const card = document.getElementById(cardId);
       if (!card) return;
-      
-      // Toggle this card independently
+
       card.classList.toggle('expanded');
       playSound(card.classList.contains('expanded') ? 'category' : 'cursor');
     }
-    
-    // Handle stat card action button clicks
+
     function handleStatAction(cardType, action) {
       const card = document.getElementById(cardType === 'coverage' ? 'stat-coverage' : 'stat-quality');
-      
+
       if (action === 'open') {
-        // Navigate to full view
+
         if (cardType === 'coverage') {
           switchTab('tests');
         } else {
@@ -7156,7 +6803,7 @@
         if (card) card.classList.remove('expanded');
         playSound('decide');
       } else if (action === 'generate' || action === 'fix') {
-        // Inject prompt into chat
+
         const chatInput = document.querySelector('.chat-input');
         if (chatInput) {
           if (cardType === 'coverage') {
@@ -7170,16 +6817,11 @@
         playSound('confirm');
       }
     }
-    
-    // ===========================================
-    // HOLD-TO-CONFIRM FOR STAT CARDS
-    // ===========================================
-    
+
     let statCardHoldTimer = null;
     let statCardHoldDelayTimer = null;
     let statCardHoldingKey = null;
-    
-    // Stat card data for hold-to-confirm actions
+
     const statCardFixData = {
       '1': {
         title: 'Improving test coverage',
@@ -7206,8 +6848,7 @@
         ]
       }
     };
-    
-    // Responses for in-line chat
+
     const statCardResponses = {
       'coverage': {
         'why': 'The 84% threshold ensures critical paths are tested while allowing flexibility for UI code.',
@@ -7222,39 +6863,34 @@
         'default': 'Code quality measures adherence to best practices and maintainability.'
       }
     };
-    
+
     function startStatCardHold(hotkey) {
       const cardId = hotkey === '1' ? 'stat-coverage' : 'stat-quality';
       const card = document.getElementById(cardId);
       if (!card || card.classList.contains('confirmed')) return;
-      
+
       statCardHoldingKey = hotkey;
-      
-      // 0.25s delay before gradient starts filling
+
       statCardHoldDelayTimer = setTimeout(() => {
         card.classList.add('filling');
-        
-        // Confirm after 1.5 more seconds (1.75s total)
+
         statCardHoldTimer = setTimeout(() => {
           card.classList.remove('filling');
           card.classList.add('confirmed');
-          
-          // Change hotkey badge to checkmark
+
           const hotkeyBadge = card.querySelector('.stat-hotkey');
           if (hotkeyBadge) hotkeyBadge.textContent = '✓';
-          
-          // Collapse the card
+
           card.classList.remove('expanded');
-          
+
           statCardHoldingKey = null;
           playSound('confirm');
-          
-          // Add task to activity page and switch to it
+
           addStatCardFixToActivity(hotkey);
         }, 1500);
       }, 250);
     }
-    
+
     function cancelStatCardHold() {
       if (statCardHoldDelayTimer) {
         clearTimeout(statCardHoldDelayTimer);
@@ -7264,7 +6900,7 @@
         clearTimeout(statCardHoldTimer);
         statCardHoldTimer = null;
       }
-      
+
       if (statCardHoldingKey) {
         const cardId = statCardHoldingKey === '1' ? 'stat-coverage' : 'stat-quality';
         const card = document.getElementById(cardId);
@@ -7274,12 +6910,11 @@
         statCardHoldingKey = null;
       }
     }
-    
+
     function addStatCardFixToActivity(hotkey) {
       const data = statCardFixData[hotkey];
       if (!data) return;
-      
-      // Add to fixActions array dynamically
+
       const newAction = {
         title: data.title,
         file: data.file,
@@ -7287,76 +6922,65 @@
         prose: data.prose,
         dialogue: data.dialogue
       };
-      
-      // Add to beginning of array
+
       fixActions.unshift(newAction);
-      
-      // Reset activity task states for new action
+
       const newStates = { 0: { status: 'active', progress: 0, expanded: true } };
       Object.keys(activityTaskStates).forEach(key => {
         newStates[parseInt(key) + 1] = activityTaskStates[key];
       });
       activityTaskStates = newStates;
-      
-      // Switch to activity tab
+
       switchTab('activity');
-      
-      // Start processing the new task
+
       setTimeout(() => {
         processActivityTask(0);
       }, 500);
     }
-    
+
     async function processActivityTask(taskIndex) {
       const taskEl = document.querySelector(`.activity-task[data-task-index="${taskIndex}"]`);
       if (!taskEl) return;
-      
+
       activityTaskStates[taskIndex] = { status: 'active', progress: 0, expanded: true };
       taskEl.classList.remove('pending');
       taskEl.classList.add('active', 'expanded');
-      
-      // Stream dialogue
+
       await streamTaskDialogue(taskIndex);
-      
-      // Animate progress
+
       for (let p = 0; p <= 100; p += 5) {
         activityTaskStates[taskIndex].progress = p;
         const fill = taskEl.querySelector('.task-progress-fill');
         if (fill) fill.style.width = `${p}%`;
         await new Promise(r => setTimeout(r, 80));
       }
-      
-      // Mark complete
+
       activityTaskStates[taskIndex].status = 'complete';
       taskEl.classList.remove('active');
       taskEl.classList.add('complete');
-      
-      // Update icon to checkmark
+
       const iconEl = taskEl.querySelector('.task-status-icon');
       if (iconEl) {
         iconEl.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
       }
-      
-      // Auto-collapse after completion (like other activity cards)
+
       activityTaskStates[taskIndex].expanded = false;
       setTimeout(() => {
         if (activityTaskStates[taskIndex].status === 'complete' && !activityTaskStates[taskIndex].expanded) {
           taskEl.classList.remove('expanded');
         }
       }, 600);
-      
+
       playSound('confirm');
     }
-    
-    // Handle in-line chat queries
+
     function handleStatCardQuery(cardType, query) {
       const convEl = document.getElementById(`stat-conversation-${cardType}`);
       if (!convEl) return;
-      
+
       const responses = statCardResponses[cardType] || {};
       let response = responses.default || 'I can help you understand this metric.';
-      
-      // Check for keyword matches
+
       const lowerQuery = query.toLowerCase();
       for (const [trigger, resp] of Object.entries(responses)) {
         if (trigger !== 'default' && lowerQuery.includes(trigger)) {
@@ -7364,8 +6988,7 @@
           break;
         }
       }
-      
-      // Add exchange to conversation
+
       const exchange = document.createElement('div');
       exchange.className = 'stat-exchange';
       exchange.innerHTML = `
@@ -7375,8 +6998,7 @@
       convEl.appendChild(exchange);
       playSound('cursor');
     }
-    
-    // Wire up stat card input fields
+
     document.addEventListener('DOMContentLoaded', () => {
       document.addEventListener('keydown', (e) => {
         if (e.target.classList.contains('stat-input-field')) {
@@ -7389,29 +7011,27 @@
         }
       });
     });
-    
-    // Add keydown/keyup handlers for hold-to-confirm in editor screen
+
     document.addEventListener('keydown', (e) => {
       if (currentScreen !== 'editor') return;
       if (e.target.closest('input, textarea')) return;
       if (e.repeat) return; // Ignore key repeat
-      
+
       if (e.key === '1' || e.key === '2') {
         startStatCardHold(e.key);
       }
     });
-    
+
     document.addEventListener('keyup', (e) => {
       if (currentScreen !== 'editor') return;
-      
+
       if (e.key === '1' || e.key === '2') {
         const cardId = e.key === '1' ? 'stat-coverage' : 'stat-quality';
         const card = document.getElementById(cardId);
-        
-        // If we were holding this key and haven't confirmed yet, toggle the card
+
         if (statCardHoldingKey === e.key) {
           cancelStatCardHold();
-          // Only toggle if not already confirmed
+
           if (card && !card.classList.contains('confirmed')) {
             toggleStatCard(cardId);
           }
@@ -7419,9 +7039,6 @@
       }
     });
 
-    // ===========================================
-    // INTERACTIVE CHAT FUNCTIONALITY
-    // ===========================================
     const aiResponses = [
       {
         headline: "Pattern Analysis Complete",
@@ -7461,12 +7078,10 @@
 
     function addUserMessage(text) {
       const container = document.getElementById('chat-messages');
-      
-      // Clear the empty state if present
+
       const emptyState = container.querySelector('.chat-empty');
       if (emptyState) emptyState.remove();
 
-      // Create user message
       const userMsg = document.createElement('div');
       userMsg.className = 'chat-user-message';
       userMsg.innerHTML = `
@@ -7476,7 +7091,6 @@
       container.appendChild(userMsg);
       container.scrollTop = container.scrollHeight;
 
-      // Show thinking indicator
       const thinking = document.createElement('div');
       thinking.className = 'chat-thinking';
       thinking.innerHTML = `
@@ -7487,7 +7101,6 @@
       container.appendChild(thinking);
       container.scrollTop = container.scrollHeight;
 
-      // Simulate AI response after delay
       setTimeout(() => {
         thinking.remove();
         addAIResponse();
@@ -7517,7 +7130,6 @@
       playSound('confirm');
     }
 
-    // Chat input handler
     document.getElementById('chat-input').addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         const input = e.target;
