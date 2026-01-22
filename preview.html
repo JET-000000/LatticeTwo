@@ -2625,8 +2625,7 @@
       line-height: 1;
     }
 
-    .activity-stat-value.green { color: var(--green); }
-    .activity-stat-value.amber { color: var(--amber); }
+    /* Keep stats neutral - using primary text color */
 
     .activity-stat-label {
       font-size: 0.6rem;
@@ -2642,10 +2641,11 @@
       flex-direction: column;
       gap: 16px;
       padding: 20px;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid var(--border-subtle);
+      background: rgba(255, 255, 255, 0.015);
+      border: none;
       border-radius: 12px;
       flex-shrink: 0;
+      margin-bottom: 8px;
     }
 
     .activity-progress-header {
@@ -2687,7 +2687,7 @@
 
     .activity-progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, var(--green), rgba(74, 222, 128, 0.6));
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.5));
       border-radius: 2px;
       width: 0%;
       transition: width 0.3s ease;
@@ -2721,24 +2721,12 @@
     .activity-stream::-webkit-scrollbar { width: 4px; }
     .activity-stream::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.06); border-radius: 2px; }
 
-    /* Softer gradient shadow at top when scrolling */
-    .activity-stream-shadow {
-      position: sticky;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 16px;
-      background: linear-gradient(to bottom, rgba(10, 10, 10, 0.5), transparent);
-      pointer-events: none;
-      z-index: 5;
-      margin-bottom: -16px;
-      flex-shrink: 0;
-    }
+    /* Removed gradient shadow element - using mask-image only */
 
     /* Task Card - Individual fix item with progress */
     .activity-task {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid var(--border-subtle);
+      background: rgba(255, 255, 255, 0.015);
+      border: 1px solid rgba(255, 255, 255, 0.04);
       border-radius: 10px;
       overflow: hidden;
       opacity: 0;
@@ -2756,7 +2744,7 @@
     }
 
     .activity-task:hover {
-      border-color: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.06);
     }
 
     .activity-task.pending {
@@ -2768,15 +2756,15 @@
     }
 
     .activity-task.active {
-      border-color: rgba(251, 191, 36, 0.25);
-      background: rgba(251, 191, 36, 0.02);
+      border-color: rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.025);
       opacity: 1;
     }
 
     .activity-task.complete {
-      border-color: rgba(74, 222, 128, 0.15);
-      background: rgba(74, 222, 128, 0.015);
-      opacity: 1;
+      border-color: rgba(255, 255, 255, 0.03);
+      background: rgba(255, 255, 255, 0.01);
+      opacity: 0.6;
     }
 
     /* Task Header - Always visible */
@@ -2799,11 +2787,65 @@
     }
 
     .activity-task.active .task-status-icon {
-      color: var(--amber);
+      color: var(--text-primary);
     }
 
     .activity-task.complete .task-status-icon {
-      color: var(--green);
+      color: var(--text-secondary);
+    }
+
+    /* Horizontal Ticker - L5ttice decorative element */
+    .task-ticker {
+      overflow: hidden;
+      height: 14px;
+      margin: 4px 0 8px;
+      mask-image: linear-gradient(90deg, transparent, black 15%, black 85%, transparent);
+      opacity: 0;
+      transition: opacity 0.4s ease 0.2s;
+    }
+
+    .activity-task.expanded .task-ticker {
+      opacity: 1;
+    }
+
+    .ticker-track {
+      display: flex;
+      gap: 24px;
+      width: max-content;
+      animation: tickerScroll 25s linear infinite;
+    }
+
+    @keyframes tickerScroll {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    .ticker-track span {
+      font-size: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+      opacity: 0.4;
+      white-space: nowrap;
+      font-weight: 400;
+    }
+
+    /* Task Prose - Plain English description */
+    .task-prose {
+      font-size: 0.8rem;
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--text-prose);
+      letter-spacing: 0.01em;
+      padding: 0 28px 16px;
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: opacity 0.3s ease 0.15s, transform 0.3s ease 0.15s;
+    }
+
+    .activity-task.expanded .task-prose {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     .task-info {
@@ -2864,14 +2906,14 @@
     .task-progress-fill {
       height: 100%;
       width: 0%;
-      background: var(--amber);
+      background: rgba(255, 255, 255, 0.8);
       border-radius: 1px;
       transition: width 0.1s linear;
     }
 
     .activity-task.complete .task-progress-fill {
       width: 100% !important;
-      background: var(--green);
+      background: rgba(255, 255, 255, 0.4);
     }
 
     /* Expandable Agent Dialogue Section - L5ttice Inspired */
@@ -2884,17 +2926,17 @@
     }
 
     .activity-task.expanded .task-dialogue {
-      max-height: 380px;
+      max-height: 450px;
       opacity: 1;
       border-top-color: rgba(255, 255, 255, 0.04);
     }
 
     .task-dialogue-inner {
-      padding: 24px 28px 20px;
+      padding: 8px 28px 20px;
       display: flex;
       flex-direction: column;
       gap: 12px;
-      max-height: 280px;
+      max-height: 200px;
       overflow-y: auto;
       mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
     }
@@ -4090,117 +4132,123 @@
     let fixAllInProgress = false;
     let activityTaskStates = {}; // Track individual task states: { taskIndex: { progress: 0, status: 'pending' } }
 
-    // Fix actions with agent dialogue for each
+    // Fix actions with agent dialogue, prose, and ticker keywords
     const fixActions = [
       { 
         title: 'Adding type annotations', 
         file: 'src/utils/formatters.ts', 
-        desc: 'Adding explicit return types to 3 functions',
+        ticker: ['types', 'inference', 'strict', 'safety', 'typescript'],
+        prose: 'Three utility functions lacked explicit return types. Adding annotations improves IDE support and catches potential type mismatches at compile time.',
         dialogue: [
-          { agent: 1, text: 'Scanning function signatures...' },
-          { agent: 2, text: 'Found 3 functions missing return types' },
-          { agent: 1, text: 'Inferring types from usage patterns' },
-          { agent: 3, text: 'Verified - no type conflicts detected' },
-          { agent: 1, text: 'Applying annotations' },
+          { agent: 1, text: 'Scanning <code>formatDate()</code>, <code>formatCurrency()</code>, and <code>formatNumber()</code>...' },
+          { agent: 2, text: 'Inferring return types from 47 call sites across the codebase' },
+          { agent: 3, text: 'All three return <code>string</code> consistently — no conflicts' },
+          { agent: 1, text: 'Applied <code>: string</code> annotations to all three functions' },
         ]
       },
       { 
         title: 'Adding error boundaries', 
         file: 'src/components/App.tsx', 
-        desc: 'Wrapping component tree with ErrorBoundary',
+        ticker: ['react', 'error', 'boundary', 'fallback', 'recovery'],
+        prose: 'The component tree had no crash protection. Wrapping with ErrorBoundary ensures graceful degradation instead of white-screen failures.',
         dialogue: [
-          { agent: 1, text: 'Analyzing component tree...' },
-          { agent: 2, text: 'Found 3 error-prone render patterns' },
-          { agent: 1, text: 'Creating ErrorBoundary wrapper' },
-          { agent: 3, text: 'Testing fallback UI rendering' },
-          { agent: 2, text: 'Boundaries applied successfully' },
+          { agent: 1, text: 'Analyzing render patterns in <code>App.tsx</code>...' },
+          { agent: 2, text: 'Found 3 components with async data dependencies that could throw' },
+          { agent: 3, text: 'Creating <code>ErrorBoundary</code> wrapper with fallback UI' },
+          { agent: 2, text: 'Wrapped <code>Dashboard</code>, <code>UserProfile</code>, and <code>DataTable</code>' },
         ]
       },
       { 
         title: 'Removing unused imports', 
         file: 'src/services/api.ts', 
-        desc: 'Cleaned 4 unused imports',
+        ticker: ['imports', 'treeshake', 'clean', 'bundle', 'lint'],
+        prose: 'Dead imports add noise and slightly increase bundle size. Removing them keeps the codebase clean and helps tooling work faster.',
         dialogue: [
-          { agent: 2, text: 'Tracing import dependencies...' },
-          { agent: 1, text: 'Found 4 unused imports' },
-          { agent: 3, text: 'Confirming no side effects' },
-          { agent: 2, text: 'Safe to remove' },
+          { agent: 2, text: 'Tracing import graph for <code>api.ts</code>...' },
+          { agent: 1, text: 'Found unused: <code>lodash</code>, <code>moment</code>, <code>uuid</code>, <code>chalk</code>' },
+          { agent: 3, text: 'Confirmed no side effects — these are pure imports' },
+          { agent: 2, text: 'Removed 4 imports, saving ~12KB from bundle' },
         ]
       },
       { 
         title: 'Consolidating color tokens', 
         file: 'src/styles/theme.ts', 
-        desc: 'Unified 14 redundant color definitions',
+        ticker: ['tokens', 'design', 'colors', 'consistency', 'theme'],
+        prose: 'Fourteen instances of the same blue were hardcoded across files. Unifying to a single token makes future changes trivial.',
         dialogue: [
-          { agent: 2, text: 'Cross-referencing <code>theme.ts</code>' },
-          { agent: 1, text: 'Found 14 instances of <code>#3b82f6</code> inline' },
-          { agent: 3, text: 'Safe to consolidate - no runtime deps' },
-          { agent: 2, text: 'Extracting to <code>--color-primary</code>' },
-          { agent: 1, text: 'Updated 14 files, 0 breaking changes' },
+          { agent: 2, text: 'Cross-referencing <code>theme.ts</code> with component styles...' },
+          { agent: 1, text: 'Found <code>#3b82f6</code> hardcoded in 14 places' },
+          { agent: 3, text: 'Creating <code>--color-primary</code> token in theme.ts' },
+          { agent: 2, text: 'Replaced all 14 instances — zero visual changes' },
         ]
       },
       { 
         title: 'Adding null checks', 
         file: 'src/hooks/useAuth.ts', 
-        desc: 'Added optional chaining to prevent runtime errors',
+        ticker: ['null', 'safety', 'optional', 'chaining', 'runtime'],
+        prose: 'Two property accesses could fail if the auth state was null. Optional chaining prevents "Cannot read property of undefined" errors.',
         dialogue: [
-          { agent: 1, text: 'Scanning for potential null references...' },
-          { agent: 3, text: 'Found 2 unsafe property accesses' },
-          { agent: 2, text: 'Adding optional chaining operators' },
-          { agent: 1, text: 'Runtime safety improved' },
+          { agent: 1, text: 'Scanning <code>useAuth</code> for nullable access patterns...' },
+          { agent: 3, text: 'Found <code>user.profile.email</code> and <code>session.token</code> unsafe' },
+          { agent: 2, text: 'Applied <code>?.</code> operator: <code>user?.profile?.email</code>' },
+          { agent: 1, text: 'Runtime safety improved — no more null crashes' },
         ]
       },
       { 
         title: 'Updating deprecated APIs', 
         file: 'src/services/auth.ts', 
-        desc: 'Migrated to new authentication patterns',
+        ticker: ['api', 'migration', 'deprecation', 'supabase', 'auth'],
+        prose: 'The old subscription API will be removed in the next major version. Migrating now prevents breaking changes.',
         dialogue: [
-          { agent: 2, text: 'Checking for deprecated API calls...' },
-          { agent: 1, text: 'Found legacy <code>onAuthStateChange</code>' },
-          { agent: 3, text: 'Migrating to new subscription pattern' },
-          { agent: 2, text: 'API updated, tests passing' },
+          { agent: 2, text: 'Checking <code>auth.ts</code> for deprecated patterns...' },
+          { agent: 1, text: 'Found legacy <code>onAuthStateChange()</code> callback' },
+          { agent: 3, text: 'Migrating to <code>supabase.auth.onAuthStateChange()</code> v2 pattern' },
+          { agent: 2, text: 'API updated, all 12 auth tests still passing' },
         ]
       },
       { 
         title: 'Fixing spacing inconsistencies', 
         file: 'src/components/Button.tsx', 
-        desc: 'Applied consistent 8px grid spacing',
+        ticker: ['spacing', 'grid', 'pixels', 'layout', 'design'],
+        prose: 'Button padding was 14px instead of the 16px grid baseline. Small inconsistencies compound into visual jankiness.',
         dialogue: [
-          { agent: 1, text: 'Analyzing spacing patterns...' },
-          { agent: 2, text: 'Found 2px variance from grid' },
-          { agent: 3, text: 'Normalizing to 8px baseline' },
-          { agent: 1, text: 'Visual consistency restored' },
+          { agent: 1, text: 'Analyzing spacing in <code>Button.tsx</code>...' },
+          { agent: 2, text: 'Found <code>padding: 14px</code> — 2px off grid' },
+          { agent: 3, text: 'Normalizing to <code>padding: 16px</code> (2 grid units)' },
+          { agent: 1, text: 'Visual consistency restored across all 23 button instances' },
         ]
       },
       { 
         title: 'Adding missing tests', 
         file: 'src/utils/validators.ts', 
-        desc: 'Generated 6 unit tests for edge cases',
+        ticker: ['tests', 'coverage', 'jest', 'edge', 'cases'],
+        prose: 'Six edge cases had no test coverage. Generating tests now catches regressions before they reach production.',
         dialogue: [
-          { agent: 3, text: 'Analyzing code coverage gaps...' },
-          { agent: 1, text: 'Found 6 uncovered edge cases' },
-          { agent: 2, text: 'Generating test scaffolds' },
-          { agent: 3, text: 'Tests written and passing' },
-          { agent: 1, text: 'Coverage increased to 94%' },
+          { agent: 3, text: 'Analyzing coverage for <code>validators.ts</code>...' },
+          { agent: 1, text: 'Uncovered: empty string, null input, unicode, max length, negative, zero' },
+          { agent: 2, text: 'Generating <code>validators.test.ts</code> with 6 new cases' },
+          { agent: 3, text: 'All tests passing — coverage increased from 78% to 94%' },
         ]
       },
       { 
         title: 'Optimizing bundle', 
         file: 'package.json', 
-        desc: 'Tree-shaking removed 12% of dead code',
+        ticker: ['bundle', 'webpack', 'treeshake', 'optimize', 'size'],
+        prose: 'Eight exported functions were never imported anywhere. Tree-shaking them reduces the final bundle by 12%.',
         dialogue: [
-          { agent: 2, text: 'Analyzing bundle composition...' },
-          { agent: 1, text: 'Found 8 unused exports' },
-          { agent: 3, text: 'Running tree-shaking analysis' },
-          { agent: 2, text: 'Bundle reduced by 12%' },
+          { agent: 2, text: 'Analyzing bundle with <code>webpack-bundle-analyzer</code>...' },
+          { agent: 1, text: 'Found 8 dead exports in <code>utils/index.ts</code>' },
+          { agent: 3, text: 'Marking as <code>/*#__PURE__*/</code> for tree-shaking' },
+          { agent: 2, text: 'Bundle reduced from 847KB to 745KB (12% smaller)' },
         ]
       },
       { 
         title: 'Fixing accessibility', 
         file: 'src/components/Form.tsx', 
-        desc: 'Added aria-labels to form inputs',
+        ticker: ['a11y', 'wcag', 'aria', 'screen', 'reader'],
+        prose: 'Five form inputs had no accessible labels. Screen readers couldn\'t identify what each field was for.',
         dialogue: [
-          { agent: 1, text: 'Running a11y audit...' },
+          { agent: 1, text: 'Running <code>axe-core</code> audit on <code>Form.tsx</code>...' },
           { agent: 3, text: 'Found 5 inputs missing labels' },
           { agent: 2, text: 'Adding aria-label attributes' },
           { agent: 1, text: 'WCAG 2.1 AA compliance achieved' },
@@ -4209,46 +4257,49 @@
       { 
         title: 'Updating dependencies', 
         file: 'package.json', 
-        desc: 'Updated 3 packages with security fixes',
+        ticker: ['security', 'npm', 'audit', 'patch', 'versions'],
+        prose: 'Three packages had known vulnerabilities. Updating to patched versions closes these security holes.',
         dialogue: [
-          { agent: 2, text: 'Checking for security advisories...' },
-          { agent: 1, text: 'Found 3 vulnerable packages' },
-          { agent: 3, text: 'Verifying compatibility with updates' },
-          { agent: 2, text: 'Packages updated, no breaking changes' },
+          { agent: 2, text: 'Running <code>npm audit</code>...' },
+          { agent: 1, text: 'Found CVEs in <code>lodash</code>, <code>axios</code>, <code>ws</code>' },
+          { agent: 3, text: 'Verifying semver compatibility with updates' },
+          { agent: 2, text: 'Updated 3 packages — all tests passing' },
         ]
       },
       { 
         title: 'Extracting shared component', 
         file: 'src/components/Card.tsx', 
-        desc: 'Created reusable CardBase component',
+        ticker: ['dry', 'component', 'refactor', 'reuse', 'abstract'],
+        prose: 'Three card variants duplicated the same structure. Extracting a base component saves 47 lines and centralizes styling.',
         dialogue: [
-          { agent: 1, text: 'Analyzing component patterns...' },
-          { agent: 2, text: 'Found 3 similar card implementations' },
-          { agent: 3, text: 'Extracting common CardBase' },
-          { agent: 1, text: 'DRY principle applied, 47 lines saved' },
+          { agent: 1, text: 'Analyzing <code>ProductCard</code>, <code>UserCard</code>, <code>ProjectCard</code>...' },
+          { agent: 2, text: 'Found 87% structural similarity across all three' },
+          { agent: 3, text: 'Extracting <code>CardBase</code> with configurable slots' },
+          { agent: 1, text: 'Refactored all three to use <code>CardBase</code> — 47 lines removed' },
         ]
       },
       { 
         title: 'Adding JSDoc comments', 
         file: 'src/services/api.ts', 
-        desc: 'Documented public API methods',
+        ticker: ['jsdoc', 'docs', 'intellisense', 'comments', 'types'],
+        prose: 'Eight public functions had no documentation. JSDoc comments enable better IDE tooltips and generated docs.',
         dialogue: [
-          { agent: 3, text: 'Scanning public methods...' },
-          { agent: 1, text: 'Found 8 undocumented functions' },
-          { agent: 2, text: 'Generating JSDoc from signatures' },
-          { agent: 3, text: 'Documentation complete' },
+          { agent: 3, text: 'Scanning exports in <code>api.ts</code>...' },
+          { agent: 1, text: 'Found <code>fetchUser</code>, <code>updateUser</code>, <code>deleteUser</code>... (8 total)' },
+          { agent: 2, text: 'Generating JSDoc with <code>@param</code> and <code>@returns</code> annotations' },
+          { agent: 3, text: 'Documentation complete — IntelliSense now shows hints' },
         ]
       },
       { 
         title: 'Fixing memory leak', 
         file: 'src/hooks/useWebSocket.ts', 
-        desc: 'Added cleanup on component unmount',
+        ticker: ['memory', 'cleanup', 'useEffect', 'unmount', 'leak'],
+        prose: 'The WebSocket subscription wasn\'t cleaned up on unmount. This caused listeners to accumulate and memory to leak.',
         dialogue: [
-          { agent: 2, text: 'Tracing subscription lifecycle...' },
-          { agent: 1, text: 'Found missing cleanup in useEffect' },
-          { agent: 3, text: 'Adding return cleanup function' },
-          { agent: 2, text: 'Memory leak patched' },
-          { agent: 1, text: 'Verified with React DevTools' },
+          { agent: 2, text: 'Tracing <code>useEffect</code> in <code>useWebSocket</code>...' },
+          { agent: 1, text: 'Found <code>socket.on()</code> without matching <code>socket.off()</code>' },
+          { agent: 3, text: 'Adding cleanup: <code>return () => socket.off()</code>' },
+          { agent: 2, text: 'Memory leak patched — verified with React DevTools Profiler' },
         ]
       },
     ];
@@ -4290,7 +4341,7 @@
             </div>
             <div class="activity-stats">
               <div class="activity-stat">
-                <div class="activity-stat-value green">${completedCount}</div>
+                <div class="activity-stat-value" id="complete-count">${completedCount}</div>
                 <div class="activity-stat-label">Complete</div>
               </div>
               <div class="activity-stat">
@@ -4313,11 +4364,13 @@
           </div>
 
           <div class="activity-stream" id="activity-stream">
-            <div class="activity-stream-shadow"></div>
             ${fixActions.map((action, i) => {
-              const state = activityTaskStates[i] || { status: 'pending', progress: 0 };
+              const state = activityTaskStates[i] || { status: 'pending', progress: 0, expanded: false };
               const statusClass = state.status;
-              const isExpanded = state.status === 'active' || (state.expanded && state.status === 'complete');
+              // Cards start compact - only expand when user clicks or when actively processing
+              const isExpanded = state.expanded === true;
+              const tickerHtml = action.ticker ? 
+                [...action.ticker, ...action.ticker].map(t => `<span>${t}</span>`).join('') : '';
               
               return `
                 <div class="activity-task ${statusClass} ${isExpanded ? 'expanded' : ''}" 
@@ -4344,6 +4397,14 @@
                     </div>
                   </div>
                   <div class="task-dialogue">
+                    ${action.ticker ? `
+                      <div class="task-ticker">
+                        <div class="ticker-track">${tickerHtml}</div>
+                      </div>
+                    ` : ''}
+                    ${action.prose ? `
+                      <div class="task-prose">${action.prose}</div>
+                    ` : ''}
                     <div class="task-dialogue-inner" id="dialogue-${i}">
                       <!-- Agent messages will be streamed here -->
                     </div>
@@ -5707,19 +5768,20 @@
               iconEl.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
             }
             
-            // Collapse after a moment (unless user expanded manually)
+            // Collapse after a moment
+            activityTaskStates[i].expanded = false;
             setTimeout(() => {
               if (activityTaskStates[i].status === 'complete' && !activityTaskStates[i].expanded) {
                 taskEl.classList.remove('expanded');
               }
-            }, 500);
+            }, 600);
           }
           
           // Update header stats
           const completedCount = Object.values(activityTaskStates).filter(s => s.status === 'complete').length;
           const remainingCount = fixActions.length - completedCount;
           
-          const completeStatEl = document.querySelector('.activity-stat-value.green');
+          const completeStatEl = document.getElementById('complete-count');
           const remainingStatEl = document.querySelector('.activity-stat:nth-child(2) .activity-stat-value');
           const headerProgressFill = document.querySelector('.activity-progress-fill');
           const headerProgressPercent = document.querySelector('.activity-progress-percent');
