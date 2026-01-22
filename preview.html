@@ -145,6 +145,555 @@
       to { opacity: 1; max-height: 500px; }
     }
 
+    @keyframes tickerScrollReverse {
+      from { transform: translateX(-50%); }
+      to { transform: translateX(0); }
+    }
+
+    @keyframes agentMsgIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes conceptIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes float {
+      0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+      10% { opacity: 0.5; }
+      90% { opacity: 0.5; }
+      100% { transform: translateY(-100vh) translateX(var(--drift, 50px)); opacity: 0; }
+    }
+
+    /* ===========================================
+       SCREEN SYSTEM
+       =========================================== */
+    .screen {
+      position: fixed;
+      inset: 0;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.4s var(--ease-out-expo), visibility 0.4s;
+    }
+
+    .screen.active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    /* ===========================================
+       ANALYSIS SCREEN
+       =========================================== */
+    #analysis-screen {
+      background: var(--bg-surface);
+    }
+
+    .analysis-status {
+      position: fixed;
+      top: 48px;
+      left: 64px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 0.6rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--text-tertiary);
+    }
+
+    .status-headline {
+      font-size: 1.15rem;
+      font-weight: 300;
+      color: var(--text-prose);
+      max-width: 360px;
+      line-height: 1.5;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: all 0.5s var(--ease-out-expo);
+    }
+
+    .status-headline.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .status-headline em {
+      color: var(--text-bright);
+      font-style: normal;
+    }
+
+    .ascii-progress {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      opacity: 0;
+      transition: opacity 0.5s var(--ease-out-expo) 0.1s;
+    }
+
+    .ascii-progress.visible {
+      opacity: 1;
+    }
+
+    .ascii-bar {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      letter-spacing: 0.02em;
+    }
+
+    .ascii-bar .filled {
+      color: var(--text-primary);
+    }
+
+    .ascii-status {
+      font-size: 0.65rem;
+      color: var(--text-tertiary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .current-file {
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+    }
+
+    /* Stream Ticker Background */
+    .stream-ticker {
+      position: fixed;
+      top: 50%;
+      left: 0;
+      right: 0;
+      transform: translateY(-50%);
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+      height: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 24px;
+      opacity: 0;
+      transition: opacity 1s ease;
+      mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+    }
+
+    .stream-ticker.visible {
+      opacity: 1;
+    }
+
+    .ticker-row {
+      display: flex;
+      white-space: nowrap;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.06);
+      letter-spacing: 0.02em;
+    }
+
+    .ticker-content {
+      display: flex;
+      animation: tickerScroll var(--duration, 60s) linear infinite;
+    }
+
+    .ticker-row.reverse .ticker-content {
+      animation-name: tickerScrollReverse;
+    }
+
+    .ticker-item {
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ticker-item .agent-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      opacity: 0.5;
+    }
+
+    .ticker-item.agent-1 .agent-dot { background: var(--purple); }
+    .ticker-item.agent-2 .agent-dot { background: var(--blue); }
+    .ticker-item.agent-3 .agent-dot { background: var(--green); }
+
+    /* Center Agent Messages */
+    .agent-center {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 420px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 50;
+    }
+
+    .agent-message {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 18px;
+      background: rgba(20, 20, 20, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      animation: agentMsgIn 0.4s var(--ease-out-expo);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .agent-message.fading {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+
+    .agent-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 6px;
+      font-size: 0.6rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .agent-badge .dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+    }
+
+    .agent-message.agent-1 .agent-badge .dot { background: var(--purple); }
+    .agent-message.agent-2 .agent-badge .dot { background: var(--blue); }
+    .agent-message.agent-3 .agent-badge .dot { background: var(--green); }
+
+    .agent-text {
+      font-size: 0.82rem;
+      color: var(--text-prose);
+      line-height: 1.5;
+    }
+
+    .agent-text code {
+      background: rgba(255, 255, 255, 0.04);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 0.9em;
+      color: var(--text-primary);
+    }
+
+    .agent-text .highlight {
+      color: var(--text-bright);
+    }
+
+    /* Concepts Bar */
+    .concepts-bar {
+      position: fixed;
+      bottom: 48px;
+      right: 64px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .concepts-bar.visible {
+      opacity: 1;
+    }
+
+    .concepts-label {
+      font-size: 0.55rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .concepts-list {
+      display: flex;
+      gap: 8px;
+    }
+
+    .concept-tag {
+      padding: 6px 14px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      animation: conceptIn 0.3s ease;
+    }
+
+    /* Hint Bar */
+    .hint-bar {
+      position: fixed;
+      bottom: 48px;
+      left: 64px;
+      display: flex;
+      gap: 24px;
+      font-size: 0.6rem;
+      color: var(--text-muted);
+    }
+
+    .hint-bar kbd {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 3px 8px;
+      border-radius: 4px;
+      margin-right: 5px;
+      color: var(--text-tertiary);
+    }
+
+    /* Play Demo Button (Analysis) */
+    .analysis-play-btn {
+      position: fixed;
+      bottom: 48px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 14px 32px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      color: var(--text-bright);
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.25s var(--ease-out-expo);
+      z-index: 300;
+    }
+
+    .analysis-play-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.15);
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    .analysis-play-btn kbd {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 4px 10px;
+      border-radius: 5px;
+      margin-right: 10px;
+      font-size: 0.75rem;
+    }
+
+    .analysis-play-btn.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Ambient Particles */
+    .ambient-particle {
+      position: fixed;
+      width: 2px;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: float 30s linear infinite;
+    }
+
+    .particles-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    /* ===========================================
+       DASHBOARD SCREEN - TEXT-BASED REPORT
+       =========================================== */
+    #dashboard-screen {
+      background: var(--bg-deep);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .report-container {
+      max-width: 700px;
+      width: 100%;
+      animation: fadeIn 0.6s var(--ease-out-expo);
+    }
+
+    .report-document {
+      padding: 0 32px;
+    }
+
+    .report-header {
+      margin-bottom: 48px;
+    }
+
+    .report-logo {
+      font-size: 0.55rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--text-tertiary);
+      margin-bottom: 12px;
+    }
+
+    .report-title {
+      font-size: 2.2rem;
+      font-weight: 200;
+      color: var(--text-white);
+      letter-spacing: -0.02em;
+    }
+
+    .analysis-text {
+      font-size: 1.1rem;
+      line-height: 1.85;
+      font-weight: 300;
+      letter-spacing: 0.01em;
+      color: #b0b0b0;
+      margin-bottom: 24px;
+    }
+
+    .analysis-text .highlight {
+      color: #ffffff;
+      font-weight: 400;
+    }
+
+    .analysis-text .highlight.green {
+      color: var(--green);
+      text-shadow: 0 0 20px rgba(74, 222, 128, 0.3);
+    }
+
+    .analysis-text .highlight.amber {
+      color: var(--amber);
+      text-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+    }
+
+    .report-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 32px 0;
+    }
+
+    .report-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 400;
+      cursor: pointer;
+      transition: all 0.2s var(--ease-out-expo);
+    }
+
+    .report-badge:hover {
+      transform: translateY(-2px);
+    }
+
+    .badge-key {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+      padding: 3px 7px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      line-height: 1;
+    }
+
+    .report-badge.warning {
+      background: rgba(251, 191, 36, 0.12);
+      border: 1px solid rgba(251, 191, 36, 0.25);
+      color: #fde68a;
+    }
+    .report-badge.warning .badge-key { background: rgba(251, 191, 36, 0.25); color: #fbbf24; }
+
+    .report-badge.blue {
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      color: #93c5fd;
+    }
+    .report-badge.blue .badge-key { background: rgba(59, 130, 246, 0.25); color: #60a5fa; }
+
+    .report-badge.success {
+      background: rgba(34, 197, 94, 0.12);
+      border: 1px solid rgba(34, 197, 94, 0.25);
+      color: #86efac;
+    }
+    .report-badge.success .badge-key { background: rgba(34, 197, 94, 0.25); color: #4ade80; }
+
+    .report-badge.primary {
+      background: rgba(139, 92, 246, 0.15);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      color: #c4b5fd;
+    }
+    .report-badge.primary .badge-key { background: rgba(139, 92, 246, 0.3); color: #a78bfa; }
+
+    .report-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 48px;
+      flex-wrap: wrap;
+    }
+
+    .report-action-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 20px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s var(--ease-out-expo);
+    }
+
+    .report-action-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--border-visible);
+      transform: translateY(-2px);
+    }
+
+    .report-action-btn.primary {
+      background: rgba(74, 222, 128, 0.12);
+      border-color: rgba(74, 222, 128, 0.25);
+      color: var(--green);
+    }
+
+    .report-action-btn.primary:hover {
+      background: rgba(74, 222, 128, 0.2);
+      border-color: rgba(74, 222, 128, 0.4);
+    }
+
+    .report-action-btn kbd {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+    }
+
+    .report-action-btn.primary kbd {
+      background: rgba(74, 222, 128, 0.25);
+      color: var(--green);
+    }
+
     /* ===========================================
        BASE STYLES
        =========================================== */
@@ -1646,16 +2195,142 @@
     <div class="narration-text" id="narration-text"></div>
   </div>
 
-  <!-- Status Island -->
-  <div class="status-island" id="status-island">
-    <div class="status-dot" id="status-dot"></div>
-    <span class="status-text" id="status-text">Ready</span>
-    <div class="status-progress" id="status-progress" style="display: none;">
-      <div class="status-progress-fill" id="status-progress-fill" style="width: 0%"></div>
+  <!-- ==========================================
+       ANALYSIS SCREEN (Landing Page)
+       ========================================== -->
+  <div class="screen active" id="analysis-screen">
+    <!-- Status Area (Top Left) -->
+    <div class="analysis-status">
+      <div class="logo">Lattice</div>
+      <div class="status-headline visible" id="status-headline">
+        Ready to analyze your codebase.
+      </div>
+      <div class="ascii-progress" id="ascii-progress">
+        <div class="ascii-bar" id="ascii-bar"></div>
+        <div class="ascii-status">
+          scanning <span class="current-file" id="current-file"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stream Ticker (Background) -->
+    <div class="stream-ticker" id="stream-ticker">
+      <div class="ticker-row" id="ticker-row-1" style="--duration: 80s;"></div>
+      <div class="ticker-row reverse" id="ticker-row-2" style="--duration: 70s;"></div>
+      <div class="ticker-row" id="ticker-row-3" style="--duration: 90s;"></div>
+    </div>
+
+    <!-- Agent Messages (Center) -->
+    <div class="agent-center" id="agent-center"></div>
+
+    <!-- Concepts Bar (Bottom Right) -->
+    <div class="concepts-bar" id="concepts-bar">
+      <span class="concepts-label">Detected</span>
+      <div class="concepts-list" id="concepts-list"></div>
+    </div>
+
+    <!-- Hint Bar (Bottom Left) -->
+    <div class="hint-bar">
+      <span><kbd>Space</kbd> Skip</span>
+    </div>
+
+    <!-- Begin Analysis Button -->
+    <button class="analysis-play-btn" id="analysis-play-btn">
+      <kbd>Enter</kbd>
+      Begin Analysis
+    </button>
+  </div>
+
+  <!-- ==========================================
+       DASHBOARD SCREEN - Text-Based L5ttice Report
+       ========================================== -->
+  <div class="screen" id="dashboard-screen">
+    <div class="report-container">
+      <div class="report-document">
+        <!-- Header -->
+        <div class="report-header">
+          <div class="report-logo">Lattice</div>
+          <div class="report-title">Analysis Complete</div>
+        </div>
+        
+        <!-- Main Report Text -->
+        <p class="analysis-text">
+          Scanned <span class="highlight">47 files</span> across your React codebase. 
+          Overall health score is <span class="highlight green">78%</span>, which is above average for projects of this size.
+        </p>
+        
+        <p class="analysis-text">
+          Found <span class="highlight amber">14 issues</span> that could benefit from attention, 
+          including <span class="highlight">4 quick wins</span> that can be resolved automatically.
+        </p>
+        
+        <!-- Insights as badges -->
+        <div class="report-badges">
+          <div class="report-badge warning" data-key="1" id="btn-fragmentation">
+            <span class="badge-key">1</span>
+            Fragmentation: 0.73
+          </div>
+          <div class="report-badge blue" data-key="2" id="btn-coherence">
+            <span class="badge-key">2</span>
+            37 style conflicts
+          </div>
+          <div class="report-badge success" data-key="3" id="btn-opportunity">
+            <span class="badge-key">3</span>
+            70% drift reducible
+          </div>
+          <div class="report-badge primary" data-key="4" id="btn-performance">
+            <span class="badge-key">4</span>
+            12% bundle savings
+          </div>
+        </div>
+        
+        <p class="analysis-text" style="margin-top: 32px;">
+          <span class="highlight">14 redundant color definitions</span> could be unified into shared tokens. 
+          Duplicate patterns in Button, Form, and Card suggest opportunities for component extraction.
+        </p>
+        
+        <p class="analysis-text">
+          <span class="highlight">47 components</span> would auto-correct if you consolidate these patterns. 
+          Bundle analysis shows <span class="highlight">8 unused exports</span> contributing to unnecessary size.
+        </p>
+        
+        <!-- Action Buttons -->
+        <div class="report-actions">
+          <button class="report-action-btn primary" id="report-btn-editor">
+            <span>Open Editor</span>
+            <kbd>E</kbd>
+          </button>
+          <button class="report-action-btn" id="report-btn-features">
+            <span>Features</span>
+            <kbd>F</kbd>
+          </button>
+          <button class="report-action-btn" id="report-btn-tech-debt">
+            <span>Tech Debt</span>
+            <kbd>T</kbd>
+          </button>
+          <button class="report-action-btn" id="report-btn-tests">
+            <span>Tests</span>
+            <kbd>S</kbd>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class="app">
+  <!-- ==========================================
+       EDITOR SCREEN
+       ========================================== -->
+  <div class="screen" id="editor-screen">
+    <!-- Status Island -->
+    <div class="status-island" id="status-island">
+      <div class="status-dot" id="status-dot"></div>
+      <span class="status-text" id="status-text">Ready</span>
+      <div class="status-progress" id="status-progress" style="display: none;">
+        <div class="status-progress-fill" id="status-progress-fill" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <div class="app">
     <!-- Navigation Bar -->
     <nav class="nav-bar">
       <button class="nav-tab active" id="tab-editor" data-tab="editor">Editor</button>
@@ -1708,19 +2383,23 @@
     </div>
   </div>
 
-  <!-- Demo Controls -->
-  <div class="demo-controls">
-    <button class="demo-btn primary" id="play-demo-btn">▶ Play Demo</button>
-    <button class="demo-btn" id="restart-btn">↺ Restart</button>
-    <button class="demo-btn sound-btn" id="sound-toggle"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path class="sound-wave" d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button>
-  </div>
+    <!-- Demo Controls (inside editor screen) -->
+    <div class="demo-controls">
+      <button class="demo-btn primary" id="play-demo-btn">Play Demo</button>
+      <button class="demo-btn" id="restart-btn">Restart</button>
+      <button class="demo-btn sound-btn" id="sound-toggle"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path class="sound-wave" d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button>
+    </div>
+  </div><!-- End editor-screen -->
 
   <!-- Audio Elements -->
+  <audio id="sound-startup" src="client/public/sounds/01 Startup.mp3" preload="auto"></audio>
   <audio id="sound-cursor" src="client/public/sounds/05 SFX Cursor.mp3" preload="auto"></audio>
   <audio id="sound-decide" src="client/public/sounds/06 SFX Decide.mp3" preload="auto"></audio>
   <audio id="sound-cancel" src="client/public/sounds/03 SFX Cancel.mp3" preload="auto"></audio>
   <audio id="sound-confirm" src="client/public/sounds/09 SFX System Ok.mp3" preload="auto"></audio>
   <audio id="sound-tab" src="client/public/sounds/04 SFX Category Decide.mp3" preload="auto"></audio>
+  <audio id="sound-category" src="client/public/sounds/04 SFX Category Decide.mp3" preload="auto"></audio>
+  <audio id="sound-option" src="client/public/sounds/07 SFX Option.mp3" preload="auto"></audio>
 
   <script>
     // ===========================================
@@ -1732,6 +2411,68 @@
     let currentTab = 'editor';
     let demoTimeouts = [];
     let expandedCards = new Set();
+    
+    // Analysis state
+    let currentScreen = 'analysis';
+    let analysisRunning = false;
+    let analysisComplete = false;
+    let analysisInterval = null;
+    let agentMessageIndex = 0;
+
+    // ===========================================
+    // ANALYSIS DATA
+    // ===========================================
+    const analysisFiles = [
+      'package.json', 'tsconfig.json', 'src/index.tsx', 'src/App.tsx',
+      'src/components/ChatPanel.tsx', 'src/components/FilePanel.tsx',
+      'src/components/CodeEditor.tsx', 'src/services/auth.ts',
+      'src/services/api.ts', 'src/utils/formatters.ts', 'src/utils/session.ts',
+      'src/hooks/useTheme.ts', 'src/styles/theme.ts', 'src/components/Button.tsx',
+      'src/components/Card.tsx', 'src/components/Modal.tsx', 'src/components/Form.tsx'
+    ];
+
+    const streamDialogue = [
+      { agent: 1, text: 'scanning component tree...' },
+      { agent: 2, text: 'found 847 instances' },
+      { agent: 3, text: 'cross-referencing theme.ts' },
+      { agent: 1, text: 'duplicate color #3b82f6 detected' },
+      { agent: 2, text: 'checking coherence graph' },
+      { agent: 3, text: 'pattern match in Button.tsx' },
+      { agent: 1, text: 'should we flag this as critical?' },
+      { agent: 2, text: 'is this intentional or drift?' },
+      { agent: 3, text: 'want me to trace the origin?' },
+      { agent: 1, text: 'yes, confirmed - same base color' },
+      { agent: 2, text: 'looks like copy-paste drift' },
+      { agent: 3, text: 'no breaking changes if we merge' },
+      { agent: 1, text: 'the original is in theme.ts:47' },
+      { agent: 2, text: 'this one diverged 3 commits ago' },
+      { agent: 3, text: 'I see 4 more instances downstream' },
+      { agent: 1, text: 'interesting - hover state differs' },
+      { agent: 2, text: 'spacing is off by 2px here' },
+      { agent: 3, text: 'border-radius inconsistent' },
+      { agent: 1, text: 'flagging for review' },
+      { agent: 2, text: 'adding to coherence report' },
+      { agent: 3, text: 'queueing for batch fix' },
+      { agent: 1, text: 'calculating impact radius...' },
+      { agent: 2, text: 'building dependency graph' },
+      { agent: 3, text: 'preparing safe refactor' },
+    ];
+
+    const agentMessages = [
+      { agent: 1, text: 'Scanning component tree... found <span class="highlight">847 instances</span>' },
+      { agent: 2, text: 'Cross-referencing with <code>theme.ts</code>' },
+      { agent: 1, text: 'Duplicate color detected: <code>#3b82f6</code> in Button.tsx' },
+      { agent: 3, text: 'Checking coherence graph for patterns...' },
+      { agent: 2, text: 'Match confirmed. Adding to <span class="highlight">fragmentation index</span>' },
+      { agent: 1, text: 'Found spacing conflict in <code>FormInput.tsx:23</code>' },
+      { agent: 3, text: 'Analyzing bundle for unused exports...' },
+      { agent: 2, text: 'Token inheritance traced through 47 components' },
+      { agent: 1, text: 'Calculating projected impact...' },
+      { agent: 3, text: 'Tree-shaking analysis complete' },
+      { agent: 2, text: 'Generating actionable insights...' },
+    ];
+
+    const detectedConcepts = ['React', 'TypeScript', 'OAuth', 'Redux', 'JWT', 'REST API'];
 
     // ===========================================
     // REALISTIC DATA
@@ -1902,6 +2643,213 @@
       soundEnabled = !soundEnabled;
       const btn = document.getElementById('sound-toggle');
       btn.classList.toggle('muted', !soundEnabled);
+    }
+
+    // ===========================================
+    // SCREEN NAVIGATION
+    // ===========================================
+    function showScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(`${screenId}-screen`).classList.add('active');
+      currentScreen = screenId;
+    }
+
+    // ===========================================
+    // STREAM TICKER
+    // ===========================================
+    function initStreamTicker() {
+      const rows = [
+        document.getElementById('ticker-row-1'),
+        document.getElementById('ticker-row-2'),
+        document.getElementById('ticker-row-3'),
+      ];
+
+      rows.forEach((row, rowIndex) => {
+        if (!row) return;
+        const content = document.createElement('div');
+        content.className = 'ticker-content';
+        
+        // Double the content for seamless loop
+        for (let i = 0; i < 2; i++) {
+          streamDialogue.forEach(item => {
+            const tickerItem = document.createElement('span');
+            tickerItem.className = `ticker-item agent-${item.agent}`;
+            tickerItem.innerHTML = `<span class="agent-dot"></span>${item.text}`;
+            content.appendChild(tickerItem);
+          });
+        }
+        
+        row.appendChild(content);
+      });
+    }
+
+    // ===========================================
+    // ANALYSIS SEQUENCE
+    // ===========================================
+    const ANALYSIS_DURATION = 22000; // 22 seconds
+    const BAR_WIDTH = 20;
+    let analysisStartTime = null;
+
+    function updateAsciiBar(progress) {
+      const asciiBar = document.getElementById('ascii-bar');
+      const currentFile = document.getElementById('current-file');
+      if (!asciiBar || !currentFile) return;
+      
+      const percent = Math.round(progress * 100);
+      const filled = Math.round(progress * BAR_WIDTH);
+      
+      const filledStr = '\u2588'.repeat(filled);
+      const emptyStr = '\u2591'.repeat(BAR_WIDTH - filled);
+      
+      asciiBar.innerHTML = `<span class="filled">${filledStr}</span>${emptyStr} ${percent}%`;
+      
+      const fileIndex = Math.floor(progress * analysisFiles.length);
+      if (fileIndex < analysisFiles.length) {
+        currentFile.textContent = analysisFiles[fileIndex];
+      }
+    }
+
+    function updateHeadline(progress) {
+      const headline = document.getElementById('status-headline');
+      if (!headline) return;
+      const headlines = [
+        'Scanning file structure...',
+        'Analyzing dependencies...',
+        'Mapping component tree...',
+        'Detecting patterns...',
+        'Cross-referencing tokens...',
+        'Calculating surfaces...',
+        'Generating insights...',
+        'Finalizing analysis...',
+      ];
+      const idx = Math.min(Math.floor(progress * headlines.length), headlines.length - 1);
+      headline.innerHTML = headlines[idx];
+    }
+
+    async function addAgentMessage() {
+      if (agentMessageIndex >= agentMessages.length) return;
+      
+      const container = document.getElementById('agent-center');
+      if (!container) return;
+      const msg = agentMessages[agentMessageIndex];
+      agentMessageIndex++;
+      
+      // Remove old messages if too many
+      const messages = container.querySelectorAll('.agent-message');
+      if (messages.length >= 4) {
+        const oldest = messages[0];
+        oldest.classList.add('fading');
+        await new Promise(r => setTimeout(r, 300));
+        oldest.remove();
+      }
+      
+      const msgEl = document.createElement('div');
+      msgEl.className = `agent-message agent-${msg.agent}`;
+      msgEl.innerHTML = `
+        <div class="agent-badge"><span class="dot"></span>Agent ${msg.agent}</div>
+        <div class="agent-text">${msg.text}</div>
+      `;
+      container.appendChild(msgEl);
+      playSound('confirm');
+    }
+
+    function addConcept(concept) {
+      const conceptsList = document.getElementById('concepts-list');
+      if (!conceptsList) return;
+      const tag = document.createElement('span');
+      tag.className = 'concept-tag';
+      tag.textContent = concept;
+      conceptsList.appendChild(tag);
+    }
+
+    async function runAnalysis() {
+      if (analysisRunning) return;
+      analysisRunning = true;
+      analysisComplete = false;
+      agentMessageIndex = 0;
+      
+      // Hide play button
+      const playBtn = document.getElementById('analysis-play-btn');
+      if (playBtn) playBtn.classList.add('hidden');
+      
+      // Show progress elements
+      const asciiProgress = document.getElementById('ascii-progress');
+      const streamTicker = document.getElementById('stream-ticker');
+      if (asciiProgress) asciiProgress.classList.add('visible');
+      if (streamTicker) streamTicker.classList.add('visible');
+      
+      // Play startup sound
+      playSound('startup');
+      
+      analysisStartTime = Date.now();
+      
+      // Schedule agent messages with sounds
+      for (let i = 0; i < agentMessages.length; i++) {
+        setTimeout(() => {
+          addAgentMessage();
+        }, 2000 + i * 1800);
+      }
+      
+      // Schedule concepts
+      setTimeout(() => {
+        const conceptsBar = document.getElementById('concepts-bar');
+        if (conceptsBar) conceptsBar.classList.add('visible');
+        detectedConcepts.forEach((c, i) => setTimeout(() => addConcept(c), i * 400));
+      }, 8000);
+      
+      // Progress bar update
+      analysisInterval = setInterval(() => {
+        const elapsed = Date.now() - analysisStartTime;
+        const progress = Math.min(elapsed / ANALYSIS_DURATION, 1);
+        updateAsciiBar(progress);
+        updateHeadline(progress);
+        
+        if (progress >= 1) {
+          clearInterval(analysisInterval);
+          finishAnalysis();
+        }
+      }, 50);
+    }
+
+    function finishAnalysis() {
+      analysisComplete = true;
+      analysisRunning = false;
+      
+      // Transition to dashboard after a moment
+      setTimeout(() => {
+        showScreen('dashboard');
+        playSound('category');
+      }, 1000);
+    }
+
+    function skipAnalysis() {
+      if (analysisInterval) clearInterval(analysisInterval);
+      analysisComplete = true;
+      analysisRunning = false;
+      showScreen('dashboard');
+      playSound('category');
+    }
+
+    // ===========================================
+    // AMBIENT PARTICLES
+    // ===========================================
+    function createParticles() {
+      const analysisScreen = document.getElementById('analysis-screen');
+      if (!analysisScreen) return;
+      
+      const container = document.createElement('div');
+      container.className = 'particles-container';
+      analysisScreen.appendChild(container);
+      
+      for (let i = 0; i < 30; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'ambient-particle';
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.animationDuration = `${20 + Math.random() * 20}s`;
+        particle.style.animationDelay = `${Math.random() * 20}s`;
+        particle.style.setProperty('--drift', `${(Math.random() - 0.5) * 100}px`);
+        container.appendChild(particle);
+      }
     }
 
     // ===========================================
@@ -2594,8 +3542,11 @@
       demoRunning = true;
       
       const playBtn = document.getElementById('play-demo-btn');
-      playBtn.textContent = '⏸ Pause';
+      playBtn.textContent = 'Pause';
       playBtn.classList.add('active');
+      
+      // Ensure we're on the editor screen
+      showScreen('editor');
       
       // Reset state
       switchTab('editor');
@@ -2746,12 +3697,13 @@
       demoTimeouts.forEach(t => clearTimeout(t));
       demoTimeouts = [];
       demoRunning = false;
-      document.getElementById('play-demo-btn').textContent = '▶ Play Demo';
+      document.getElementById('play-demo-btn').textContent = 'Play Demo';
       document.getElementById('play-demo-btn').classList.remove('active');
     }
 
     function restartDemo() {
       stopDemo();
+      showScreen('editor');
       switchTab('editor');
       clearChat();
       hideNarration();
@@ -2785,8 +3737,109 @@
     // ===========================================
     // INITIALIZE
     // ===========================================
+    
+    // Initialize stream ticker for analysis screen
+    initStreamTicker();
+    
+    // Create ambient particles for analysis screen
+    createParticles();
+    
+    // Render file tree
     renderFileTree();
+    
+    // Pre-render editor tab content
     switchTab('editor');
+    
+    // ===========================================
+    // ANALYSIS & DASHBOARD EVENT LISTENERS
+    // ===========================================
+    
+    // Begin Analysis button
+    const analysisPlayBtn = document.getElementById('analysis-play-btn');
+    if (analysisPlayBtn) {
+      analysisPlayBtn.addEventListener('click', runAnalysis);
+    }
+    
+    // Dashboard action buttons
+    const reportBtnEditor = document.getElementById('report-btn-editor');
+    if (reportBtnEditor) {
+      reportBtnEditor.addEventListener('click', () => {
+        showScreen('editor');
+        playSound('decide');
+        switchTab('editor');
+      });
+    }
+    
+    const reportBtnFeatures = document.getElementById('report-btn-features');
+    if (reportBtnFeatures) {
+      reportBtnFeatures.addEventListener('click', () => {
+        showScreen('editor');
+        playSound('decide');
+        switchTab('features');
+      });
+    }
+    
+    const reportBtnTechDebt = document.getElementById('report-btn-tech-debt');
+    if (reportBtnTechDebt) {
+      reportBtnTechDebt.addEventListener('click', () => {
+        showScreen('editor');
+        playSound('decide');
+        switchTab('tech-debt');
+      });
+    }
+    
+    const reportBtnTests = document.getElementById('report-btn-tests');
+    if (reportBtnTests) {
+      reportBtnTests.addEventListener('click', () => {
+        showScreen('editor');
+        playSound('decide');
+        switchTab('tests');
+      });
+    }
+    
+    // Report badge clicks
+    document.querySelectorAll('.report-badge').forEach(badge => {
+      badge.addEventListener('click', () => {
+        showScreen('editor');
+        playSound('decide');
+        switchTab('tech-debt');
+      });
+    });
+    
+    // Keyboard shortcuts for analysis/dashboard screens
+    document.addEventListener('keydown', (e) => {
+      if (currentScreen === 'analysis') {
+        if (e.key === 'Enter' && !analysisRunning) {
+          runAnalysis();
+        } else if (e.key === ' ' && analysisRunning) {
+          e.preventDefault();
+          skipAnalysis();
+        }
+      } else if (currentScreen === 'dashboard') {
+        if (e.key === 'e' || e.key === 'E') {
+          showScreen('editor');
+          playSound('decide');
+          switchTab('editor');
+        } else if (e.key === 'f' || e.key === 'F') {
+          showScreen('editor');
+          playSound('decide');
+          switchTab('features');
+        } else if (e.key === 't' || e.key === 'T') {
+          showScreen('editor');
+          playSound('decide');
+          switchTab('tech-debt');
+        } else if (e.key === 's' || e.key === 'S') {
+          showScreen('editor');
+          playSound('decide');
+          switchTab('tests');
+        }
+      } else if (currentScreen === 'editor') {
+        if (e.key === 'Escape') {
+          showScreen('dashboard');
+          playSound('cancel');
+        }
+      }
+    });
   </script>
 </body>
 </html>
