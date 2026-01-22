@@ -1,0 +1,2792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LatticeTwo — Interactive Demo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ===========================================
+       DESIGN TOKENS
+       =========================================== */
+    :root {
+      /* Backgrounds */
+      --bg-deep: #0a0a0a;
+      --bg-surface: #111;
+      --bg-elevated: rgba(255, 255, 255, 0.02);
+      --bg-hover: rgba(255, 255, 255, 0.04);
+      --bg-active: rgba(255, 255, 255, 0.06);
+
+      /* Borders */
+      --border-subtle: rgba(255, 255, 255, 0.04);
+      --border-visible: rgba(255, 255, 255, 0.08);
+
+      /* Text */
+      --text-muted: #333;
+      --text-tertiary: #444;
+      --text-secondary: #555;
+      --text-prose: #888;
+      --text-primary: #ccc;
+      --text-bright: #e5e5e5;
+      --text-white: #fff;
+
+      /* Semantic colors */
+      --amber: #fbbf24;
+      --amber-bg: rgba(251, 191, 36, 0.12);
+      --amber-border: rgba(251, 191, 36, 0.25);
+      --blue: #60a5fa;
+      --blue-bg: rgba(59, 130, 246, 0.12);
+      --blue-border: rgba(59, 130, 246, 0.25);
+      --purple: #a78bfa;
+      --purple-bg: rgba(139, 92, 246, 0.15);
+      --purple-border: rgba(139, 92, 246, 0.3);
+      --green: #4ade80;
+      --green-bg: rgba(34, 197, 94, 0.12);
+      --green-border: rgba(34, 197, 94, 0.25);
+      --red: #f87171;
+      --red-bg: rgba(248, 113, 113, 0.12);
+
+      /* Typography */
+      --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'SF Mono', Menlo, Monaco, monospace;
+
+      /* Transitions */
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* ===========================================
+       ANIMATIONS
+       =========================================== */
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(6px); }
+    }
+
+    @keyframes annotationIn {
+      from { opacity: 0; transform: translateY(-10px); }
+    }
+
+    @keyframes feedItemIn {
+      from { opacity: 0; transform: translateY(10px) scale(0.95); }
+    }
+
+    @keyframes statusGlow {
+      0%, 100% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.15); }
+      50% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.35); }
+    }
+
+    @keyframes thinkingSlide {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(300%); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+
+    @keyframes clickRipple {
+      0% { transform: scale(0); opacity: 0.6; }
+      100% { transform: scale(2.5); opacity: 0; }
+    }
+
+    @keyframes cursorPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    @keyframes glowPulse {
+      0%, 100% { box-shadow: 0 0 6px rgba(255, 255, 255, 0.3); }
+      50% { box-shadow: 0 0 12px rgba(255, 255, 255, 0.5); }
+    }
+
+    @keyframes cardEnter {
+      from { opacity: 0; transform: translateY(20px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes typeText {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+
+    @keyframes celebrateGlow {
+      0% { box-shadow: 0 0 20px rgba(74, 222, 128, 0.5); }
+      50% { box-shadow: 0 0 40px rgba(74, 222, 128, 0.8); }
+      100% { box-shadow: 0 0 20px rgba(74, 222, 128, 0.5); }
+    }
+
+    @keyframes tickerScroll {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    @keyframes expandIn {
+      from { opacity: 0; max-height: 0; }
+      to { opacity: 1; max-height: 500px; }
+    }
+
+    /* ===========================================
+       BASE STYLES
+       =========================================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: var(--font-family);
+      background: var(--bg-deep);
+      color: var(--text-bright);
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 3px;
+    }
+
+    ::selection {
+      background: rgba(139, 92, 246, 0.3);
+    }
+
+    kbd {
+      display: inline-block;
+      background: var(--bg-active);
+      border-radius: 3px;
+      padding: 2px 6px;
+      font-family: inherit;
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    /* ===========================================
+       MOCK CURSOR
+       =========================================== */
+    .mock-cursor {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      pointer-events: none;
+      z-index: 10000;
+      transition: left 0.8s cubic-bezier(0.25, 0.1, 0.25, 1), 
+                  top 0.8s cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+
+    .mock-cursor svg {
+      width: 20px;
+      height: 20px;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+    }
+
+    .mock-cursor.clicking {
+      animation: cursorPulse 0.15s ease;
+    }
+
+    .click-ripple {
+      position: fixed;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      pointer-events: none;
+      z-index: 9999;
+      animation: clickRipple 0.4s ease-out forwards;
+    }
+
+    /* ===========================================
+       NARRATION BAR
+       =========================================== */
+    .narration-bar {
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 12px 32px;
+      background: linear-gradient(180deg, rgba(10, 10, 10, 0.85) 0%, rgba(10, 10, 10, 0.95) 100%);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      backdrop-filter: blur(20px);
+      z-index: 9000;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      max-width: 600px;
+      text-align: center;
+    }
+
+    .narration-bar.visible {
+      opacity: 1;
+    }
+
+    .narration-text {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--text-prose);
+      line-height: 1.6;
+    }
+
+    .narration-text em {
+      color: var(--text-white);
+      font-style: normal;
+    }
+
+    /* ===========================================
+       STATUS ISLAND
+       =========================================== */
+    .status-island {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 24px;
+      z-index: 8000;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: all 0.4s var(--ease-out-expo);
+    }
+
+    .status-island.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .status-island.success {
+      border-color: var(--green-border);
+      animation: celebrateGlow 1.5s ease;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text-prose);
+    }
+
+    .status-dot.active {
+      background: var(--green);
+      animation: statusGlow 2s ease infinite;
+    }
+
+    .status-text {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--text-primary);
+    }
+
+    .status-progress {
+      width: 60px;
+      height: 3px;
+      background: var(--bg-active);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .status-progress-fill {
+      height: 100%;
+      background: var(--green);
+      transition: width 0.3s ease;
+    }
+
+    /* ===========================================
+       LAYOUT
+       =========================================== */
+    .app {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .nav-bar {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      height: 48px;
+      padding: 0 24px;
+      border-bottom: 1px solid var(--border-subtle);
+      flex-shrink: 0;
+    }
+
+    /* ===========================================
+       NAV TABS - Cursor-tracking glow
+       =========================================== */
+    .nav-tab {
+      padding: 8px 14px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.2s var(--ease-out-expo);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-tab::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: var(--glow-x, 50%);
+      transform: translateX(-50%);
+      width: 0;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 1px;
+      transition: width 0.2s ease, background 0.2s ease;
+    }
+
+    .nav-tab:hover {
+      background: var(--bg-elevated);
+      color: var(--text-prose);
+    }
+
+    .nav-tab:hover::before {
+      width: 12px;
+      background: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.2);
+    }
+
+    .nav-tab.active {
+      background: var(--bg-hover);
+      color: var(--text-bright);
+    }
+
+    .nav-tab.active::before {
+      width: 20px;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
+      animation: glowPulse 2s ease infinite;
+    }
+
+    .spacer {
+      flex: 1;
+    }
+
+    .calculate-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px 6px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border-visible);
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      font-size: 11px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s var(--ease-out-expo);
+    }
+
+    .calculate-btn:hover {
+      background: var(--bg-hover);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .content {
+      display: flex;
+      flex: 1;
+      min-height: 0;
+    }
+
+    /* ===========================================
+       PANELS - Fixed alignment
+       =========================================== */
+    .panel {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .panel-left {
+      width: 240px;
+      border-right: 1px solid var(--border-subtle);
+    }
+
+    .panel-center {
+      flex: 1;
+      border-right: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-right {
+      width: 360px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border-subtle);
+      min-height: 44px; /* Fixed height for alignment */
+      flex-shrink: 0;
+    }
+
+    .panel-tab {
+      padding: 6px 10px;
+      font-size: 10px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-secondary);
+      background: transparent;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .panel-tab:hover {
+      background: var(--bg-elevated);
+      color: var(--text-prose);
+    }
+
+    .panel-tab.active {
+      background: var(--bg-hover);
+      color: var(--text-bright);
+    }
+
+    .panel-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 0;
+    }
+
+    /* ===========================================
+       FILE TREE
+       =========================================== */
+    .file-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 12px 6px 16px;
+      color: var(--text-secondary);
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      border-radius: 4px;
+      margin: 1px 4px;
+    }
+
+    .file-item:hover {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      transform: translateX(2px);
+    }
+
+    .file-item.active {
+      background: var(--bg-hover);
+      color: var(--text-bright);
+    }
+
+    .file-item .icon {
+      opacity: 0.5;
+      font-size: 10px;
+      margin-right: 6px;
+    }
+
+    .folder-item {
+      padding-left: 12px;
+    }
+
+    .folder-item .icon {
+      font-size: 8px;
+    }
+
+    .nested {
+      padding-left: 12px;
+    }
+
+    .file-badge {
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    .file-badge.green {
+      background: var(--green-bg);
+      color: var(--green);
+    }
+
+    .file-badge.amber {
+      background: var(--amber-bg);
+      color: var(--amber);
+    }
+
+    .file-badge.red {
+      background: var(--red-bg);
+      color: var(--red);
+    }
+
+    /* ===========================================
+       EDITOR AREA
+       =========================================== */
+    .editor-tabs {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      padding: 0 12px;
+      height: 36px;
+      border-bottom: 1px solid var(--border-subtle);
+      flex-shrink: 0;
+    }
+
+    .editor-tab {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 10px;
+      height: 26px;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 5px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .editor-tab:hover {
+      background: var(--bg-elevated);
+    }
+
+    .editor-tab.active {
+      background: var(--bg-hover);
+      border-color: var(--border-visible);
+      color: var(--text-primary);
+    }
+
+    .editor-tab .close {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      transition: color 0.15s ease;
+    }
+
+    .editor-tab .close:hover {
+      color: var(--red);
+    }
+
+    .editor-code {
+      flex: 1;
+      padding: 16px 20px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--text-prose);
+      overflow: auto;
+    }
+
+    .code-line {
+      display: flex;
+    }
+
+    .code-line.highlight {
+      background: rgba(74, 222, 128, 0.08);
+      margin: 0 -20px;
+      padding: 0 20px;
+      border-left: 2px solid var(--green);
+    }
+
+    .line-num {
+      width: 40px;
+      text-align: right;
+      padding-right: 16px;
+      color: var(--text-muted);
+      user-select: none;
+    }
+
+    .code-keyword { color: #c678dd; }
+    .code-string { color: #98c379; }
+    .code-comment { color: #5c6370; font-style: italic; }
+    .code-function { color: #61afef; }
+    .code-type { color: #e5c07b; }
+    .code-number { color: #d19a66; }
+
+    /* ===========================================
+       STATS ROW
+       =========================================== */
+    .stats-row {
+      display: flex;
+      gap: 16px;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-subtle);
+      flex-shrink: 0;
+    }
+
+    .stat-card {
+      padding: 16px 20px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .stat-card.green {
+      border-color: rgba(74, 222, 128, 0.15);
+      background: rgba(74, 222, 128, 0.02);
+    }
+
+    .stat-card.amber {
+      border-color: rgba(251, 191, 36, 0.15);
+      background: rgba(251, 191, 36, 0.02);
+    }
+
+    .stat-card.red {
+      border-color: rgba(248, 113, 113, 0.15);
+      background: rgba(248, 113, 113, 0.02);
+    }
+
+    .stat-label {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 200;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.02em;
+    }
+
+    .stat-card.green .stat-value { color: var(--green); }
+    .stat-card.amber .stat-value { color: var(--amber); }
+    .stat-card.red .stat-value { color: var(--red); }
+
+    .stat-change {
+      font-size: 10px;
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    .stat-change.positive { color: var(--green); }
+    .stat-change.negative { color: var(--red); }
+
+    /* ===========================================
+       CHAT PANEL - L5ttice Style
+       =========================================== */
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .chat-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      gap: 12px;
+    }
+
+    .chat-empty-label {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+    }
+
+    .chat-empty-hint {
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--text-secondary);
+    }
+
+    /* Exchange (query/response) */
+    .exchange {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border-subtle);
+      animation: slideIn 0.25s var(--ease-out-expo);
+    }
+
+    .query {
+      font-size: 13px;
+      color: var(--text-prose);
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .query-arrow {
+      color: var(--text-tertiary);
+      font-size: 12px;
+    }
+
+    .query-text {
+      font-weight: 300;
+    }
+
+    .typing-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 14px;
+      background: var(--text-prose);
+      margin-left: 2px;
+      animation: blink 0.8s infinite;
+      vertical-align: middle;
+    }
+
+    .response {
+      padding-left: 18px;
+      margin-top: 8px;
+    }
+
+    .response-headline {
+      font-size: 1.2rem;
+      font-weight: 300;
+      color: var(--text-primary);
+      line-height: 1.5;
+      letter-spacing: -0.01em;
+    }
+
+    .response-headline em {
+      color: var(--text-white);
+      font-style: normal;
+    }
+
+    .response-detail {
+      margin-top: 8px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      font-weight: 300;
+    }
+
+    /* Thinking */
+    .thinking {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-left: 18px;
+      margin-top: 8px;
+    }
+
+    .thinking-bar {
+      height: 2px;
+      width: 60px;
+      background: var(--bg-active);
+      border-radius: 1px;
+      overflow: hidden;
+    }
+
+    .thinking-bar-fill {
+      height: 100%;
+      width: 30%;
+      background: linear-gradient(90deg, transparent, var(--text-prose), transparent);
+      animation: thinkingSlide 1s ease-in-out infinite;
+    }
+
+    .thinking-text {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 300;
+    }
+
+    /* ===========================================
+       ANNOTATION CARDS - L5ttice Style
+       =========================================== */
+    .annotation-card {
+      display: flex;
+      gap: 20px;
+      padding: 16px 18px;
+      border-radius: 12px;
+      animation: cardEnter 0.35s var(--ease-out-expo);
+      margin-top: 8px;
+      transition: all 0.25s ease;
+    }
+
+    .annotation-card.green {
+      background: rgba(74, 222, 128, 0.04);
+      border: 1px solid rgba(74, 222, 128, 0.1);
+    }
+
+    .annotation-card.amber {
+      background: rgba(251, 191, 36, 0.04);
+      border: 1px solid rgba(251, 191, 36, 0.1);
+    }
+
+    .annotation-card.blue {
+      background: rgba(96, 165, 250, 0.04);
+      border: 1px solid rgba(96, 165, 250, 0.1);
+    }
+
+    .annotation-card.applied {
+      background: rgba(74, 222, 128, 0.08);
+      border-color: rgba(74, 222, 128, 0.2);
+    }
+
+    .annotation-left {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      width: 120px;
+    }
+
+    .annotation-header {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 8px 4px 4px;
+      border-radius: 5px;
+      font-size: 11px;
+      font-weight: 500;
+      align-self: flex-start;
+    }
+
+    .annotation-card.green .annotation-header {
+      background: rgba(74, 222, 128, 0.12);
+      color: var(--green);
+    }
+
+    .annotation-card.amber .annotation-header {
+      background: rgba(251, 191, 36, 0.12);
+      color: var(--amber);
+    }
+
+    .annotation-card.blue .annotation-header {
+      background: rgba(96, 165, 250, 0.12);
+      color: var(--blue);
+    }
+
+    .header-key {
+      padding: 2px 5px;
+      border-radius: 3px;
+      font-size: 9px;
+      font-weight: 600;
+    }
+
+    .annotation-card.green .header-key {
+      background: rgba(74, 222, 128, 0.25);
+      color: var(--green);
+    }
+
+    .annotation-card.amber .header-key {
+      background: rgba(251, 191, 36, 0.25);
+      color: var(--amber);
+    }
+
+    .annotation-card.blue .header-key {
+      background: rgba(96, 165, 250, 0.25);
+      color: var(--blue);
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 200;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .annotation-card.green .stat-number { color: var(--green); }
+    .annotation-card.amber .stat-number { color: var(--amber); }
+    .annotation-card.blue .stat-number { color: var(--blue); }
+
+    .stat-number sup {
+      font-size: 0.4em;
+      color: var(--text-secondary);
+      font-weight: 400;
+      margin-left: 4px;
+    }
+
+    /* Ticker */
+    .stat-ticker {
+      overflow: hidden;
+      height: 16px;
+      mask-image: linear-gradient(90deg, transparent, black 10%, black 90%, transparent);
+    }
+
+    .ticker-inner {
+      display: flex;
+      gap: 16px;
+      width: max-content;
+      animation: tickerScroll 20s linear infinite;
+    }
+
+    .ticker-inner span {
+      font-size: 0.55rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      white-space: nowrap;
+      opacity: 0.5;
+    }
+
+    .annotation-card.green .ticker-inner span { color: var(--green); }
+    .annotation-card.amber .ticker-inner span { color: var(--amber); }
+    .annotation-card.blue .ticker-inner span { color: var(--blue); }
+
+    .annotation-right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .annotation-prose {
+      font-size: 13px;
+      line-height: 1.7;
+      font-weight: 300;
+      color: var(--text-prose);
+    }
+
+    .annotation-prose strong {
+      color: var(--text-primary);
+      font-weight: 400;
+    }
+
+    .annotation-prose code {
+      background: var(--bg-active);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 0.9em;
+      color: var(--text-secondary);
+    }
+
+    .annotation-path {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-prose);
+    }
+
+    .annotation-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 10px 6px 6px;
+      border-radius: 5px;
+      font-size: 11px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      border: none;
+    }
+
+    .action-btn.primary {
+      background: rgba(74, 222, 128, 0.12);
+      border: 1px solid rgba(74, 222, 128, 0.2);
+      color: var(--green);
+    }
+
+    .action-btn.primary:hover {
+      background: rgba(74, 222, 128, 0.2);
+      transform: translateY(-1px);
+    }
+
+    .action-btn.primary kbd {
+      background: rgba(74, 222, 128, 0.25);
+      color: var(--green);
+    }
+
+    .action-btn.secondary {
+      background: var(--bg-active);
+      border: 1px solid var(--border-visible);
+      color: var(--text-secondary);
+    }
+
+    .action-btn.secondary:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+    }
+
+    .action-btn.used {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .applied-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--green);
+      font-weight: 500;
+    }
+
+    /* In-card chat input */
+    .annotation-input {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-subtle);
+      margin-top: 4px;
+    }
+
+    .annotation-input .input-arrow {
+      color: var(--text-muted);
+      font-size: 11px;
+    }
+
+    .card-input-field {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--text-prose);
+    }
+
+    .card-input-field::placeholder {
+      color: var(--text-tertiary);
+    }
+
+    .card-input-field:focus {
+      color: var(--text-primary);
+    }
+
+    .annotation-input .input-hint {
+      font-size: 9px;
+      color: var(--text-muted);
+    }
+
+    /* Card conversation */
+    .card-conversation {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .card-exchange {
+      padding: 8px 0;
+      border-top: 1px solid var(--border-subtle);
+      animation: fadeInUp 0.2s ease;
+    }
+
+    .card-query {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+
+    .card-query .arrow {
+      color: var(--text-tertiary);
+      margin-right: 4px;
+    }
+
+    .card-response {
+      font-size: 12px;
+      color: var(--text-prose);
+      line-height: 1.6;
+    }
+
+    /* Chat Input */
+    .chat-input {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 20px;
+      border-top: 1px solid var(--border-subtle);
+      flex-shrink: 0;
+    }
+
+    .chat-input .arrow {
+      color: var(--text-tertiary);
+      font-size: 14px;
+    }
+
+    .chat-input input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text-prose);
+      font-size: 14px;
+      font-weight: 300;
+      outline: none;
+    }
+
+    .chat-input input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .chat-input .hint {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    /* ===========================================
+       INSIGHT VIEWS - L5ttice Style
+       =========================================== */
+    .insight-container {
+      padding: 32px 40px;
+      height: 100%;
+      overflow-y: auto;
+      max-width: 900px;
+    }
+
+    .insight-header {
+      margin-bottom: 32px;
+    }
+
+    .insight-title {
+      font-size: 1.8rem;
+      font-weight: 200;
+      color: var(--text-bright);
+      margin-bottom: 8px;
+    }
+
+    .insight-summary {
+      font-size: 14px;
+      color: var(--text-secondary);
+      font-weight: 300;
+      line-height: 1.6;
+      max-width: 500px;
+    }
+
+    /* Filter/Sort Bar */
+    .insight-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      flex: 1;
+      max-width: 280px;
+      transition: all 0.2s ease;
+    }
+
+    .search-box:focus-within {
+      border-color: var(--border-visible);
+      background: var(--bg-hover);
+    }
+
+    .search-box .icon {
+      color: var(--text-tertiary);
+      font-size: 11px;
+      font-weight: 300;
+    }
+    
+    .search-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .search-icon svg {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+      stroke-width: 1.5;
+      fill: none;
+    }
+
+    .search-box input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 12px;
+      color: var(--text-prose);
+    }
+
+    .search-box input::placeholder {
+      color: var(--text-tertiary);
+    }
+
+    .filter-pills {
+      display: flex;
+      gap: 6px;
+    }
+
+    .filter-pill {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 500;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .filter-pill:hover {
+      background: var(--bg-hover);
+      color: var(--text-prose);
+    }
+
+    .filter-pill.active {
+      background: var(--bg-active);
+      border-color: var(--border-visible);
+      color: var(--text-primary);
+    }
+
+    .sort-dropdown {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .sort-dropdown:hover {
+      background: var(--bg-hover);
+      color: var(--text-prose);
+    }
+
+    .insight-stats {
+      display: flex;
+      gap: 48px;
+      margin-bottom: 48px;
+      align-items: baseline;
+    }
+
+    .insight-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .insight-stat-value {
+      font-size: 2.8rem;
+      font-weight: 200;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      color: var(--text-prose);
+    }
+
+    .insight-stat-value.green { color: var(--green); }
+    .insight-stat-value.amber { color: var(--amber); }
+    .insight-stat-value.red { color: var(--red); }
+
+    .insight-stat-label {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .insight-section-label {
+      font-size: 10px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .insight-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* ===========================================
+       INSIGHT CARDS - Expandable L5ttice Style
+       =========================================== */
+    .insight-card {
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.25s var(--ease-out-expo);
+      overflow: hidden;
+    }
+
+    .insight-card:hover {
+      border-color: var(--border-visible);
+      background: var(--bg-hover);
+    }
+
+    .insight-card.expanded {
+      background: var(--bg-hover);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .insight-card-main {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 16px 20px;
+    }
+
+    /* Score indicator - L5ttice typography style */
+    .insight-score {
+      display: flex;
+      align-items: baseline;
+      flex-shrink: 0;
+      min-width: 64px;
+    }
+
+    .insight-score-num {
+      font-size: 2rem;
+      font-weight: 200;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .insight-score-unit {
+      font-size: 0.75rem;
+      font-weight: 400;
+      opacity: 0.5;
+      margin-left: 2px;
+    }
+
+    .insight-score.green .insight-score-num { color: var(--green); }
+    .insight-score.green .insight-score-unit { color: var(--green); }
+    .insight-score.amber .insight-score-num { color: var(--amber); }
+    .insight-score.amber .insight-score-unit { color: var(--amber); }
+    .insight-score.red .insight-score-num { color: var(--red); }
+    .insight-score.red .insight-score-unit { color: var(--red); }
+
+    .insight-card-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .insight-card-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .insight-card-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 300;
+      line-height: 1.5;
+    }
+
+    .insight-card-meta {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .insight-meta-badge {
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: var(--bg-active);
+      color: var(--text-secondary);
+    }
+
+    .insight-card-expand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--text-tertiary);
+      transition: transform 0.25s var(--ease-out-expo), color 0.15s ease;
+      align-self: center;
+      margin-left: auto;
+    }
+
+    .insight-card:hover .insight-card-expand {
+      color: var(--text-secondary);
+    }
+
+    .insight-card.expanded .insight-card-expand {
+      transform: rotate(45deg);
+      color: var(--text-prose);
+    }
+
+    /* Expanded section - smooth expand/collapse */
+    .insight-expanded {
+      padding: 0 20px 0;
+      border-top: 1px solid var(--border-subtle);
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                  opacity 0.25s ease,
+                  padding 0.3s ease;
+    }
+
+    .insight-card.expanded .insight-expanded {
+      max-height: 500px;
+      opacity: 1;
+      padding: 0 20px 16px;
+    }
+
+    .expanded-section {
+      padding-top: 16px;
+    }
+
+    .expanded-section-label {
+      font-size: 10px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .insight-file-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .insight-file-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .insight-file-item:hover {
+      background: var(--bg-elevated);
+      color: var(--blue);
+    }
+
+    .expanded-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    /* In-card input */
+    .expanded-input {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+      padding: 10px 12px;
+      background: var(--bg-deep);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+    }
+
+    .expanded-input .arrow {
+      color: var(--text-muted);
+      font-size: 11px;
+    }
+
+    .expanded-input input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--text-prose);
+    }
+
+    .expanded-input input::placeholder {
+      color: var(--text-tertiary);
+    }
+
+    /* ===========================================
+       DEMO CONTROLS
+       =========================================== */
+    .demo-controls {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      display: flex;
+      gap: 8px;
+      z-index: 100;
+    }
+
+    .demo-btn {
+      padding: 8px 14px;
+      border-radius: 6px;
+      border: 1px solid var(--border-visible);
+      background: var(--bg-surface);
+      color: var(--text-prose);
+      font-size: 11px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .demo-btn:hover {
+      background: var(--bg-hover);
+      color: var(--text-bright);
+    }
+
+    .demo-btn.active {
+      background: var(--green-bg);
+      border-color: var(--green-border);
+      color: var(--green);
+    }
+
+    .demo-btn.primary {
+      background: var(--bg-hover);
+      border-color: rgba(255, 255, 255, 0.15);
+      color: var(--text-bright);
+    }
+    
+    .demo-btn.sound-btn {
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .demo-btn.sound-btn svg {
+      transition: opacity 0.2s ease;
+    }
+    
+    .demo-btn.sound-btn.muted svg .sound-wave {
+      opacity: 0;
+    }
+    
+    .demo-btn.sound-btn.muted::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 2px;
+      background: var(--red);
+      transform: rotate(-45deg);
+      border-radius: 1px;
+    }
+    
+    .demo-btn.sound-btn {
+      position: relative;
+    }
+  </style>
+</head>
+<body>
+  <!-- Mock Cursor -->
+  <div class="mock-cursor" id="mock-cursor" style="left: -50px; top: -50px;">
+    <svg viewBox="0 0 24 24" fill="none">
+      <path d="M4 4L12 20L14 14L20 12L4 4Z" fill="white" stroke="black" stroke-width="1"/>
+    </svg>
+  </div>
+
+  <!-- Narration Bar -->
+  <div class="narration-bar" id="narration-bar">
+    <div class="narration-text" id="narration-text"></div>
+  </div>
+
+  <!-- Status Island -->
+  <div class="status-island" id="status-island">
+    <div class="status-dot" id="status-dot"></div>
+    <span class="status-text" id="status-text">Ready</span>
+    <div class="status-progress" id="status-progress" style="display: none;">
+      <div class="status-progress-fill" id="status-progress-fill" style="width: 0%"></div>
+    </div>
+  </div>
+
+  <div class="app">
+    <!-- Navigation Bar -->
+    <nav class="nav-bar">
+      <button class="nav-tab active" id="tab-editor" data-tab="editor">Editor</button>
+      <button class="nav-tab" id="tab-features" data-tab="features">Features</button>
+      <button class="nav-tab" id="tab-tech-debt" data-tab="tech-debt">Tech Debt</button>
+      <button class="nav-tab" id="tab-tests" data-tab="tests">Tests</button>
+      <div class="spacer"></div>
+      <button class="calculate-btn" id="calculate-btn">
+        <kbd>⌘P</kbd>
+        Calculate
+      </button>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="content">
+      <!-- Left Panel: File Tree -->
+      <div class="panel panel-left" id="panel-left">
+        <div class="panel-header">
+          <button class="panel-tab active">All Files</button>
+          <button class="panel-tab">App Code</button>
+        </div>
+        <div class="panel-content" id="file-tree">
+          <!-- File tree content -->
+        </div>
+      </div>
+
+      <!-- Center Panel: Dynamic Content -->
+      <div class="panel panel-center" id="panel-center">
+        <!-- Content changes based on tab -->
+      </div>
+
+      <!-- Right Panel: Chat -->
+      <div class="panel panel-right" id="panel-right">
+        <div class="panel-header">
+          <div class="status-dot active"></div>
+          <span style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); margin-left: 8px;">Agent Active</span>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+          <div class="chat-empty">
+            <div class="chat-empty-label">Lattice Agent</div>
+            <div class="chat-empty-hint">Ask about your codebase...</div>
+          </div>
+        </div>
+        <div class="chat-input">
+          <span class="arrow">→</span>
+          <input type="text" placeholder="Ask about this codebase..." id="chat-input" readonly>
+          <span class="hint"><kbd>↵</kbd></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Demo Controls -->
+  <div class="demo-controls">
+    <button class="demo-btn primary" id="play-demo-btn">▶ Play Demo</button>
+    <button class="demo-btn" id="restart-btn">↺ Restart</button>
+    <button class="demo-btn sound-btn" id="sound-toggle"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path class="sound-wave" d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button>
+  </div>
+
+  <!-- Audio Elements -->
+  <audio id="sound-cursor" src="client/public/sounds/05 SFX Cursor.mp3" preload="auto"></audio>
+  <audio id="sound-decide" src="client/public/sounds/06 SFX Decide.mp3" preload="auto"></audio>
+  <audio id="sound-cancel" src="client/public/sounds/03 SFX Cancel.mp3" preload="auto"></audio>
+  <audio id="sound-confirm" src="client/public/sounds/09 SFX System Ok.mp3" preload="auto"></audio>
+  <audio id="sound-tab" src="client/public/sounds/04 SFX Category Decide.mp3" preload="auto"></audio>
+
+  <script>
+    // ===========================================
+    // STATE
+    // ===========================================
+    let soundEnabled = true;
+    let demoRunning = false;
+    let demoPaused = false;
+    let currentTab = 'editor';
+    let demoTimeouts = [];
+    let expandedCards = new Set();
+
+    // ===========================================
+    // REALISTIC DATA
+    // ===========================================
+    const fileTree = [
+      { name: 'src', type: 'folder', expanded: true, children: [
+        { name: 'components', type: 'folder', expanded: true, children: [
+          { name: 'App.tsx', type: 'file', score: 8.4, scoreColor: 'green' },
+          { name: 'ChatPanel.tsx', type: 'file', score: 7.2, scoreColor: 'green' },
+          { name: 'FilePanel.tsx', type: 'file', score: 6.8, scoreColor: 'amber' },
+          { name: 'CodeEditor.tsx', type: 'file', score: 9.1, scoreColor: 'green' },
+        ]},
+        { name: 'utils', type: 'folder', expanded: false, children: [
+          { name: 'formatters.ts', type: 'file', score: 3.2, scoreColor: 'red' },
+          { name: 'validators.ts', type: 'file', score: 7.5, scoreColor: 'green' },
+        ]},
+        { name: 'services', type: 'folder', expanded: false, children: [
+          { name: 'auth.ts', type: 'file', score: 4.1, scoreColor: 'amber' },
+          { name: 'api.ts', type: 'file', score: 8.0, scoreColor: 'green' },
+        ]},
+      ]},
+      { name: 'public', type: 'folder', expanded: false },
+      { name: 'package.json', type: 'file' },
+      { name: 'tsconfig.json', type: 'file' },
+    ];
+
+    const featuresData = [
+      { 
+        id: 'auth', 
+        name: 'User Authentication', 
+        score: 94, 
+        color: 'green',
+        desc: 'OAuth 2.0 with Google and GitHub providers, JWT session management',
+        files: ['src/services/auth.ts', 'src/utils/session.ts', 'src/components/AuthPage.tsx'],
+        meta: ['OAuth 2.0', 'JWT', '3 files'],
+        ticker: ['security', 'session', 'tokens', 'providers'],
+        prose: 'Handles user identity with <strong>OAuth 2.0</strong> flows. Sessions persist via JWT tokens stored in httpOnly cookies.',
+        actions: [{ key: 'D', label: 'View diagram', primary: false }, { key: 'T', label: 'Run tests', primary: true }]
+      },
+      { 
+        id: 'files', 
+        name: 'File Management', 
+        score: 87, 
+        color: 'green',
+        desc: 'Upload, preview, and organize files with drag-and-drop support',
+        files: ['src/components/FilePanel.tsx', 'src/services/storage.ts'],
+        meta: ['Drag & Drop', '2 files'],
+        ticker: ['upload', 'preview', 'organize', 'storage'],
+        prose: 'Complete file handling with <strong>drag-and-drop</strong> uploads and real-time preview.',
+        actions: [{ key: 'F', label: 'Open FilePanel', primary: true }]
+      },
+      { 
+        id: 'realtime', 
+        name: 'Real-time Collaboration', 
+        score: 72, 
+        color: 'amber',
+        desc: 'WebSocket-based live editing with conflict resolution',
+        files: ['src/services/websocket.ts', 'src/utils/crdt.ts', 'src/hooks/useCollaboration.ts'],
+        meta: ['WebSocket', 'CRDT', '3 files'],
+        ticker: ['sync', 'collab', 'crdt', 'websocket'],
+        prose: 'Live collaboration via <strong>WebSocket</strong>. CRDT ensures conflict-free merges.',
+        actions: [{ key: 'I', label: 'Improve score', primary: true }, { key: '?', label: 'Why 72%' }]
+      },
+      { 
+        id: 'export', 
+        name: 'Export API', 
+        score: 45, 
+        color: 'red',
+        desc: 'Export data in various formats, limited error handling',
+        files: ['src/services/export.ts'],
+        meta: ['Needs work', '1 file'],
+        ticker: ['json', 'csv', 'pdf', 'export'],
+        prose: 'Basic export functionality. Missing <strong>error boundaries</strong> and format validation.',
+        actions: [{ key: 'F', label: 'Fix issues', primary: true }, { key: 'R', label: 'Refactor' }]
+      },
+    ];
+
+    const techDebtData = [
+      {
+        id: 'formatters',
+        name: 'utils/formatters.ts',
+        score: 3,
+        color: 'red',
+        desc: 'No type safety, uses any extensively, missing error boundaries',
+        issues: ['any types', 'no tests', 'dead code'],
+        ticker: ['types', 'safety', 'testing', 'coverage'],
+        prose: 'Heavy use of <code>any</code> types bypasses TypeScript safety. <strong>12 functions</strong> lack proper typing.',
+        actions: [{ key: 'F', label: 'Add types', primary: true }, { key: 'D', label: 'View diff' }]
+      },
+      {
+        id: 'auth',
+        name: 'services/auth.ts',
+        score: 4,
+        color: 'amber',
+        desc: 'Deprecated OAuth flow, should migrate to next-auth',
+        issues: ['deprecated API', 'sync calls'],
+        ticker: ['oauth', 'migration', 'async', 'next-auth'],
+        prose: 'Using <strong>deprecated OAuth 1.0</strong> patterns. Migrate to <code>next-auth</code> for better security.',
+        actions: [{ key: 'M', label: 'Migrate', primary: true }, { key: '?', label: 'Why migrate' }]
+      },
+      {
+        id: 'filepanel',
+        name: 'components/FilePanel.tsx',
+        score: 6,
+        color: 'amber',
+        desc: 'Modal accessibility issues, missing ARIA labels',
+        issues: ['a11y', 'large component'],
+        ticker: ['aria', 'a11y', 'modal', 'focus'],
+        prose: 'Missing <strong>ARIA labels</strong> on interactive elements. Modal lacks proper focus management.',
+        actions: [{ key: 'A', label: 'Fix a11y', primary: true }]
+      },
+      {
+        id: 'chatpanel',
+        name: 'components/ChatPanel.tsx',
+        score: 7,
+        color: 'green',
+        desc: 'Good structure, minor performance optimizations possible',
+        issues: ['memo opportunities'],
+        ticker: ['memo', 'perf', 'render', 'optimize'],
+        prose: 'Well structured. Consider <code>useMemo</code> for message list to reduce re-renders.',
+        actions: [{ key: 'O', label: 'Optimize', primary: true }]
+      },
+    ];
+
+    const testsData = [
+      { name: 'components/', score: 84, color: 'green', coverage: '84%', tests: 42, 
+        desc: 'Strong coverage. Missing edge cases in modal interactions.',
+        files: ['App.test.tsx', 'ChatPanel.test.tsx', 'FilePanel.test.tsx'] },
+      { name: 'utils/', score: 91, color: 'green', coverage: '91%', tests: 28,
+        desc: 'Excellent coverage. All utility functions well tested.',
+        files: ['formatters.test.ts', 'validators.test.ts'] },
+      { name: 'services/', score: 67, color: 'amber', coverage: '67%', tests: 15,
+        desc: 'Auth service needs more integration tests.',
+        files: ['auth.test.ts', 'api.test.ts'] },
+      { name: 'hooks/', score: 42, color: 'red', coverage: '42%', tests: 8,
+        desc: 'Critical gap. Custom hooks lack proper testing.',
+        files: ['useCollaboration.test.ts'] },
+    ];
+
+    // ===========================================
+    // SOUND
+    // ===========================================
+    let lastSoundTime = {};
+    const SOUND_DEBOUNCE = 80; // ms
+    
+    function playSound(name) {
+      if (!soundEnabled) return;
+      
+      // Debounce rapid sounds
+      const now = Date.now();
+      if (lastSoundTime[name] && now - lastSoundTime[name] < SOUND_DEBOUNCE) {
+        return;
+      }
+      lastSoundTime[name] = now;
+      
+      const audio = document.getElementById(`sound-${name}`);
+      if (audio) {
+        // Clone audio for overlapping sounds
+        const clone = audio.cloneNode();
+        clone.volume = 0.12;
+        clone.play().catch(() => {});
+        // Clean up clone after playing
+        clone.onended = () => clone.remove();
+      }
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      const btn = document.getElementById('sound-toggle');
+      btn.classList.toggle('muted', !soundEnabled);
+    }
+
+    // ===========================================
+    // CURSOR-TRACKING GLOW FOR TABS
+    // ===========================================
+    document.querySelectorAll('.nav-tab').forEach(tab => {
+      tab.addEventListener('mousemove', (e) => {
+        const rect = tab.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        tab.style.setProperty('--glow-x', `${x}%`);
+      });
+      
+      tab.addEventListener('mouseleave', () => {
+        tab.style.setProperty('--glow-x', '50%');
+      });
+    });
+
+    // ===========================================
+    // MOCK CURSOR
+    // ===========================================
+    function moveCursor(x, y, duration = 800) {
+      return new Promise(resolve => {
+        const cursor = document.getElementById('mock-cursor');
+        cursor.style.transitionDuration = `${duration}ms`;
+        cursor.style.left = `${x}px`;
+        cursor.style.top = `${y}px`;
+        setTimeout(resolve, duration + 50);
+      });
+    }
+
+    function moveCursorToElement(selector, offsetX = 0, offsetY = 0, duration = 800) {
+      return new Promise(resolve => {
+        const el = document.querySelector(selector);
+        if (!el) { resolve(); return; }
+        const rect = el.getBoundingClientRect();
+        moveCursor(rect.left + rect.width/2 + offsetX, rect.top + rect.height/2 + offsetY, duration)
+          .then(resolve);
+      });
+    }
+
+    function clickCursor() {
+      return new Promise(resolve => {
+        const cursor = document.getElementById('mock-cursor');
+        cursor.classList.add('clicking');
+        
+        // Create ripple
+        const ripple = document.createElement('div');
+        ripple.className = 'click-ripple';
+        ripple.style.left = `${parseInt(cursor.style.left) - 5}px`;
+        ripple.style.top = `${parseInt(cursor.style.top) - 5}px`;
+        document.body.appendChild(ripple);
+        
+        // No sound on demo clicks - visual feedback only
+        
+        setTimeout(() => {
+          cursor.classList.remove('clicking');
+          ripple.remove();
+          resolve();
+        }, 400);
+      });
+    }
+
+    // ===========================================
+    // NARRATION
+    // ===========================================
+    function showNarration(text, duration = 3000) {
+      return new Promise(resolve => {
+        const bar = document.getElementById('narration-bar');
+        const textEl = document.getElementById('narration-text');
+        textEl.innerHTML = text;
+        bar.classList.add('visible');
+        
+        setTimeout(() => {
+          bar.classList.remove('visible');
+          setTimeout(resolve, 500);
+        }, duration);
+      });
+    }
+
+    function hideNarration() {
+      document.getElementById('narration-bar').classList.remove('visible');
+    }
+
+    // ===========================================
+    // STATUS ISLAND
+    // ===========================================
+    function showStatus(text, progress = null) {
+      const island = document.getElementById('status-island');
+      const dot = document.getElementById('status-dot');
+      const textEl = document.getElementById('status-text');
+      const progressBar = document.getElementById('status-progress');
+      const progressFill = document.getElementById('status-progress-fill');
+      
+      textEl.textContent = text;
+      dot.classList.add('active');
+      island.classList.add('visible');
+      island.classList.remove('success');
+      
+      if (progress !== null) {
+        progressBar.style.display = 'block';
+        progressFill.style.width = `${progress}%`;
+      } else {
+        progressBar.style.display = 'none';
+      }
+    }
+
+    function updateStatusProgress(progress) {
+      document.getElementById('status-progress-fill').style.width = `${progress}%`;
+    }
+
+    function showStatusSuccess(text) {
+      const island = document.getElementById('status-island');
+      document.getElementById('status-text').textContent = text;
+      document.getElementById('status-progress').style.display = 'none';
+      island.classList.add('success');
+      playSound('confirm');
+    }
+
+    function hideStatus() {
+      document.getElementById('status-island').classList.remove('visible');
+    }
+
+    // ===========================================
+    // FILE TREE RENDERING
+    // ===========================================
+    function renderFileTree() {
+      const container = document.getElementById('file-tree');
+      container.innerHTML = renderFileNode(fileTree, 0);
+    }
+
+    function renderFileNode(items, depth) {
+      return items.map(item => {
+        if (item.type === 'folder') {
+          const icon = item.expanded ? '▾' : '▸';
+          const children = item.expanded && item.children ? 
+            `<div class="nested">${renderFileNode(item.children, depth + 1)}</div>` : '';
+          return `
+            <div class="file-item folder-item" style="padding-left: ${12 + depth * 12}px">
+              <span><span class="icon">${icon}</span> ${item.name}</span>
+            </div>
+            ${children}
+          `;
+        } else {
+          const badge = item.score ? 
+            `<span class="file-badge ${item.scoreColor}">${item.score}</span>` : '';
+          return `
+            <div class="file-item" data-file="${item.name}" style="padding-left: ${16 + depth * 12}px">
+              <span>${item.name}</span>
+              ${badge}
+            </div>
+          `;
+        }
+      }).join('');
+    }
+
+    // ===========================================
+    // TAB SWITCHING
+    // ===========================================
+    function switchTab(tabName) {
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById(`tab-${tabName}`).classList.add('active');
+      currentTab = tabName;
+      expandedCards.clear();
+      
+      const panelCenter = document.getElementById('panel-center');
+      
+      switch(tabName) {
+        case 'editor':
+          panelCenter.innerHTML = getEditorContent();
+          break;
+        case 'features':
+          panelCenter.innerHTML = getFeaturesContent();
+          setupCardInteractions();
+          break;
+        case 'tech-debt':
+          panelCenter.innerHTML = getTechDebtContent();
+          setupCardInteractions();
+          break;
+        case 'tests':
+          panelCenter.innerHTML = getTestsContent();
+          setupCardInteractions();
+          break;
+      }
+      
+      playSound('tab');
+    }
+
+    // ===========================================
+    // CARD INTERACTIONS
+    // ===========================================
+    function setupCardInteractions() {
+      document.querySelectorAll('.insight-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+          // Don't toggle if clicking on input or button
+          if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON' || e.target.tagName === 'KBD') return;
+          
+          const id = card.dataset.id;
+          const isExpanding = !expandedCards.has(id);
+          
+          if (isExpanding) {
+            expandedCards.add(id);
+            card.classList.add('expanded');
+            playSound('tab'); // 04 SFX Category Decide for expand
+          } else {
+            expandedCards.delete(id);
+            card.classList.remove('expanded');
+            playSound('cancel'); // 03 SFX Cancel for collapse
+          }
+        });
+
+        // Handle action button clicks
+        card.querySelectorAll('.action-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (btn.classList.contains('primary')) {
+              btn.classList.add('used');
+              showStatus('Applying...', 0);
+              setTimeout(() => updateStatusProgress(50), 200);
+              setTimeout(() => updateStatusProgress(100), 400);
+              setTimeout(() => showStatusSuccess('Done'), 600);
+              setTimeout(() => hideStatus(), 2500);
+            }
+            playSound('confirm');
+          });
+        });
+
+        // Handle in-card input
+        const input = card.querySelector('.expanded-input input');
+        if (input) {
+          input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && input.value.trim()) {
+              addCardResponse(card, input.value);
+              input.value = '';
+            }
+          });
+          input.addEventListener('click', (e) => e.stopPropagation());
+        }
+      });
+    }
+
+    function addCardResponse(card, query) {
+      const conversationArea = card.querySelector('.card-conversation');
+      if (!conversationArea) return;
+      
+      const responses = {
+        'why': 'Based on static analysis of code patterns, dependencies, and test coverage metrics.',
+        'how': 'You can fix this by running the suggested action, or I can guide you through manually.',
+        'safe': 'Yes, this change is safe. It\'s a pure refactor with no functional impact.',
+        'default': 'I can help with that. Would you like me to apply the suggested fix?'
+      };
+      
+      let response = responses.default;
+      for (const [key, val] of Object.entries(responses)) {
+        if (query.toLowerCase().includes(key)) {
+          response = val;
+          break;
+        }
+      }
+      
+      const exchange = document.createElement('div');
+      exchange.className = 'card-exchange';
+      exchange.innerHTML = `
+        <div class="card-query"><span class="arrow">→</span>${query}</div>
+        <div class="card-response">${response}</div>
+      `;
+      conversationArea.appendChild(exchange);
+      playSound('confirm');
+    }
+
+    // ===========================================
+    // CONTENT GENERATORS
+    // ===========================================
+    function getEditorContent() {
+      return `
+        <div class="editor-tabs">
+          <div class="editor-tab active">
+            <span>App.tsx</span>
+            <span class="close">×</span>
+          </div>
+          <div class="editor-tab">
+            <span>ChatPanel.tsx</span>
+            <span class="close">×</span>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-card green">
+            <div class="stat-label">Test Coverage</div>
+            <div class="stat-value">8.4</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-label">Code Quality</div>
+            <div class="stat-value">7.8</div>
+          </div>
+        </div>
+        <div class="editor-code" id="editor-code">
+          <div class="code-line"><span class="line-num">1</span><span class="code-keyword">import</span> React <span class="code-keyword">from</span> <span class="code-string">'react'</span>;</div>
+          <div class="code-line"><span class="line-num">2</span><span class="code-keyword">import</span> { useSelector } <span class="code-keyword">from</span> <span class="code-string">'react-redux'</span>;</div>
+          <div class="code-line"><span class="line-num">3</span><span class="code-keyword">import</span> { ChatPanel } <span class="code-keyword">from</span> <span class="code-string">'./ChatPanel'</span>;</div>
+          <div class="code-line"><span class="line-num">4</span></div>
+          <div class="code-line"><span class="line-num">5</span><span class="code-comment">// Main application component</span></div>
+          <div class="code-line"><span class="line-num">6</span><span class="code-keyword">export default function</span> <span class="code-function">App</span>() {</div>
+          <div class="code-line"><span class="line-num">7</span>  <span class="code-keyword">const</span> user = <span class="code-function">useSelector</span>(s => s.user);</div>
+          <div class="code-line"><span class="line-num">8</span>  <span class="code-keyword">const</span> project = <span class="code-function">useSelector</span>(s => s.project);</div>
+          <div class="code-line"><span class="line-num">9</span></div>
+          <div class="code-line"><span class="line-num">10</span>  <span class="code-keyword">if</span> (!user) <span class="code-keyword">return</span> <span class="code-string">&lt;AuthPage /&gt;</span>;</div>
+          <div class="code-line"><span class="line-num">11</span></div>
+          <div class="code-line"><span class="line-num">12</span>  <span class="code-keyword">return</span> (</div>
+          <div class="code-line"><span class="line-num">13</span>    &lt;<span class="code-type">ThemeProvider</span> theme=<span class="code-string">"dark"</span>&gt;</div>
+          <div class="code-line"><span class="line-num">14</span>      &lt;<span class="code-type">Layout</span>&gt;</div>
+          <div class="code-line"><span class="line-num">15</span>        &lt;<span class="code-type">ChatPanel</span> projectId={project.id} /&gt;</div>
+          <div class="code-line"><span class="line-num">16</span>      &lt;/<span class="code-type">Layout</span>&gt;</div>
+          <div class="code-line"><span class="line-num">17</span>    &lt;/<span class="code-type">ThemeProvider</span>&gt;</div>
+          <div class="code-line"><span class="line-num">18</span>  );</div>
+          <div class="code-line"><span class="line-num">19</span>}</div>
+        </div>
+      `;
+    }
+
+    function getFeaturesContent() {
+      return `
+        <div class="insight-container">
+          <div class="insight-header">
+            <h2 class="insight-title">Feature Surface</h2>
+            <p class="insight-summary">4 distinct features detected. Click any card to explore, ask questions, or apply fixes.</p>
+          </div>
+          
+          <div class="insight-toolbar">
+            <div class="search-box">
+              <span class="search-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg></span>
+              <input type="text" placeholder="Search features...">
+            </div>
+            <div class="filter-pills">
+              <button class="filter-pill active">All</button>
+              <button class="filter-pill">High score</button>
+              <button class="filter-pill">Needs work</button>
+            </div>
+            <div class="spacer"></div>
+            <button class="sort-dropdown">Sort: Score ▾</button>
+          </div>
+
+          <div class="insight-stats">
+            <div class="insight-stat">
+              <div class="insight-stat-value green">4</div>
+              <div class="insight-stat-label">Features</div>
+            </div>
+            <div class="insight-stat">
+              <div class="insight-stat-value">12</div>
+              <div class="insight-stat-label">Files</div>
+            </div>
+            <div class="insight-stat">
+              <div class="insight-stat-value amber">74.5</div>
+              <div class="insight-stat-label">Avg Score</div>
+            </div>
+          </div>
+
+          <div class="insight-section-label">Detected Features</div>
+          <div class="insight-list" id="features-list">
+            ${featuresData.map(f => `
+              <div class="insight-card" data-id="${f.id}">
+                <div class="insight-card-main">
+                  <div class="insight-score ${f.color}">
+                    <span class="insight-score-num">${f.score}</span>
+                  </div>
+                  <div class="insight-card-content">
+                    <div class="insight-card-title">${f.name}</div>
+                    <div class="insight-card-desc">${f.desc}</div>
+                    <div class="insight-card-meta">
+                      ${f.meta.map(m => `<span class="insight-meta-badge">${m}</span>`).join('')}
+                    </div>
+                  </div>
+                  <span class="insight-card-expand">+</span>
+                </div>
+                <div class="insight-expanded">
+                  <div class="expanded-section">
+                    <div class="expanded-section-label">Analysis</div>
+                    <p class="annotation-prose">${f.prose}</p>
+                  </div>
+                  <div class="expanded-section">
+                    <div class="expanded-section-label">Files</div>
+                    <div class="insight-file-list">
+                      ${f.files.map(file => `<div class="insight-file-item">→ ${file}</div>`).join('')}
+                    </div>
+                  </div>
+                  <div class="card-conversation"></div>
+                  <div class="expanded-input">
+                    <span class="arrow">→</span>
+                    <input type="text" placeholder="Ask about this feature...">
+                  </div>
+                  <div class="expanded-actions">
+                    ${f.actions.map(a => `
+                      <button class="action-btn ${a.primary ? 'primary' : 'secondary'}">
+                        <kbd>${a.key}</kbd> ${a.label}
+                      </button>
+                    `).join('')}
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function getTechDebtContent() {
+      return `
+        <div class="insight-container">
+          <div class="insight-header">
+            <h2 class="insight-title">Tech Debt Overview</h2>
+            <p class="insight-summary">Improvement areas sorted by severity. Fix issues with a single click.</p>
+          </div>
+          
+          <div class="insight-toolbar">
+            <div class="search-box">
+              <span class="search-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg></span>
+              <input type="text" placeholder="Search files...">
+            </div>
+            <div class="filter-pills">
+              <button class="filter-pill active">All</button>
+              <button class="filter-pill">Critical</button>
+              <button class="filter-pill">Moderate</button>
+            </div>
+            <div class="spacer"></div>
+            <button class="sort-dropdown">Sort: Severity ▾</button>
+          </div>
+
+          <div class="insight-stats">
+            <div class="insight-stat">
+              <div class="insight-stat-value amber">5.0</div>
+              <div class="insight-stat-label">Avg Score</div>
+            </div>
+            <div class="insight-stat">
+              <div class="insight-stat-value red">2</div>
+              <div class="insight-stat-label">Critical</div>
+            </div>
+            <div class="insight-stat">
+              <div class="insight-stat-value">4</div>
+              <div class="insight-stat-label">Files</div>
+            </div>
+          </div>
+
+          <div class="insight-section-label">Files by Tech Debt</div>
+          <div class="insight-list" id="tech-debt-list">
+            ${techDebtData.map(f => `
+              <div class="insight-card" data-id="${f.id}">
+                <div class="insight-card-main">
+                  <div class="insight-score ${f.color}">
+                    <span class="insight-score-num">${f.score}</span><span class="insight-score-unit">/10</span>
+                  </div>
+                  <div class="insight-card-content">
+                    <div class="insight-card-title" style="font-family: var(--font-mono); font-size: 13px;">${f.name}</div>
+                    <div class="insight-card-desc">${f.desc}</div>
+                    <div class="insight-card-meta">
+                      ${f.issues.map(i => `<span class="insight-meta-badge">${i}</span>`).join('')}
+                    </div>
+                  </div>
+                  <span class="insight-card-expand">+</span>
+                </div>
+                <div class="insight-expanded">
+                  <div class="expanded-section">
+                    <div class="expanded-section-label">Analysis</div>
+                    <p class="annotation-prose">${f.prose}</p>
+                  </div>
+                  <div class="card-conversation"></div>
+                  <div class="expanded-input">
+                    <span class="arrow">→</span>
+                    <input type="text" placeholder="Ask about this issue...">
+                  </div>
+                  <div class="expanded-actions">
+                    ${f.actions.map(a => `
+                      <button class="action-btn ${a.primary ? 'primary' : 'secondary'}">
+                        <kbd>${a.key}</kbd> ${a.label}
+                      </button>
+                    `).join('')}
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function getTestsContent() {
+      return `
+        <div class="insight-container">
+          <div class="insight-header">
+            <h2 class="insight-title">Test Coverage</h2>
+            <p class="insight-summary">Coverage by directory. Expand to see test files and add missing tests.</p>
+          </div>
+          
+          <div class="insight-toolbar">
+            <div class="search-box">
+              <span class="search-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg></span>
+              <input type="text" placeholder="Search...">
+            </div>
+            <div class="filter-pills">
+              <button class="filter-pill active">All</button>
+              <button class="filter-pill">Low coverage</button>
+            </div>
+            <div class="spacer"></div>
+            <button class="sort-dropdown">Sort: Coverage ▾</button>
+          </div>
+
+          <div class="insight-stats">
+            <div class="insight-stat">
+              <div class="insight-stat-value green">71%</div>
+              <div class="insight-stat-label">Overall</div>
+            </div>
+            <div class="insight-stat">
+              <div class="insight-stat-value">93</div>
+              <div class="insight-stat-label">Tests</div>
+            </div>
+            <div class="insight-stat">
+              <div class="insight-stat-value green">4</div>
+              <div class="insight-stat-label">Suites</div>
+            </div>
+          </div>
+
+          <div class="insight-section-label">Coverage by Directory</div>
+          <div class="insight-list" id="tests-list">
+            ${testsData.map(t => `
+              <div class="insight-card" data-id="${t.name.replace('/', '')}">
+                <div class="insight-card-main">
+                  <div class="insight-score ${t.color}">
+                    <span class="insight-score-num">${t.score}</span><span class="insight-score-unit">%</span>
+                  </div>
+                  <div class="insight-card-content">
+                    <div class="insight-card-title" style="font-family: var(--font-mono);">${t.name}</div>
+                    <div class="insight-card-desc">${t.tests} tests, ${t.coverage} line coverage</div>
+                    <div class="insight-card-meta">
+                      <span class="insight-meta-badge">${t.desc.split('.')[0]}</span>
+                    </div>
+                  </div>
+                  <span class="insight-card-expand">+</span>
+                </div>
+                <div class="insight-expanded">
+                  <div class="expanded-section">
+                    <div class="expanded-section-label">Details</div>
+                    <p class="annotation-prose">${t.desc}</p>
+                  </div>
+                  <div class="expanded-section">
+                    <div class="expanded-section-label">Test Files</div>
+                    <div class="insight-file-list">
+                      ${t.files.map(file => `<div class="insight-file-item">→ ${file}</div>`).join('')}
+                    </div>
+                  </div>
+                  <div class="card-conversation"></div>
+                  <div class="expanded-input">
+                    <span class="arrow">→</span>
+                    <input type="text" placeholder="Ask about coverage...">
+                  </div>
+                  <div class="expanded-actions">
+                    <button class="action-btn primary">
+                      <kbd>G</kbd> Generate tests
+                    </button>
+                    <button class="action-btn secondary">
+                      <kbd>R</kbd> Run tests
+                    </button>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    // ===========================================
+    // CHAT SIMULATION
+    // ===========================================
+    function clearChat() {
+      document.getElementById('chat-messages').innerHTML = '';
+    }
+
+    function typeInChat(text, speed = 50) {
+      return new Promise(resolve => {
+        const input = document.getElementById('chat-input');
+        let i = 0;
+        input.value = '';
+        
+        function typeChar() {
+          if (i < text.length) {
+            input.value += text[i];
+            i++;
+            setTimeout(typeChar, speed);
+          } else {
+            resolve();
+          }
+        }
+        typeChar();
+      });
+    }
+
+    function addQuery(text) {
+      clearChat();
+      const container = document.getElementById('chat-messages');
+      const exchange = document.createElement('div');
+      exchange.className = 'exchange';
+      exchange.innerHTML = `
+        <div class="query">
+          <span class="query-arrow">→</span>
+          <span class="query-text">${text}</span>
+        </div>
+        <div class="thinking">
+          <div class="thinking-bar">
+            <div class="thinking-bar-fill"></div>
+          </div>
+          <span class="thinking-text">Thinking...</span>
+        </div>
+      `;
+      container.appendChild(exchange);
+      container.scrollTop = container.scrollHeight;
+      document.getElementById('chat-input').value = '';
+      return exchange;
+    }
+
+    function showResponse(exchange, headline, detail) {
+      return new Promise(resolve => {
+        exchange.querySelector('.thinking').innerHTML = `
+          <div class="response">
+            <div class="response-headline">${headline}</div>
+            <div class="response-detail">${detail}</div>
+          </div>
+        `;
+        playSound('confirm');
+        setTimeout(resolve, 500);
+      });
+    }
+
+    function addAnnotationCard(filePath, color, headerText, prose, actions) {
+      const container = document.getElementById('chat-messages');
+      const card = document.createElement('div');
+      card.className = `annotation-card ${color}`;
+      card.id = 'pending-edit';
+      
+      const tickerItems = ['refactor', 'improve', 'fix', 'update'];
+      const tickerHTML = tickerItems.map(t => `<span>${t}</span>`).join('') + 
+                         tickerItems.map(t => `<span>${t}</span>`).join('');
+      
+      card.innerHTML = `
+        <div class="annotation-left">
+          <div class="annotation-header">
+            <span class="header-key">${headerText.charAt(0)}</span>
+            ${headerText}
+          </div>
+          <div class="stat-number">1<sup>file</sup></div>
+          <div class="stat-ticker">
+            <div class="ticker-inner">${tickerHTML}</div>
+          </div>
+        </div>
+        <div class="annotation-right">
+          <div class="annotation-path">${filePath}</div>
+          <div class="annotation-prose">${prose}</div>
+          <div class="annotation-actions">
+            ${actions.map(a => `
+              <button class="action-btn ${a.primary ? 'primary' : 'secondary'}">
+                <kbd>${a.key}</kbd> ${a.label}
+              </button>
+            `).join('')}
+          </div>
+          <div class="annotation-input">
+            <span class="input-arrow">→</span>
+            <input type="text" class="card-input-field" placeholder="Ask about this change...">
+            <span class="input-hint"><kbd>↵</kbd></span>
+          </div>
+        </div>
+      `;
+      container.appendChild(card);
+      container.scrollTop = container.scrollHeight;
+      playSound('cursor');
+      return card;
+    }
+
+    function applyEdit(card) {
+      return new Promise(resolve => {
+        card.classList.add('applied');
+        card.querySelector('.annotation-actions').innerHTML = `
+          <div class="applied-indicator"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Applied</div>
+        `;
+        playSound('confirm');
+        setTimeout(resolve, 500);
+      });
+    }
+
+    // ===========================================
+    // DEMO SEQUENCE
+    // ===========================================
+    async function runDemo() {
+      if (demoRunning) return;
+      demoRunning = true;
+      
+      const playBtn = document.getElementById('play-demo-btn');
+      playBtn.textContent = '⏸ Pause';
+      playBtn.classList.add('active');
+      
+      // Reset state
+      switchTab('editor');
+      clearChat();
+      hideNarration();
+      hideStatus();
+      
+      // Delay helper
+      const wait = (ms) => new Promise(r => { 
+        const t = setTimeout(r, ms); 
+        demoTimeouts.push(t);
+      });
+      
+      try {
+        // Scene 1: Welcome
+        await wait(500);
+        await showNarration('<em>Lattice</em> — AI-powered codebase intelligence', 3500);
+        await wait(1000);
+        
+        // Scene 2: Chat query
+        await showNarration('Ask questions about your codebase in <em>natural language</em>', 3000);
+        await moveCursorToElement('#chat-input', 0, 0);
+        await clickCursor();
+        await wait(300);
+        await typeInChat('How does authentication work in this app?', 40);
+        await wait(500);
+        
+        const exchange = addQuery('How does authentication work in this app?');
+        await wait(2000);
+        await showResponse(exchange, 
+          'Authentication uses <em>OAuth 2.0</em> with JWT tokens',
+          'Users sign in via Google or GitHub. The session is managed in Redux and persisted to local storage.'
+        );
+        await wait(1500);
+        
+        // Scene 3: Features tab with cursor-tracking glow
+        await showNarration('Discover <em>what your code does</em> — click to explore', 3000);
+        await moveCursorToElement('#tab-features', -20, 0, 600);
+        await wait(200);
+        // Simulate cursor moving across tab
+        await moveCursorToElement('#tab-features', 20, 0, 400);
+        await clickCursor();
+        switchTab('features');
+        await wait(1500);
+        
+        // Scene 4: Expand a feature card
+        await showNarration('Cards expand to reveal <em>details and actions</em>', 2500);
+        await moveCursorToElement('.insight-card[data-id="auth"]', 0, 0);
+        await clickCursor();
+        document.querySelector('.insight-card[data-id="auth"]').classList.add('expanded');
+        expandedCards.add('auth');
+        await wait(2000);
+        
+        // Scene 5: Tech Debt with fix actions
+        await showNarration('Fix issues with <em>one click</em>', 3000);
+        await moveCursorToElement('#tab-tech-debt', 0, 0);
+        await clickCursor();
+        switchTab('tech-debt');
+        await wait(1500);
+        
+        // Expand critical file
+        await moveCursorToElement('.insight-card[data-id="formatters"]', 0, 0);
+        await clickCursor();
+        document.querySelector('.insight-card[data-id="formatters"]').classList.add('expanded');
+        await wait(1500);
+        
+        // Click fix button
+        await moveCursorToElement('.insight-card[data-id="formatters"] .action-btn.primary', 0, 0);
+        await clickCursor();
+        const fixBtn = document.querySelector('.insight-card[data-id="formatters"] .action-btn.primary');
+        fixBtn.classList.add('used');
+        showStatus('Adding types...', 0);
+        await wait(300);
+        updateStatusProgress(50);
+        await wait(500);
+        updateStatusProgress(100);
+        await wait(300);
+        showStatusSuccess('Types added');
+        await wait(1500);
+        
+        // Scene 6: Back to editor for AI edit
+        hideStatus();
+        await moveCursorToElement('#tab-editor', 0, 0);
+        await clickCursor();
+        switchTab('editor');
+        await wait(500);
+        
+        await moveCursorToElement('#chat-input', 0, 0);
+        await clickCursor();
+        await wait(300);
+        await typeInChat('Refactor auth to use next-auth', 40);
+        await wait(500);
+        
+        const exchange2 = addQuery('Refactor auth to use next-auth');
+        await wait(1500);
+        await showResponse(exchange2,
+          "I'll migrate to <em>next-auth</em>",
+          'This will update the OAuth flow and improve security.'
+        );
+        await wait(500);
+        
+        const editCard = addAnnotationCard(
+          'src/services/auth.ts',
+          'green',
+          'Edit',
+          'Replacing deprecated OAuth 1.0 patterns with <strong>next-auth</strong>. Zero breaking changes.',
+          [{ key: 'Y', label: 'Apply', primary: true }, { key: 'N', label: 'Reject', primary: false }]
+        );
+        await wait(1500);
+        
+        // Apply the edit
+        await moveCursorToElement('#pending-edit .action-btn.primary', 0, 0);
+        await clickCursor();
+        showStatus('Applying...', 0);
+        await wait(300);
+        updateStatusProgress(50);
+        await wait(500);
+        updateStatusProgress(100);
+        await wait(300);
+        
+        await applyEdit(editCard);
+        showStatusSuccess('Migration complete');
+        
+        await wait(2000);
+        
+        // Scene 7: Tests
+        hideStatus();
+        await showNarration('Track <em>test coverage</em> and generate missing tests', 3000);
+        await moveCursorToElement('#tab-tests', 0, 0);
+        await clickCursor();
+        switchTab('tests');
+        await wait(2500);
+        
+        // Scene 8: End
+        await showNarration('Lattice — <em>Understand</em>, <em>improve</em>, and <em>ship</em> faster', 4000);
+        await moveCursor(-50, -50, 500);
+        
+      } catch (e) {
+        console.log('Demo interrupted');
+      }
+      
+      demoRunning = false;
+      playBtn.textContent = '▶ Play Demo';
+      playBtn.classList.remove('active');
+    }
+
+    function stopDemo() {
+      demoTimeouts.forEach(t => clearTimeout(t));
+      demoTimeouts = [];
+      demoRunning = false;
+      document.getElementById('play-demo-btn').textContent = '▶ Play Demo';
+      document.getElementById('play-demo-btn').classList.remove('active');
+    }
+
+    function restartDemo() {
+      stopDemo();
+      switchTab('editor');
+      clearChat();
+      hideNarration();
+      hideStatus();
+      moveCursor(-50, -50, 100);
+    }
+
+    // ===========================================
+    // EVENT LISTENERS
+    // ===========================================
+    document.getElementById('play-demo-btn').addEventListener('click', () => {
+      if (demoRunning) {
+        stopDemo();
+      } else {
+        runDemo();
+      }
+    });
+
+    document.getElementById('restart-btn').addEventListener('click', restartDemo);
+    document.getElementById('sound-toggle').addEventListener('click', toggleSound);
+
+    // Tab clicks (for manual interaction)
+    document.querySelectorAll('.nav-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        if (!demoRunning) {
+          switchTab(tab.dataset.tab);
+        }
+      });
+    });
+
+    // ===========================================
+    // INITIALIZE
+    // ===========================================
+    renderFileTree();
+    switchTab('editor');
+  </script>
+</body>
+</html>

@@ -1,0 +1,2337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lattice</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ===========================================
+       DESIGN TOKENS
+       =========================================== */
+    :root {
+      --bg-deep: #0a0a0a;
+      --bg-surface: #1a1a1a;
+      --bg-elevated: rgba(255, 255, 255, 0.02);
+      --bg-hover: rgba(255, 255, 255, 0.04);
+      --border-subtle: #2a2a2a;
+      --border-visible: rgba(255, 255, 255, 0.08);
+      --text-muted: #333;
+      --text-tertiary: #444;
+      --text-secondary: #555;
+      --text-prose: #666;
+      --text-primary: #888;
+      --text-bright: #999;
+      --text-white: #ccc;
+      --amber: #fbbf24;
+      --blue: #60a5fa;
+      --purple: #a78bfa;
+      --green: #4ade80;
+      --red: #f87171;
+      --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'SF Mono', Menlo, Monaco, monospace;
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg-deep);
+      color: #e5e5e5;
+      font-family: var(--font-family);
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ===========================================
+       ANIMATIONS
+       =========================================== */
+    @keyframes bodyFadeIn {
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes countUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+
+    @keyframes float {
+      0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+      10% { opacity: 0.5; }
+      90% { opacity: 0.5; }
+      100% { transform: translateY(-20px) translateX(var(--drift, 20px)); opacity: 0; }
+    }
+
+    @keyframes tickerScroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    @keyframes tickerScrollReverse {
+      0% { transform: translateX(-50%); }
+      100% { transform: translateX(0); }
+    }
+
+    @keyframes agentMsgIn {
+      from { opacity: 0; transform: translateY(10px); }
+    }
+
+    @keyframes conceptIn {
+      from { opacity: 0; transform: scale(0.9); }
+    }
+
+    @keyframes glowPulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(74, 222, 128, 0.2); }
+      50% { box-shadow: 0 0 40px rgba(74, 222, 128, 0.4); }
+    }
+
+    @keyframes numberReveal {
+      0% { opacity: 0; transform: scale(0.8) translateY(20px); }
+      60% { transform: scale(1.05) translateY(-5px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    @keyframes successGlow {
+      0%, 100% { box-shadow: 0 0 30px rgba(74, 222, 128, 0.2); }
+      50% { box-shadow: 0 0 60px rgba(74, 222, 128, 0.4); }
+    }
+
+    @keyframes cardReveal {
+      0% { opacity: 0; transform: translateY(20px) scale(0.95); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* ===========================================
+       SCREEN CONTAINERS
+       =========================================== */
+    .screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      z-index: 1;
+      transition: opacity 0.6s var(--ease-out-expo), visibility 0.6s;
+    }
+
+    .screen.active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      z-index: 10;
+    }
+
+    /* ===========================================
+       ANALYSIS SCREEN
+       =========================================== */
+    #analysis-screen {
+      background: var(--bg-surface);
+    }
+
+    .analysis-status {
+      position: fixed;
+      top: 48px;
+      left: 64px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 0.6rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--text-tertiary);
+    }
+
+    .status-headline {
+      font-size: 1.15rem;
+      font-weight: 300;
+      color: var(--text-prose);
+      max-width: 360px;
+      line-height: 1.5;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: all 0.5s var(--ease-out-expo);
+    }
+
+    .status-headline.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .status-headline em {
+      color: var(--text-bright);
+      font-style: normal;
+    }
+
+    .ascii-progress {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      opacity: 0;
+      transition: opacity 0.5s var(--ease-out-expo) 0.1s;
+    }
+
+    .ascii-progress.visible {
+      opacity: 1;
+    }
+
+    .ascii-bar {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      letter-spacing: 0.02em;
+    }
+
+    .ascii-bar .filled {
+      color: var(--text-primary);
+    }
+
+    .ascii-status {
+      font-size: 0.65rem;
+      color: var(--text-tertiary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .current-file {
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+    }
+
+    /* Stream Ticker Background */
+    .stream-ticker {
+      position: fixed;
+      top: 50%;
+      left: 0;
+      right: 0;
+      transform: translateY(-50%);
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+      height: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 24px;
+      opacity: 0;
+      transition: opacity 1s ease;
+      mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+    }
+
+    .stream-ticker.visible {
+      opacity: 1;
+    }
+
+    .ticker-row {
+      display: flex;
+      white-space: nowrap;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.06);
+      letter-spacing: 0.02em;
+    }
+
+    .ticker-content {
+      display: flex;
+      animation: tickerScroll var(--duration, 60s) linear infinite;
+    }
+
+    .ticker-row.reverse .ticker-content {
+      animation-name: tickerScrollReverse;
+    }
+
+    .ticker-item {
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ticker-item .agent-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      opacity: 0.5;
+    }
+
+    .ticker-item.agent-1 .agent-dot { background: var(--purple); }
+    .ticker-item.agent-2 .agent-dot { background: var(--blue); }
+    .ticker-item.agent-3 .agent-dot { background: var(--green); }
+
+    /* Center Agent Messages */
+    .agent-center {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 420px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 50;
+    }
+
+    .agent-message {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 18px;
+      background: rgba(20, 20, 20, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      animation: agentMsgIn 0.4s var(--ease-out-expo);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .agent-message.fading {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+
+    .agent-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 6px;
+      font-size: 0.6rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .agent-badge .dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+    }
+
+    .agent-message.agent-1 .agent-badge .dot { background: var(--purple); }
+    .agent-message.agent-2 .agent-badge .dot { background: var(--blue); }
+    .agent-message.agent-3 .agent-badge .dot { background: var(--green); }
+
+    .agent-text {
+      font-size: 0.82rem;
+      color: var(--text-prose);
+      line-height: 1.5;
+    }
+
+    .agent-text code {
+      background: rgba(255, 255, 255, 0.04);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 0.9em;
+      color: var(--text-primary);
+    }
+
+    .agent-text .highlight {
+      color: var(--text-bright);
+    }
+
+    /* Inbox Area */
+    .inbox-area {
+      position: fixed;
+      top: 48px;
+      right: 64px;
+      width: 340px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 200;
+    }
+
+    .inbox-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 4px 8px;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: all 0.4s var(--ease-out-expo);
+    }
+
+    .inbox-header.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .inbox-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .inbox-label {
+      font-size: 0.55rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-tertiary);
+    }
+
+    .inbox-count {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.6rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    /* Inbox cards removed - these styles moved to editor insight cards */
+
+    /* Concepts Bar */
+    .concepts-bar {
+      position: fixed;
+      bottom: 48px;
+      right: 64px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .concepts-bar.visible {
+      opacity: 1;
+    }
+
+    .concepts-label {
+      font-size: 0.55rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .concepts-list {
+      display: flex;
+      gap: 8px;
+    }
+
+    .concept-tag {
+      padding: 6px 14px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      animation: conceptIn 0.3s ease;
+    }
+
+    /* Hint Bar */
+    .hint-bar {
+      position: fixed;
+      bottom: 48px;
+      left: 64px;
+      display: flex;
+      gap: 24px;
+      font-size: 0.6rem;
+      color: var(--text-muted);
+    }
+
+    .hint-bar kbd {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 3px 8px;
+      border-radius: 4px;
+      margin-right: 5px;
+      color: var(--text-tertiary);
+    }
+
+    /* Play Demo Button */
+    .play-demo-btn {
+      position: fixed;
+      bottom: 48px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 14px 32px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      color: var(--text-bright);
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.25s var(--ease-out-expo);
+      z-index: 300;
+    }
+
+    .play-demo-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.15);
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    .play-demo-btn kbd {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 4px 10px;
+      border-radius: 5px;
+      margin-right: 10px;
+      font-size: 0.75rem;
+    }
+
+    .play-demo-btn.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Ambient Particles */
+    .ambient-particle {
+      position: fixed;
+      width: 2px;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: float 30s linear infinite;
+    }
+
+    /* Particle Container */
+    .particles-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    /* Glow effect for dashboard elements */
+    .dash-insight::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .dash-insight.warning::after {
+      box-shadow: 0 0 30px rgba(251, 191, 36, 0.15);
+    }
+
+    .dash-insight.blue::after {
+      box-shadow: 0 0 30px rgba(96, 165, 250, 0.15);
+    }
+
+    .dash-insight.success::after {
+      box-shadow: 0 0 30px rgba(74, 222, 128, 0.15);
+    }
+
+    .dash-insight.primary::after {
+      box-shadow: 0 0 30px rgba(167, 139, 250, 0.15);
+    }
+
+    .dash-insight:hover::after {
+      opacity: 1;
+    }
+
+    /* Counter animation class */
+    .counting {
+      display: inline-block;
+    }
+
+    /* ===========================================
+       DASHBOARD SCREEN - TEXT-BASED REPORT
+       =========================================== */
+    #dashboard-screen {
+      background: var(--bg-deep);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .report-container {
+      max-width: 700px;
+      width: 100%;
+      animation: fadeIn 0.6s var(--ease-out-expo);
+    }
+
+    .report-document {
+      padding: 0 32px;
+    }
+
+    .report-header {
+      margin-bottom: 48px;
+    }
+
+    .report-logo {
+      font-size: 0.55rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--text-tertiary);
+      margin-bottom: 12px;
+    }
+
+    .report-title {
+      font-size: 2.2rem;
+      font-weight: 200;
+      color: var(--text-white);
+      letter-spacing: -0.02em;
+    }
+
+    /* Analysis Text - L5ttice Typography */
+    .analysis-text {
+      font-size: 1.1rem;
+      line-height: 1.85;
+      font-weight: 300;
+      letter-spacing: 0.01em;
+      color: #b0b0b0;
+      margin-bottom: 24px;
+    }
+
+    .analysis-text .highlight {
+      color: #ffffff;
+      font-weight: 400;
+    }
+
+    .analysis-text .highlight.green {
+      color: var(--green);
+      text-shadow: 0 0 20px rgba(74, 222, 128, 0.3);
+    }
+
+    .analysis-text .highlight.amber {
+      color: var(--amber);
+      text-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+    }
+
+    /* Report Badges */
+    .report-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 32px 0;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 400;
+      cursor: pointer;
+      transition: all 0.2s var(--ease-out-expo);
+    }
+
+    .badge:hover {
+      transform: translateY(-2px);
+    }
+
+    .badge-key {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+      padding: 3px 7px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      line-height: 1;
+    }
+
+    .badge.warning {
+      background: rgba(251, 191, 36, 0.12);
+      border: 1px solid rgba(251, 191, 36, 0.25);
+      color: #fde68a;
+    }
+    .badge.warning .badge-key { background: rgba(251, 191, 36, 0.25); color: #fbbf24; }
+
+    .badge.blue {
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      color: #93c5fd;
+    }
+    .badge.blue .badge-key { background: rgba(59, 130, 246, 0.25); color: #60a5fa; }
+
+    .badge.success {
+      background: rgba(34, 197, 94, 0.12);
+      border: 1px solid rgba(34, 197, 94, 0.25);
+      color: #86efac;
+    }
+    .badge.success .badge-key { background: rgba(34, 197, 94, 0.25); color: #4ade80; }
+
+    .badge.primary {
+      background: rgba(139, 92, 246, 0.15);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      color: #c4b5fd;
+    }
+    .badge.primary .badge-key { background: rgba(139, 92, 246, 0.3); color: #a78bfa; }
+
+    /* Report Actions */
+    .report-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 48px;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 20px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s var(--ease-out-expo);
+    }
+
+    .action-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--border-visible);
+      transform: translateY(-2px);
+    }
+
+    .action-btn.primary {
+      background: rgba(74, 222, 128, 0.12);
+      border-color: rgba(74, 222, 128, 0.25);
+      color: var(--green);
+    }
+
+    .action-btn.primary:hover {
+      background: rgba(74, 222, 128, 0.2);
+      border-color: rgba(74, 222, 128, 0.4);
+    }
+
+    .action-btn kbd {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+    }
+
+    .action-btn.primary kbd {
+      background: rgba(74, 222, 128, 0.25);
+      color: var(--green);
+    }
+
+
+    /* ===========================================
+       EDITOR SCREEN
+       =========================================== */
+    #editor-screen {
+      background: var(--bg-deep);
+    }
+
+    .app {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-bar {
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      height: 48px;
+      background: var(--bg-deep);
+      border-bottom: 1px solid var(--border-subtle);
+      gap: 4px;
+    }
+
+    .nav-tab {
+      position: relative;
+      padding: 10px 16px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 0.72rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: color 0.2s var(--ease-out-expo);
+      overflow: hidden;
+    }
+
+    .nav-tab:hover {
+      color: var(--text-primary);
+    }
+
+    .nav-tab.active {
+      color: var(--text-white);
+    }
+
+    /* Cursor-following glow underscore */
+    .nav-tab::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      left: var(--glow-x, 50%);
+      transform: translateX(-50%);
+      width: 0;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 1px;
+      box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.4);
+      transition: width 0.15s ease, opacity 0.15s ease;
+      opacity: 0;
+    }
+
+    .nav-tab:hover::after {
+      width: 24px;
+      opacity: 0.6;
+    }
+
+    .nav-tab.active::after {
+      width: 20px;
+      opacity: 1;
+      left: 50%;
+      box-shadow: 0 0 12px 3px rgba(255, 255, 255, 0.5);
+    }
+
+    .spacer { flex: 1; }
+
+    .calculate-btn {
+      padding: 8px 16px;
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      color: var(--text-secondary);
+      font-size: 0.7rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .calculate-btn:hover {
+      background: rgba(255, 255, 255, 0.02);
+      border-color: var(--border-visible);
+    }
+
+    .calculate-btn kbd {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 0.65rem;
+    }
+
+    .content {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    .panel {
+      border-right: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-deep);
+    }
+
+    .panel:last-child {
+      border-right: none;
+    }
+
+    .panel-left { width: 220px; }
+    .panel-center { flex: 1; }
+    .panel-right { width: 320px; }
+
+    .panel-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel-tab {
+      padding: 6px 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .panel-tab:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .panel-tab.active {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-primary);
+    }
+
+    .panel-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+    }
+
+    /* File Tree */
+    .file-item {
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: var(--text-primary);
+      transition: all 0.15s ease;
+    }
+
+    .file-item:hover {
+      background: rgba(255, 255, 255, 0.02);
+      transform: translateX(2px);
+    }
+
+    .file-item .icon {
+      color: var(--text-tertiary);
+    }
+
+    .file-folder { padding-left: 0; }
+    .file-folder + .folder-children { padding-left: 16px; }
+
+    .file-score {
+      margin-left: auto;
+      font-size: 0.65rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    .file-score.green { background: rgba(74, 222, 128, 0.15); color: var(--green); }
+    .file-score.amber { background: rgba(251, 191, 36, 0.15); color: var(--amber); }
+    .file-score.red { background: rgba(248, 113, 113, 0.15); color: var(--red); }
+
+    /* Code Display */
+    .code-container {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      line-height: 1.7;
+      padding: 16px;
+    }
+
+    .code-line {
+      display: flex;
+    }
+
+    .line-num {
+      width: 40px;
+      color: var(--text-tertiary);
+      text-align: right;
+      padding-right: 16px;
+      user-select: none;
+    }
+
+    .code-text {
+      color: var(--text-prose);
+    }
+
+    .code-text .keyword { color: #c678dd; }
+    .code-text .string { color: #98c379; }
+    .code-text .function { color: #61afef; }
+    .code-text .comment { color: var(--text-tertiary); }
+    .code-text .component { color: #e5c07b; }
+
+    /* Chat Panel */
+    .chat-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .chat-empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-tertiary);
+    }
+
+    .chat-empty-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+
+    .chat-empty-hint {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .chat-input-container {
+      padding: 16px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .chat-input {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+    }
+
+    .chat-input .arrow {
+      color: var(--text-tertiary);
+    }
+
+    .chat-input input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-primary);
+      font-size: 0.85rem;
+      font-family: var(--font-family);
+    }
+
+    .chat-input input::placeholder {
+      color: var(--text-tertiary);
+    }
+
+    .chat-input kbd {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      color: var(--text-tertiary);
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse 2s infinite;
+    }
+
+    
+    /* ============================================= */
+    /* INSIGHT CARDS (Features, Tech Debt, Tests)   */
+    /* ============================================= */
+    .insights-container {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      overflow-y: auto;
+      max-height: calc(100vh - 180px);
+    }
+    
+    .insight-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.2s var(--ease-out-expo);
+      padding: 24px 28px;
+    }
+    
+    .insight-card:hover {
+      border-color: var(--border-visible);
+      background: #151515;
+    }
+    
+    .insight-main {
+      display: flex;
+      align-items: flex-start;
+      gap: 24px;
+    }
+    
+    .insight-score {
+      min-width: 70px;
+      display: flex;
+      align-items: baseline;
+      gap: 2px;
+    }
+    
+    .insight-score-num {
+      font-size: 2.8rem;
+      font-weight: 300;
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+    
+    .insight-score-unit {
+      display: none; /* Hide /10 unit */
+    }
+    
+    /* Color-coded scores based on value */
+    .insight-score.score-high .insight-score-num { color: #4ade80; }
+    .insight-score.score-medium .insight-score-num { color: #fbbf24; }
+    .insight-score.score-low .insight-score-num { color: #ef4444; }
+    
+    /* Severity colors for tech debt */
+    .insight-score.severity-high .insight-score-num { color: #ef4444; }
+    .insight-score.severity-medium .insight-score-num { color: #fbbf24; }
+    .insight-score.severity-low .insight-score-num { color: #4ade80; }
+    
+    .insight-info {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .insight-title {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--text-white);
+      margin-bottom: 6px;
+    }
+    
+    .insight-description {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+    
+    .insight-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    
+    .insight-tag {
+      font-size: 0.75rem;
+      padding: 6px 12px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      color: var(--text-secondary);
+    }
+    
+    .insight-tag.status-needs-work {
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.3);
+    }
+    
+    .insight-meta {
+      display: none; /* Hide old meta, using tags instead */
+    }
+    
+    .insight-actions {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding-top: 8px;
+    }
+    
+    .insight-expand {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      color: var(--text-tertiary);
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.25s var(--ease-out-expo);
+    }
+    
+    .insight-expand:hover {
+      color: var(--text-primary);
+    }
+    
+    .insight-card.expanded .insight-expand {
+      transform: rotate(45deg);
+    }
+    
+    .insight-expanded {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      margin-top: 0;
+      transition: all 0.3s var(--ease-out-expo);
+    }
+    
+    .insight-card.expanded .insight-expanded {
+      max-height: 200px;
+      opacity: 1;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-subtle);
+    }
+    
+    .insight-file-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    
+    .insight-file-tag {
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      padding: 5px 10px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      border-radius: 5px;
+      color: var(--text-secondary);
+    }
+    
+    .insight-inline-chat {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+    }
+    
+    .insight-inline-chat .arrow {
+      color: var(--text-tertiary);
+      font-size: 0.85rem;
+    }
+    
+    .insight-inline-chat input {
+      flex: 1;
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      outline: none;
+    }
+    
+    .insight-inline-chat kbd {
+      font-size: 0.65rem;
+      padding: 3px 7px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      border-radius: 3px;
+      color: var(--text-tertiary);
+    }
+    
+    .insight-action-bar {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .insight-btn {
+      padding: 8px 14px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-visible);
+      border-radius: 6px;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .insight-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .insight-btn.secondary {
+      background: transparent;
+      border-color: var(--border-subtle);
+      color: var(--text-secondary);
+    }
+    
+    /* Test Summary */
+    .test-summary {
+      display: flex;
+      gap: 24px;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      margin-bottom: 12px;
+    }
+    
+    .test-stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .test-stat-value {
+      font-size: 1.8rem;
+      font-weight: 300;
+      letter-spacing: -0.02em;
+      color: var(--text-white);
+    }
+    
+    .test-stat-label {
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-tertiary);
+    }
+    
+    .test-coverage-bar {
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+    
+    .test-coverage-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981, #3b82f6);
+      border-radius: 2px;
+      transition: width 0.5s ease;
+    }
+    
+    /* Additional button styles */
+    .insight-action-bar {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    
+    .test-stat-value.failing { color: #ef4444; }
+    .test-missing .insight-score-num { color: var(--text-tertiary); }
+  </style>
+</head>
+<body>
+  <!-- ==========================================
+       ANALYSIS SCREEN (Landing Page)
+       ========================================== -->
+  <div class="screen active" id="analysis-screen">
+    <!-- Status Area (Top Left) -->
+    <div class="analysis-status">
+      <div class="logo">Lattice</div>
+      <div class="status-headline visible" id="status-headline">
+        Ready to analyze your codebase.
+      </div>
+      <div class="ascii-progress" id="ascii-progress">
+        <div class="ascii-bar" id="ascii-bar"></div>
+        <div class="ascii-status">
+          scanning <span class="current-file" id="current-file"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stream Ticker (Background) -->
+    <div class="stream-ticker" id="stream-ticker">
+      <div class="ticker-row" id="ticker-row-1" style="--duration: 80s;"></div>
+      <div class="ticker-row reverse" id="ticker-row-2" style="--duration: 70s;"></div>
+      <div class="ticker-row" id="ticker-row-3" style="--duration: 90s;"></div>
+    </div>
+
+    <!-- Agent Messages (Center) -->
+    <div class="agent-center" id="agent-center"></div>
+
+    <!-- Hidden inbox (kept for JS compatibility) -->
+    <div class="inbox-area" style="display: none;">
+      <div class="inbox-header" id="inbox-header"></div>
+      <div class="inbox-cards" id="inbox-cards"></div>
+      <span id="inbox-count" style="display:none;">0</span>
+    </div>
+
+    <!-- Concepts Bar (Bottom Right) -->
+    <div class="concepts-bar" id="concepts-bar">
+      <span class="concepts-label">Detected</span>
+      <div class="concepts-list" id="concepts-list"></div>
+    </div>
+
+    <!-- Hint Bar (Bottom Left) -->
+    <div class="hint-bar">
+      <span><kbd>Space</kbd> Skip</span>
+    </div>
+
+    <!-- Play Demo Button -->
+    <button class="play-demo-btn" id="play-demo-btn">
+      <kbd>Enter</kbd>
+      Begin Analysis
+    </button>
+  </div>
+
+  <!-- ==========================================
+       DASHBOARD SCREEN - Text-Based L5ttice Report
+       ========================================== -->
+  <div class="screen" id="dashboard-screen">
+    <div class="report-container">
+      <div class="report-document">
+        <!-- Header -->
+        <div class="report-header">
+          <div class="report-logo">Lattice</div>
+          <div class="report-title">Analysis Complete</div>
+        </div>
+        
+        <!-- Main Report Text -->
+        <p class="analysis-text">
+          Scanned <span class="highlight">47 files</span> across your React codebase. 
+          Overall health score is <span class="highlight green">78%</span>, which is above average for projects of this size.
+        </p>
+        
+        <p class="analysis-text">
+          Found <span class="highlight amber">14 issues</span> that could benefit from attention, 
+          including <span class="highlight">4 quick wins</span> that can be resolved automatically.
+        </p>
+        
+        <!-- Insights as badges -->
+        <div class="report-badges">
+          <div class="badge warning" data-key="1" id="btn-fragmentation">
+            <span class="badge-key">1</span>
+            Fragmentation: 0.73
+          </div>
+          <div class="badge blue" data-key="2" id="btn-coherence">
+            <span class="badge-key">2</span>
+            37 style conflicts
+          </div>
+          <div class="badge success" data-key="3" id="btn-opportunity">
+            <span class="badge-key">3</span>
+            70% drift reducible
+          </div>
+          <div class="badge primary" data-key="4" id="btn-performance">
+            <span class="badge-key">4</span>
+            12% bundle savings
+          </div>
+        </div>
+        
+        <p class="analysis-text" style="margin-top: 32px;">
+          <span class="highlight">14 redundant color definitions</span> could be unified into shared tokens. 
+          Duplicate patterns in Button, Form, and Card suggest opportunities for component extraction.
+        </p>
+        
+        <p class="analysis-text">
+          <span class="highlight">47 components</span> would auto-correct if you consolidate these patterns. 
+          Bundle analysis shows <span class="highlight">8 unused exports</span> contributing to unnecessary size.
+        </p>
+        
+        <!-- Action Buttons -->
+        <div class="report-actions">
+          <button class="action-btn primary" id="btn-editor">
+            <span>Open Editor</span>
+            <kbd>E</kbd>
+          </button>
+          <button class="action-btn" id="btn-features">
+            <span>Features</span>
+            <kbd>F</kbd>
+          </button>
+          <button class="action-btn" id="btn-tech-debt">
+            <span>Tech Debt</span>
+            <kbd>T</kbd>
+          </button>
+          <button class="action-btn" id="btn-tests">
+            <span>Tests</span>
+            <kbd>S</kbd>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       EDITOR SCREEN
+       ========================================== -->
+  <div class="screen" id="editor-screen">
+    <div class="app">
+      <nav class="nav-bar">
+        <button class="nav-tab active" id="tab-editor" data-tab="editor">Editor</button>
+        <button class="nav-tab" id="tab-features" data-tab="features">Features</button>
+        <button class="nav-tab" id="tab-tech-debt" data-tab="tech-debt">Tech Debt</button>
+        <button class="nav-tab" id="tab-tests" data-tab="tests">Tests</button>
+        <div class="spacer"></div>
+        <button class="calculate-btn">
+          <kbd>P</kbd>
+          Calculate
+        </button>
+      </nav>
+
+      <div class="content">
+        <!-- Left Panel: File Tree -->
+        <div class="panel panel-left">
+          <div class="panel-header">
+            <button class="panel-tab active">All Files</button>
+            <button class="panel-tab">App Code</button>
+          </div>
+          <div class="panel-content" id="file-tree"></div>
+        </div>
+
+        <!-- Center Panel: Code / Insights -->
+        <div class="panel panel-center">
+          <div class="panel-header" id="center-panel-header">
+            <button class="panel-tab active">App.tsx</button>
+            <button class="panel-tab">ChatPanel.tsx</button>
+          </div>
+          <div class="panel-content" id="center-content">
+            <div class="code-container" id="code-display"></div>
+          </div>
+        </div>
+
+        <!-- Right Panel: Chat -->
+        <div class="panel panel-right">
+          <div class="panel-header">
+            <div class="status-dot"></div>
+            <span style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); margin-left: 8px;">Agent Active</span>
+          </div>
+          <div class="chat-container">
+            <div class="chat-messages" id="chat-messages">
+              <div class="chat-empty">
+                <div class="chat-empty-label">Lattice Agent</div>
+                <div class="chat-empty-hint">Ask about your codebase...</div>
+              </div>
+            </div>
+            <div class="chat-input-container">
+              <div class="chat-input">
+                <span class="arrow">&#8594;</span>
+                <input type="text" placeholder="Ask about this codebase..." id="chat-input" readonly>
+                <kbd>&#8629;</kbd>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audio -->
+  <audio id="sound-startup" src="client/public/sounds/01 Startup.mp3" preload="auto"></audio>
+  <audio id="sound-cursor" src="client/public/sounds/05 SFX Cursor.mp3" preload="auto"></audio>
+  <audio id="sound-decide" src="client/public/sounds/06 SFX Decide.mp3" preload="auto"></audio>
+  <audio id="sound-cancel" src="client/public/sounds/03 SFX Cancel.mp3" preload="auto"></audio>
+  <audio id="sound-confirm" src="client/public/sounds/09 SFX System Ok.mp3" preload="auto"></audio>
+  <audio id="sound-category" src="client/public/sounds/04 SFX Category Decide.mp3" preload="auto"></audio>
+  <audio id="sound-option" src="client/public/sounds/07 SFX Option.mp3" preload="auto"></audio>
+
+  <script>
+    // ===========================================
+    // STATE
+    // ===========================================
+    let currentScreen = 'analysis';
+    let analysisRunning = false;
+    let analysisComplete = false;
+
+    // ===========================================
+    // DATA
+    // ===========================================
+    const analysisFiles = [
+      'package.json', 'tsconfig.json', 'src/index.tsx', 'src/App.tsx',
+      'src/components/ChatPanel.tsx', 'src/components/FilePanel.tsx',
+      'src/components/CodeEditor.tsx', 'src/services/auth.ts',
+      'src/services/api.ts', 'src/utils/formatters.ts', 'src/utils/session.ts',
+      'src/hooks/useTheme.ts', 'src/styles/theme.ts', 'src/components/Button.tsx',
+      'src/components/Card.tsx', 'src/components/Modal.tsx', 'src/components/Form.tsx'
+    ];
+
+    const streamDialogue = [
+      { agent: 1, text: 'scanning component tree...' },
+      { agent: 2, text: 'found 847 instances' },
+      { agent: 3, text: 'cross-referencing theme.ts' },
+      { agent: 1, text: 'duplicate color #3b82f6 detected' },
+      { agent: 2, text: 'checking coherence graph' },
+      { agent: 3, text: 'pattern match in Button.tsx' },
+      { agent: 1, text: 'should we flag this as critical?' },
+      { agent: 2, text: 'is this intentional or drift?' },
+      { agent: 3, text: 'want me to trace the origin?' },
+      { agent: 1, text: 'yes, confirmed - same base color' },
+      { agent: 2, text: 'looks like copy-paste drift' },
+      { agent: 3, text: 'no breaking changes if we merge' },
+      { agent: 1, text: 'the original is in theme.ts:47' },
+      { agent: 2, text: 'this one diverged 3 commits ago' },
+      { agent: 3, text: 'I see 4 more instances downstream' },
+      { agent: 1, text: 'interesting - hover state differs' },
+      { agent: 2, text: 'spacing is off by 2px here' },
+      { agent: 3, text: 'border-radius inconsistent' },
+      { agent: 1, text: 'flagging for review' },
+      { agent: 2, text: 'adding to coherence report' },
+      { agent: 3, text: 'queueing for batch fix' },
+      { agent: 1, text: 'calculating impact radius...' },
+      { agent: 2, text: 'building dependency graph' },
+      { agent: 3, text: 'preparing safe refactor' },
+    ];
+
+    const agentMessages = [
+      { agent: 1, text: 'Scanning component tree... found <span class="highlight">847 instances</span>' },
+      { agent: 2, text: 'Cross-referencing with <code>theme.ts</code>' },
+      { agent: 1, text: 'Duplicate color detected: <code>#3b82f6</code> in Button.tsx' },
+      { agent: 3, text: 'Checking coherence graph for patterns...' },
+      { agent: 2, text: 'Match confirmed. Adding to <span class="highlight">fragmentation index</span>' },
+      { agent: 1, text: 'Found spacing conflict in <code>FormInput.tsx:23</code>' },
+      { agent: 3, text: 'Analyzing bundle for unused exports...' },
+      { agent: 2, text: 'Token inheritance traced through 47 components' },
+      { agent: 1, text: 'Calculating projected impact...' },
+      { agent: 3, text: 'Tree-shaking analysis complete' },
+      { agent: 2, text: 'Generating actionable insights...' },
+    ];
+
+    const insightData = [
+      { type: 'warning', category: 'Fragmentation', title: 'Fragmentation index: <em>0.73</em>', summary: '14 redundant color definitions detected' },
+      { type: 'blue', category: 'Coherence', title: 'Found <em>37 style conflicts</em>', summary: 'Duplicate patterns in Button, Form, Card' },
+      { type: 'success', category: 'Opportunity', title: 'Potential <em>70% reduction</em> in drift', summary: '47 components would auto-correct' },
+      { type: 'primary', category: 'Performance', title: 'Bundle could be <em>12% smaller</em>', summary: 'Unused exports and duplicates detected' },
+    ];
+
+    const detectedConcepts = ['React', 'TypeScript', 'OAuth', 'Redux', 'JWT', 'REST API'];
+
+    const fileTree = [
+      { name: 'src', type: 'folder', children: [
+        { name: 'components', type: 'folder', children: [
+          { name: 'App.tsx', type: 'file', score: 8.4, scoreClass: 'green' },
+          { name: 'ChatPanel.tsx', type: 'file', score: 7.2, scoreClass: 'green' },
+          { name: 'FilePanel.tsx', type: 'file', score: 6.8, scoreClass: 'amber' },
+          { name: 'CodeEditor.tsx', type: 'file', score: 9.1, scoreClass: 'green' },
+        ]},
+        { name: 'utils', type: 'folder', children: [
+          { name: 'formatters.ts', type: 'file', score: 3.2, scoreClass: 'red' },
+          { name: 'validators.ts', type: 'file', score: 7.5, scoreClass: 'green' },
+        ]},
+        { name: 'services', type: 'folder', children: [
+          { name: 'auth.ts', type: 'file', score: 4.1, scoreClass: 'amber' },
+          { name: 'api.ts', type: 'file', score: 8.0, scoreClass: 'green' },
+        ]},
+      ]},
+      { name: 'package.json', type: 'file' },
+      { name: 'tsconfig.json', type: 'file' },
+    ];
+
+    const codeContent = `<div class="code-line"><span class="line-num">1</span><span class="code-text"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">'react'</span>;</span></div>
+<div class="code-line"><span class="line-num">2</span><span class="code-text"><span class="keyword">import</span> { useSelector } <span class="keyword">from</span> <span class="string">'react-redux'</span>;</span></div>
+<div class="code-line"><span class="line-num">3</span><span class="code-text"><span class="keyword">import</span> { ChatPanel } <span class="keyword">from</span> <span class="string">'./ChatPanel'</span>;</span></div>
+<div class="code-line"><span class="line-num">4</span><span class="code-text"></span></div>
+<div class="code-line"><span class="line-num">5</span><span class="code-text"><span class="comment">// Main application component</span></span></div>
+<div class="code-line"><span class="line-num">6</span><span class="code-text"><span class="keyword">export default function</span> <span class="function">App</span>() {</span></div>
+<div class="code-line"><span class="line-num">7</span><span class="code-text">  <span class="keyword">const</span> user = <span class="function">useSelector</span>(s => s.user);</span></div>
+<div class="code-line"><span class="line-num">8</span><span class="code-text">  <span class="keyword">const</span> project = <span class="function">useSelector</span>(s => s.project);</span></div>
+<div class="code-line"><span class="line-num">9</span><span class="code-text"></span></div>
+<div class="code-line"><span class="line-num">10</span><span class="code-text">  <span class="keyword">if</span> (!user) <span class="keyword">return</span> &lt;<span class="component">AuthPage</span> /&gt;;</span></div>
+<div class="code-line"><span class="line-num">11</span><span class="code-text"></span></div>
+<div class="code-line"><span class="line-num">12</span><span class="code-text">  <span class="keyword">return</span> (</span></div>
+<div class="code-line"><span class="line-num">13</span><span class="code-text">    &lt;<span class="component">ThemeProvider</span> theme=<span class="string">"dark"</span>&gt;</span></div>
+<div class="code-line"><span class="line-num">14</span><span class="code-text">      &lt;<span class="component">Layout</span>&gt;</span></div>
+<div class="code-line"><span class="line-num">15</span><span class="code-text">        &lt;<span class="component">ChatPanel</span> projectId={project.id} /&gt;</span></div>
+<div class="code-line"><span class="line-num">16</span><span class="code-text">      &lt;/<span class="component">Layout</span>&gt;</span></div>
+<div class="code-line"><span class="line-num">17</span><span class="code-text">    &lt;/<span class="component">ThemeProvider</span>&gt;</span></div>
+<div class="code-line"><span class="line-num">18</span><span class="code-text">  );</span></div>
+<div class="code-line"><span class="line-num">19</span><span class="code-text">}</span></div>`;
+
+    // Mock data for Features tab
+    const featuresData = [
+      { id: 1, name: 'User Authentication', score: 94, description: 'OAuth 2.0 with Google and GitHub providers, JWT session management', tags: ['OAuth 2.0', 'JWT'], files: ['auth.ts', 'session.ts', 'api.ts'] },
+      { id: 2, name: 'File Management', score: 87, description: 'Upload, preview, and organize files with drag-and-drop support', tags: ['Drag & Drop'], files: ['FilePanel.tsx', 'FileTree.tsx'] },
+      { id: 3, name: 'Real-time Collaboration', score: 72, description: 'WebSocket-based live editing with conflict resolution', tags: ['WebSocket', 'CRDT'], files: ['collab.ts', 'sync.ts', 'socket.ts'] },
+      { id: 4, name: 'Export API', score: 45, description: 'Export data in various formats, limited error handling', tags: ['Needs work'], files: ['export.ts'], status: 'needs-work' },
+    ];
+
+    // Mock data for Tech Debt tab
+    const techDebtData = [
+      { id: 1, severity: 'high', title: 'Inconsistent error handling', description: 'Error boundaries missing in 12 components', files: ['App.tsx', 'ChatPanel.tsx', 'FilePanel.tsx'], effort: '3h' },
+      { id: 2, severity: 'medium', title: 'Duplicate color definitions', description: '14 hex colors defined inline instead of using theme', files: ['Button.tsx', 'Card.tsx', 'Form.tsx'], effort: '1h' },
+      { id: 3, severity: 'high', title: 'Missing type definitions', description: 'Several functions have implicit any types', files: ['api.ts', 'formatters.ts'], effort: '2h' },
+      { id: 4, severity: 'low', title: 'Unused dependencies', description: '7 packages in package.json are not imported', files: ['package.json'], effort: '30m' },
+      { id: 5, severity: 'medium', title: 'Large bundle size', description: 'Code splitting could reduce initial load by 40%', files: ['App.tsx', 'index.tsx'], effort: '4h' },
+      { id: 6, severity: 'low', title: 'Inconsistent naming', description: 'Mix of camelCase and snake_case in utility functions', files: ['formatters.ts', 'validators.ts'], effort: '45m' },
+    ];
+
+    // Mock data for Tests tab
+    const testsData = [
+      { id: 1, file: 'auth.ts', coverage: 87, tests: 12, passing: 11, failing: 1, status: 'warning' },
+      { id: 2, file: 'api.ts', coverage: 92, tests: 8, passing: 8, failing: 0, status: 'success' },
+      { id: 3, file: 'App.tsx', coverage: 45, tests: 3, passing: 3, failing: 0, status: 'low' },
+      { id: 4, file: 'ChatPanel.tsx', coverage: 0, tests: 0, passing: 0, failing: 0, status: 'missing' },
+      { id: 5, file: 'formatters.ts', coverage: 100, tests: 15, passing: 15, failing: 0, status: 'success' },
+      { id: 6, file: 'validators.ts', coverage: 78, tests: 10, passing: 9, failing: 1, status: 'warning' },
+    ];
+
+    let currentTab = 'editor';
+
+    // ===========================================
+    // SOUND
+    // ===========================================
+    function playSound(name) {
+      const audio = document.getElementById(`sound-${name}`);
+      if (audio) {
+        const clone = audio.cloneNode();
+        clone.volume = 0.15;
+        clone.play().catch(() => {});
+        clone.onended = () => clone.remove();
+      }
+    }
+
+    // ===========================================
+    // SCREEN NAVIGATION
+    // ===========================================
+    function showScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(`${screenId}-screen`).classList.add('active');
+      currentScreen = screenId;
+    }
+
+    // ===========================================
+    // STREAM TICKER
+    // ===========================================
+    function initStreamTicker() {
+      const rows = [
+        document.getElementById('ticker-row-1'),
+        document.getElementById('ticker-row-2'),
+        document.getElementById('ticker-row-3'),
+      ];
+
+      rows.forEach((row, rowIndex) => {
+        const content = document.createElement('div');
+        content.className = 'ticker-content';
+        
+        // Double the content for seamless loop
+        for (let i = 0; i < 2; i++) {
+          streamDialogue.forEach(item => {
+            const tickerItem = document.createElement('span');
+            tickerItem.className = `ticker-item agent-${item.agent}`;
+            tickerItem.innerHTML = `<span class="agent-dot"></span>${item.text}`;
+            content.appendChild(tickerItem);
+          });
+        }
+        
+        row.appendChild(content);
+      });
+    }
+
+    // ===========================================
+    // ANALYSIS SEQUENCE
+    // ===========================================
+    const ANALYSIS_DURATION = 22000; // 22 seconds
+    const BAR_WIDTH = 20;
+    let analysisStartTime = null;
+    let analysisInterval = null;
+    let agentMessageIndex = 0;
+    let insightIndex = 0;
+
+    function updateAsciiBar(progress) {
+      const asciiBar = document.getElementById('ascii-bar');
+      const currentFile = document.getElementById('current-file');
+      const percent = Math.round(progress * 100);
+      const filled = Math.round(progress * BAR_WIDTH);
+      
+      const filledStr = '█'.repeat(filled);
+      const emptyStr = '░'.repeat(BAR_WIDTH - filled);
+      
+      asciiBar.innerHTML = `<span class="filled">${filledStr}</span>${emptyStr} ${percent}%`;
+      
+      const fileIndex = Math.floor(progress * analysisFiles.length);
+      if (fileIndex < analysisFiles.length) {
+        currentFile.textContent = analysisFiles[fileIndex];
+      }
+    }
+
+    function updateHeadline(progress) {
+      const headline = document.getElementById('status-headline');
+      const headlines = [
+        'Scanning file structure...',
+        'Analyzing dependencies...',
+        'Mapping component tree...',
+        'Detecting patterns...',
+        'Cross-referencing tokens...',
+        'Calculating surfaces...',
+        'Generating insights...',
+        'Finalizing analysis...',
+      ];
+      const idx = Math.min(Math.floor(progress * headlines.length), headlines.length - 1);
+      headline.innerHTML = headlines[idx];
+    }
+
+    async function addAgentMessage() {
+      if (agentMessageIndex >= agentMessages.length) return;
+      
+      const container = document.getElementById('agent-center');
+      const msg = agentMessages[agentMessageIndex];
+      agentMessageIndex++;
+      
+      // Remove old messages if too many
+      const messages = container.querySelectorAll('.agent-message');
+      if (messages.length >= 4) {
+        const oldest = messages[0];
+        oldest.classList.add('fading');
+        await new Promise(r => setTimeout(r, 300));
+        oldest.remove();
+      }
+      
+      const msgEl = document.createElement('div');
+      msgEl.className = `agent-message agent-${msg.agent}`;
+      msgEl.innerHTML = `
+        <div class="agent-badge"><span class="dot"></span>Agent ${msg.agent}</div>
+        <div class="agent-text">${msg.text}</div>
+      `;
+      container.appendChild(msgEl);
+    }
+
+    // Insight cards removed - inbox area no longer exists
+    function addInsight() {
+      // No-op - insights are shown in dashboard after analysis
+    }
+
+    function addConcept(concept) {
+      const tag = document.createElement('span');
+      tag.className = 'concept-tag';
+      tag.textContent = concept;
+      document.getElementById('concepts-list').appendChild(tag);
+    }
+
+    async function runAnalysis() {
+      if (analysisRunning) return;
+      analysisRunning = true;
+      analysisComplete = false;
+      
+      // Hide play button
+      document.getElementById('play-demo-btn').classList.add('hidden');
+      
+      // Show progress elements
+      document.getElementById('ascii-progress').classList.add('visible');
+      document.getElementById('stream-ticker').classList.add('visible');
+      
+      // Play startup sound
+      playSound('startup');
+      
+      analysisStartTime = Date.now();
+      
+      // Schedule agent messages with sounds
+      for (let i = 0; i < agentMessages.length; i++) {
+        setTimeout(() => {
+          addAgentMessage();
+          playSound('confirm');
+        }, 2000 + i * 1800);
+      }
+      
+      // Schedule concepts
+      setTimeout(() => {
+        document.getElementById('concepts-bar').classList.add('visible');
+        detectedConcepts.forEach((c, i) => setTimeout(() => addConcept(c), i * 400));
+      }, 8000);
+      
+      // Progress bar update
+      analysisInterval = setInterval(() => {
+        const elapsed = Date.now() - analysisStartTime;
+        const progress = Math.min(elapsed / ANALYSIS_DURATION, 1);
+        updateAsciiBar(progress);
+        updateHeadline(progress);
+        
+        if (progress >= 1) {
+          clearInterval(analysisInterval);
+          finishAnalysis();
+        }
+      }, 50);
+    }
+
+    function finishAnalysis() {
+      analysisComplete = true;
+      analysisRunning = false;
+      
+      // Transition to dashboard after a moment
+      setTimeout(() => {
+        showScreen('dashboard');
+        playSound('category');
+      }, 1000);
+    }
+
+    function skipAnalysis() {
+      if (analysisInterval) clearInterval(analysisInterval);
+      analysisComplete = true;
+      analysisRunning = false;
+      showScreen('dashboard');
+      playSound('category');
+    }
+
+    // ===========================================
+    // FILE TREE
+    // ===========================================
+    function renderFileTree() {
+      const container = document.getElementById('file-tree');
+      container.innerHTML = renderFileNode(fileTree);
+    }
+
+    function renderFileNode(items, depth = 0) {
+      return items.map(item => {
+        if (item.type === 'folder') {
+          return `
+            <div class="file-item file-folder" style="padding-left: ${depth * 16}px">
+              <span class="icon">▾</span> ${item.name}
+            </div>
+            <div class="folder-children">${renderFileNode(item.children || [], depth + 1)}</div>
+          `;
+        } else {
+          const scoreHtml = item.score ? 
+            `<span class="file-score ${item.scoreClass}">${item.score}</span>` : '';
+          return `
+            <div class="file-item" style="padding-left: ${depth * 16 + 20}px">
+              ${item.name} ${scoreHtml}
+            </div>
+          `;
+        }
+      }).join('');
+    }
+
+    // ===========================================
+    // TAB CONTENT RENDERING
+    // ===========================================
+    function renderTabContent(tabName) {
+      currentTab = tabName;
+      const centerContent = document.getElementById('center-content');
+      const centerHeader = document.getElementById('center-panel-header');
+      
+      if (tabName === 'editor') {
+        // Show code editor
+        centerHeader.innerHTML = `
+          <button class="panel-tab active">App.tsx</button>
+          <button class="panel-tab">ChatPanel.tsx</button>
+        `;
+        centerContent.innerHTML = `<div class="code-container" id="code-display">${codeContent}</div>`;
+      } else if (tabName === 'features') {
+        centerHeader.innerHTML = `
+          <span style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary);">
+            ${featuresData.length} Features Detected
+          </span>
+        `;
+        centerContent.innerHTML = renderFeaturesContent();
+      } else if (tabName === 'tech-debt') {
+        centerHeader.innerHTML = `
+          <span style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary);">
+            ${techDebtData.length} Issues Found
+          </span>
+        `;
+        centerContent.innerHTML = renderTechDebtContent();
+      } else if (tabName === 'tests') {
+        centerHeader.innerHTML = `
+          <span style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary);">
+            Test Coverage Overview
+          </span>
+        `;
+        centerContent.innerHTML = renderTestsContent();
+      }
+      
+      // Re-attach panel tab listeners
+      document.querySelectorAll('#center-panel-header .panel-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          const parent = tab.parentElement;
+          parent.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          playSound('option');
+        });
+      });
+      
+      // Re-attach card expand listeners
+      setupCardInteractions();
+    }
+    
+    function renderFeaturesContent() {
+      // Get score class based on value
+      const getScoreClass = (score) => {
+        if (score >= 80) return 'score-high';
+        if (score >= 60) return 'score-medium';
+        return 'score-low';
+      };
+      
+      return `
+        <div class="insights-container">
+          ${featuresData.map(f => `
+            <div class="insight-card" data-id="${f.id}">
+              <div class="insight-main">
+                <div class="insight-score ${getScoreClass(f.score)}">
+                  <span class="insight-score-num">${f.score}</span>
+                </div>
+                <div class="insight-info">
+                  <div class="insight-title">${f.name}</div>
+                  <div class="insight-description">${f.description}</div>
+                  <div class="insight-tags">
+                    ${(f.tags || []).map(tag => `<span class="insight-tag${tag === 'Needs work' ? ' status-needs-work' : ''}">${tag}</span>`).join('')}
+                    <span class="insight-tag">${f.files.length} file${f.files.length !== 1 ? 's' : ''}</span>
+                  </div>
+                </div>
+                <div class="insight-actions">
+                  <button class="insight-expand">+</button>
+                </div>
+              </div>
+              <div class="insight-expanded">
+                <div class="insight-file-list">
+                  ${f.files.map(file => `<span class="insight-file-tag">${file}</span>`).join('')}
+                </div>
+                <div class="insight-inline-chat">
+                  <span class="arrow">&#8594;</span>
+                  <input type="text" placeholder="Ask about this feature..." readonly>
+                  <kbd>&#8629;</kbd>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+    
+    function renderTechDebtContent() {
+      const severityOrder = { high: 1, medium: 2, low: 3 };
+      const sorted = [...techDebtData].sort((a, b) => severityOrder[a.severity] - severityOrder[b.severity]);
+      const severityLabels = { high: 'High', medium: 'Medium', low: 'Low' };
+      
+      return `
+        <div class="insights-container">
+          ${sorted.map(d => `
+            <div class="insight-card debt-${d.severity}" data-id="${d.id}">
+              <div class="insight-main">
+                <div class="insight-score severity-${d.severity}">
+                  <span class="insight-score-num">${severityLabels[d.severity]}</span>
+                </div>
+                <div class="insight-info">
+                  <div class="insight-title">${d.title}</div>
+                  <div class="insight-description">${d.description}</div>
+                  <div class="insight-tags">
+                    <span class="insight-tag">${d.effort} effort</span>
+                    <span class="insight-tag">${d.files.length} file${d.files.length !== 1 ? 's' : ''}</span>
+                  </div>
+                </div>
+                <div class="insight-actions">
+                  <button class="insight-expand">+</button>
+                </div>
+              </div>
+              <div class="insight-expanded">
+                <div class="insight-file-list">
+                  ${d.files.map(file => `<span class="insight-file-tag">${file}</span>`).join('')}
+                </div>
+                <div class="insight-action-bar">
+                  <button class="insight-btn">Fix Now</button>
+                  <button class="insight-btn secondary">Stage for Later</button>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+    
+    function renderTestsContent() {
+      // Get score class based on coverage
+      const getScoreClass = (coverage) => {
+        if (coverage >= 80) return 'score-high';
+        if (coverage >= 50) return 'score-medium';
+        return 'score-low';
+      };
+      
+      return `
+        <div class="insights-container">
+          <div class="test-summary">
+            <div class="test-stat">
+              <span class="test-stat-value">${Math.round(testsData.reduce((acc, t) => acc + t.coverage, 0) / testsData.length)}%</span>
+              <span class="test-stat-label">Avg Coverage</span>
+            </div>
+            <div class="test-stat">
+              <span class="test-stat-value">${testsData.reduce((acc, t) => acc + t.tests, 0)}</span>
+              <span class="test-stat-label">Total Tests</span>
+            </div>
+            <div class="test-stat">
+              <span class="test-stat-value failing">${testsData.reduce((acc, t) => acc + t.failing, 0)}</span>
+              <span class="test-stat-label">Failing</span>
+            </div>
+          </div>
+          ${testsData.map(t => `
+            <div class="insight-card test-${t.status}" data-id="${t.id}">
+              <div class="insight-main">
+                <div class="insight-score ${getScoreClass(t.coverage)}">
+                  <span class="insight-score-num">${t.coverage}</span>
+                </div>
+                <div class="insight-info">
+                  <div class="insight-title">${t.file}</div>
+                  <div class="insight-description">${t.tests} tests${t.failing > 0 ? `, ${t.failing} failing` : ', all passing'}</div>
+                  <div class="insight-tags">
+                    <span class="insight-tag">${t.passing} passing</span>
+                    ${t.failing > 0 ? `<span class="insight-tag status-needs-work">${t.failing} failing</span>` : ''}
+                  </div>
+                </div>
+                <div class="insight-actions">
+                  <button class="insight-expand">+</button>
+                </div>
+              </div>
+              <div class="insight-expanded">
+                <div class="test-coverage-bar">
+                  <div class="test-coverage-fill" style="width: ${t.coverage}%"></div>
+                </div>
+                <div class="insight-action-bar">
+                  <button class="insight-btn">Run Tests</button>
+                  <button class="insight-btn secondary">Generate Tests</button>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+    
+    function setupCardInteractions() {
+      document.querySelectorAll('.insight-card').forEach(card => {
+        const expandBtn = card.querySelector('.insight-expand');
+        if (expandBtn) {
+          expandBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isExpanded = card.classList.contains('expanded');
+            card.classList.toggle('expanded');
+            expandBtn.textContent = isExpanded ? '+' : '×';
+            playSound(isExpanded ? 'cancel' : 'category');
+          });
+        }
+      });
+    }
+
+    // ===========================================
+    // INIT
+    // ===========================================
+    function init() {
+      initStreamTicker();
+      renderFileTree();
+      document.getElementById('code-display').innerHTML = codeContent;
+      
+      // Event Listeners
+      document.getElementById('play-demo-btn').addEventListener('click', runAnalysis);
+      
+      document.getElementById('btn-editor').addEventListener('click', () => {
+        showScreen('editor');
+        playSound('decide');
+        // Switch to editor tab
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById('tab-editor').classList.add('active');
+        renderTabContent('editor');
+      });
+      
+      document.getElementById('btn-features').addEventListener('click', () => {
+        showScreen('editor');
+        playSound('decide');
+        // Switch to features tab
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById('tab-features').classList.add('active');
+        renderTabContent('features');
+      });
+      
+      document.getElementById('btn-tech-debt').addEventListener('click', () => {
+        showScreen('editor');
+        playSound('decide');
+        // Switch to tech debt tab
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById('tab-tech-debt').classList.add('active');
+        renderTabContent('tech-debt');
+      });
+      
+      document.getElementById('btn-tests').addEventListener('click', () => {
+        showScreen('editor');
+        playSound('decide');
+        // Switch to tests tab
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById('tab-tests').classList.add('active');
+        renderTabContent('tests');
+      });
+      
+      // Back button removed from editor view
+      
+      // Editor nav tabs with cursor-following glow
+      document.querySelectorAll('.nav-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          playSound('option');
+          const tabName = tab.getAttribute('data-tab');
+          if (tabName) {
+            renderTabContent(tabName);
+          }
+        });
+        
+        // Cursor-following glow effect
+        tab.addEventListener('mousemove', (e) => {
+          const rect = tab.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const percent = (x / rect.width) * 100;
+          tab.style.setProperty('--glow-x', `${percent}%`);
+        });
+        
+        tab.addEventListener('mouseleave', () => {
+          tab.style.setProperty('--glow-x', '50%');
+        });
+      });
+      
+      // File items
+      document.querySelectorAll('.file-item').forEach(item => {
+        item.addEventListener('click', () => {
+          playSound('cursor');
+        });
+      });
+      
+      // Panel tabs
+      document.querySelectorAll('.panel-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          const parent = tab.parentElement;
+          parent.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          playSound('option');
+        });
+      });
+      
+      // Bento insight tiles
+      document.querySelectorAll('.bento-insight').forEach(tile => {
+        tile.addEventListener('click', () => {
+          showScreen('editor');
+          playSound('decide');
+        });
+      });
+      
+      // Keyboard shortcuts
+      document.addEventListener('keydown', (e) => {
+        if (currentScreen === 'analysis') {
+          if (e.key === 'Enter' && !analysisRunning) {
+            runAnalysis();
+          } else if (e.key === ' ' && analysisRunning) {
+            e.preventDefault();
+            skipAnalysis();
+          }
+        } else if (currentScreen === 'dashboard') {
+          if (e.key === 'e' || e.key === 'E') {
+            showScreen('editor');
+            playSound('decide');
+          } else if (e.key === 'f' || e.key === 'F') {
+            showScreen('editor');
+            playSound('decide');
+          } else if (e.key === 't' || e.key === 'T') {
+            showScreen('editor');
+            playSound('decide');
+          } else if (e.key === 's' || e.key === 'S') {
+            showScreen('editor');
+            playSound('decide');
+          }
+        } else if (currentScreen === 'editor') {
+          if (e.key === 'Escape') {
+            showScreen('dashboard');
+            playSound('cancel');
+          }
+        }
+      });
+    }
+
+    // ===========================================
+    // AMBIENT PARTICLES
+    // ===========================================
+    function createParticles() {
+      const container = document.createElement('div');
+      container.className = 'particles-container';
+      document.getElementById('analysis-screen').appendChild(container);
+      
+      for (let i = 0; i < 30; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'ambient-particle';
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.animationDuration = `${20 + Math.random() * 20}s`;
+        particle.style.animationDelay = `${Math.random() * 20}s`;
+        particle.style.setProperty('--drift', `${(Math.random() - 0.5) * 100}px`);
+        container.appendChild(particle);
+      }
+    }
+
+    // ===========================================
+    // NUMBER COUNTER ANIMATION
+    // ===========================================
+    function animateCounters() {
+      // Animate main score
+      const mainScore = document.querySelector('.bento-score');
+      if (mainScore) {
+        animateSingleCounter(mainScore, 0);
+      }
+      
+      // Animate stat numbers
+      const statNums = document.querySelectorAll('.bento-stat-num');
+      statNums.forEach((counter, index) => {
+        animateSingleCounter(counter, 100 + index * 80);
+      });
+    }
+    
+    function animateSingleCounter(counter, delay) {
+      const finalValue = counter.textContent;
+      const numMatch = finalValue.match(/(\d+)/);
+      if (!numMatch) return;
+      
+      const targetNum = parseInt(numMatch[1]);
+      const suffix = finalValue.includes('%') ? '%' : '';
+      const unitHtml = suffix ? `<span class="unit">${suffix}</span>` : '';
+      
+      const duration = 800;
+      const startTime = Date.now();
+      
+      setTimeout(() => {
+        const animate = () => {
+          const elapsed = Date.now() - startTime - delay;
+          const progress = Math.min(elapsed / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          const currentNum = Math.round(targetNum * eased);
+          
+          counter.innerHTML = `${currentNum}${unitHtml}`;
+          
+          if (progress < 1) {
+            requestAnimationFrame(animate);
+          }
+        };
+        requestAnimationFrame(animate);
+      }, delay);
+    }
+
+    // Override dashboard screen transition to trigger animations
+    const originalShowScreen = showScreen;
+    showScreen = function(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(`${screenId}-screen`).classList.add('active');
+      currentScreen = screenId;
+      
+      if (screenId === 'dashboard') {
+        // Reset and trigger counter animations
+        animateCounters();
+      }
+    };
+
+    // Start
+    createParticles();
+    init();
+  </script>
+</body>
+</html>
