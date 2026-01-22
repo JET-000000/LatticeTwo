@@ -4038,7 +4038,7 @@
       { 
         id: 'auth', 
         name: 'User Authentication', 
-        score: 94, 
+        score: 9.4, 
         color: 'green',
         desc: 'OAuth 2.0 with Google and GitHub providers, JWT session management',
         files: ['src/services/auth.ts', 'src/utils/session.ts', 'src/components/AuthPage.tsx'],
@@ -4050,7 +4050,7 @@
       { 
         id: 'files', 
         name: 'File Management', 
-        score: 87, 
+        score: 8.7, 
         color: 'green',
         desc: 'Upload, preview, and organize files with drag-and-drop support',
         files: ['src/components/FilePanel.tsx', 'src/services/storage.ts'],
@@ -4062,7 +4062,7 @@
       { 
         id: 'realtime', 
         name: 'Real-time Collaboration', 
-        score: 72, 
+        score: 7.2, 
         color: 'amber',
         desc: 'WebSocket-based live editing with conflict resolution',
         files: ['src/services/websocket.ts', 'src/utils/crdt.ts', 'src/hooks/useCollaboration.ts'],
@@ -4074,7 +4074,7 @@
       { 
         id: 'export', 
         name: 'Export API', 
-        score: 45, 
+        score: 4.5, 
         color: 'red',
         desc: 'Export data in various formats, limited error handling',
         files: ['src/services/export.ts'],
@@ -5980,10 +5980,6 @@
       playBtn.textContent = 'Pause';
       playBtn.classList.add('active');
 
-      showScreen('editor');
-
-      switchTab('editor');
-      clearChat();
       hideNarration();
       hideStatus();
 
@@ -5992,13 +5988,66 @@
         demoTimeouts.push(t);
       });
 
+      const simulateKeyPress = (key) => {
+        document.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true }));
+      };
+
       try {
 
-        await wait(500);
-        await showNarration('<em>Lattice</em> — AI-powered codebase intelligence', 3500);
+        showScreen('dashboard');
+        await wait(800);
+        await showNarration('<em>Lattice</em> — AI-powered codebase intelligence', 3000);
+        await wait(1500);
+
+        await showNarration('Analysis complete — explore insights with <em>hotkeys</em>', 2500);
         await wait(1000);
 
-        await showNarration('Ask questions about your codebase in <em>natural language</em>', 3000);
+        await showNarration('Press <em>1</em> to explore fragmentation...', 2000);
+        await wait(800);
+        simulateKeyPress('1');
+        await wait(2500);
+
+        await showNarration('Press <em>2</em> to see the coherence graph...', 2000);
+        await wait(600);
+        simulateKeyPress('2');
+        await wait(2500);
+
+        await showNarration('Press <em>3</em> for performance insights...', 2000);
+        await wait(600);
+        simulateKeyPress('3');
+        await wait(2000);
+
+        simulateKeyPress('Escape');
+        await wait(500);
+
+        await showNarration('Jump into the <em>editor</em> to start working', 2500);
+        await moveCursorToElement('.report-action-btn#report-btn-editor', 0, 0);
+        await wait(400);
+        await clickCursor();
+        showScreen('editor');
+        switchTab('editor');
+        clearChat();
+        await wait(1000);
+
+        await showNarration('Stats cards show <em>coverage</em> and <em>quality</em> at a glance', 3000);
+        await wait(1500);
+
+        await showNarration('Press <em>1</em> to expand coverage details...', 2000);
+        await wait(600);
+        toggleStatCard('stat-coverage');
+        await wait(2500);
+
+        await showNarration('Press <em>2</em> for code quality insights...', 2000);
+        await wait(600);
+        toggleStatCard('stat-coverage');
+        await wait(300);
+        toggleStatCard('stat-quality');
+        await wait(2500);
+
+        toggleStatCard('stat-quality');
+        await wait(500);
+
+        await showNarration('Ask questions in <em>natural language</em>', 2500);
         await moveCursorToElement('#chat-input', 0, 0);
         await clickCursor();
         await wait(300);
@@ -6011,34 +6060,30 @@
           'Authentication uses <em>OAuth 2.0</em> with JWT tokens',
           'Users sign in via Google or GitHub. The session is managed in Redux and persisted to local storage.'
         );
-        await wait(1500);
+        await wait(2000);
 
-        await showNarration('Discover <em>what your code does</em> — click to explore', 3000);
-        await moveCursorToElement('#tab-features', -20, 0, 600);
-        await wait(200);
-
-        await moveCursorToElement('#tab-features', 20, 0, 400);
+        await showNarration('Explore <em>features</em> detected in your codebase', 2500);
+        await moveCursorToElement('#tab-features', 0, 0);
         await clickCursor();
         switchTab('features');
         await wait(1500);
 
-        await showNarration('Cards expand to reveal <em>details and actions</em>', 2500);
         await moveCursorToElement('.insight-card[data-id="auth"]', 0, 0);
         await clickCursor();
         document.querySelector('.insight-card[data-id="auth"]').classList.add('expanded');
         expandedCards.add('auth');
         await wait(2000);
 
-        await showNarration('Fix issues with <em>one click</em>', 3000);
+        await showNarration('Fix <em>tech debt</em> with one click', 2500);
         await moveCursorToElement('#tab-tech-debt', 0, 0);
         await clickCursor();
         switchTab('tech-debt');
-        await wait(1500);
+        await wait(1200);
 
         await moveCursorToElement('.insight-card[data-id="formatters"]', 0, 0);
         await clickCursor();
         document.querySelector('.insight-card[data-id="formatters"]').classList.add('expanded');
-        await wait(1500);
+        await wait(1200);
 
         await moveCursorToElement('.insight-card[data-id="formatters"] .action-btn.primary', 0, 0);
         await clickCursor();
@@ -6047,61 +6092,34 @@
         showStatus('Adding types...', 0);
         await wait(300);
         updateStatusProgress(50);
-        await wait(500);
+        await wait(400);
         updateStatusProgress(100);
         await wait(300);
         showStatusSuccess('Types added');
         await wait(1500);
-
         hideStatus();
-        await moveCursorToElement('#tab-editor', 0, 0);
+
+        await showNarration('Watch <em>automated fixes</em> in real-time', 2500);
+        await moveCursorToElement('#tab-activity', 0, 0);
         await clickCursor();
-        switchTab('editor');
-        await wait(500);
-
-        await moveCursorToElement('#chat-input', 0, 0);
-        await clickCursor();
-        await wait(300);
-        await typeInChat('Refactor auth to use next-auth', 40);
-        await wait(500);
-
-        const exchange2 = addQuery('Refactor auth to use next-auth');
-        await wait(1500);
-        await showResponse(exchange2,
-          "I'll migrate to <em>next-auth</em>",
-          'This will update the OAuth flow and improve security.'
-        );
-        await wait(500);
-
-        const editCard = addAnnotationCard(
-          'src/services/auth.ts',
-          'green',
-          'Edit',
-          'Replacing deprecated OAuth 1.0 patterns with <strong>next-auth</strong>. Zero breaking changes.',
-          [{ key: 'Y', label: 'Apply', primary: true }, { key: 'N', label: 'Reject', primary: false }]
-        );
-        await wait(1500);
-
-        await moveCursorToElement('#pending-edit .action-btn.primary', 0, 0);
-        await clickCursor();
-        showStatus('Applying...', 0);
-        await wait(300);
-        updateStatusProgress(50);
-        await wait(500);
-        updateStatusProgress(100);
-        await wait(300);
-
-        await applyEdit(editCard);
-        showStatusSuccess('Migration complete');
-
+        switchTab('activity');
         await wait(2000);
 
-        hideStatus();
-        await showNarration('Track <em>test coverage</em> and generate missing tests', 3000);
+        await showNarration('Tasks run in parallel — <em>expand</em> to see details', 2500);
+        await wait(500);
+        const firstTask = document.querySelector('.activity-task');
+        if (firstTask) {
+          await moveCursorToElement('.activity-task', 0, 0);
+          await clickCursor();
+          firstTask.classList.add('expanded');
+          await wait(2500);
+        }
+
+        await showNarration('Track <em>test coverage</em> and generate missing tests', 2500);
         await moveCursorToElement('#tab-tests', 0, 0);
         await clickCursor();
         switchTab('tests');
-        await wait(2500);
+        await wait(2000);
 
         await showNarration('Lattice — <em>Understand</em>, <em>improve</em>, and <em>ship</em> faster', 4000);
         await moveCursor(-50, -50, 500);
