@@ -2499,137 +2499,6 @@
       border-radius: 3px;
     }
 
-    .chat-user-message {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 8px 0;
-      animation: fadeIn 0.3s ease;
-    }
-
-    .chat-user-message .user-arrow {
-      color: #666;
-      font-size: 0.9rem;
-      flex-shrink: 0;
-    }
-
-    .chat-user-message .user-text {
-      color: #aaa;
-      font-size: 0.95rem;
-      font-weight: 300;
-      line-height: 1.5;
-    }
-
-    .chat-thinking {
-      padding: 16px 0 8px 24px;
-      animation: fadeIn 0.3s ease;
-    }
-
-    .thinking-dots {
-      display: flex;
-      gap: 4px;
-    }
-
-    .thinking-dots span {
-      width: 6px;
-      height: 6px;
-      background: #444;
-      border-radius: 50%;
-      animation: dotPulse 1.4s ease-in-out infinite;
-    }
-
-    .thinking-dots span:nth-child(2) { animation-delay: 0.2s; }
-    .thinking-dots span:nth-child(3) { animation-delay: 0.4s; }
-
-    @keyframes dotPulse {
-      0%, 80%, 100% { opacity: 0.3; transform: scale(1); }
-      40% { opacity: 1; transform: scale(1.2); }
-    }
-
-    .chat-ai-response {
-      padding: 16px 0 12px 24px;
-      animation: fadeIn 0.4s ease;
-    }
-
-    .chat-ai-response .response-headline {
-      color: #e0e0e0;
-      font-size: 1rem;
-      font-weight: 500;
-      margin-bottom: 10px;
-      letter-spacing: 0.02em;
-    }
-
-    .chat-ai-response .response-detail {
-      color: #888;
-      font-size: 0.9rem;
-      font-weight: 300;
-      line-height: 1.7;
-      margin-bottom: 14px;
-    }
-
-    .chat-ai-response .response-detail .highlight {
-      color: #fff;
-      font-weight: 400;
-    }
-
-    .chat-ai-response .response-detail .code-ref {
-      color: #7dd3fc;
-      font-family: 'SF Mono', 'Fira Code', monospace;
-      font-size: 0.85em;
-      background: rgba(125, 211, 252, 0.08);
-      padding: 2px 6px;
-      border-radius: 4px;
-    }
-
-    .response-actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .response-action-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 12px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 6px;
-      color: #888;
-      font-size: 0.8rem;
-      font-weight: 400;
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
-
-    .response-action-btn:hover {
-      background: rgba(255, 255, 255, 0.08);
-      color: #ccc;
-      border-color: rgba(255, 255, 255, 0.12);
-    }
-
-    .response-action-btn.primary {
-      background: rgba(74, 222, 128, 0.1);
-      border-color: rgba(74, 222, 128, 0.2);
-      color: #4ade80;
-    }
-
-    .response-action-btn.primary:hover {
-      background: rgba(74, 222, 128, 0.18);
-      border-color: rgba(74, 222, 128, 0.3);
-    }
-
-    .response-action-btn kbd {
-      background: rgba(255, 255, 255, 0.08);
-      padding: 2px 5px;
-      border-radius: 3px;
-      font-size: 0.7rem;
-      font-weight: 600;
-    }
-
-    .response-action-btn.primary kbd {
-      background: rgba(74, 222, 128, 0.2);
-    }
 
     .insight-container {
       padding: 32px 40px;
@@ -7041,36 +6910,20 @@
 
     const aiResponses = [
       {
-        headline: "Pattern Analysis Complete",
-        detail: `I've traced the data flow through your component hierarchy. The <span class="highlight">useCallback</span> dependency array in <span class="code-ref">Dashboard.tsx:47</span> is missing <span class="highlight">filterState</span>, causing stale closures on rapid filter changes. This cascades into 3 downstream effects.`,
-        actions: [
-          { key: 'F', label: 'Fix dependency', primary: true },
-          { key: 'S', label: 'Show cascade' }
-        ]
+        headline: "Found <em>3 stale closures</em> in your component tree",
+        detail: "The useCallback in Dashboard.tsx:47 is missing filterState, causing re-renders on rapid filter changes. I can fix the dependency array and memoize the downstream effects."
       },
       {
-        headline: "Semantic Drift Detected", 
-        detail: `Cross-referencing your <span class="highlight">Button</span> variants against the design tokens reveals <span class="highlight">7 color overrides</span> that bypass your theme system. Most appear in <span class="code-ref">legacy/</span> components. Consolidating would reduce your CSS surface by ~340 lines.`,
-        actions: [
-          { key: 'C', label: 'Consolidate', primary: true },
-          { key: 'M', label: 'Map overrides' }
-        ]
+        headline: "Detected <em>7 color overrides</em> bypassing your theme",
+        detail: "Most appear in legacy/ components. Consolidating these into your design tokens would reduce CSS surface by ~340 lines and improve consistency."
       },
       {
-        headline: "Architectural Insight",
-        detail: `Your <span class="highlight">API layer</span> follows a consistent pattern except for <span class="code-ref">services/auth.ts</span> which mixes concerns. Extracting the token refresh logic into a dedicated interceptor would align with your existing patterns and improve testability.`,
-        actions: [
-          { key: 'R', label: 'Refactor', primary: true },
-          { key: 'D', label: 'Show diff' }
-        ]
+        headline: "Your auth layer has <em>mixed concerns</em>",
+        detail: "services/auth.ts handles both token refresh and user state. Extracting the refresh logic into a dedicated interceptor would align with your existing patterns."
       },
       {
-        headline: "Performance Opportunity",
-        detail: `Profiling your render cycles shows <span class="highlight">UserCard</span> re-renders 12x per navigation. The culprit: an inline object in <span class="code-ref">Layout.tsx:89</span> creates a new reference each render. Memoizing drops this to 2x.`,
-        actions: [
-          { key: 'O', label: 'Optimize', primary: true },
-          { key: 'P', label: 'Profile view' }
-        ]
+        headline: "UserCard re-renders <em>12x per navigation</em>",
+        detail: "The culprit is an inline object in Layout.tsx:89 creating new references each render. Wrapping it in useMemo drops this to 2x."
       }
     ];
 
@@ -7078,57 +6931,51 @@
 
     function addUserMessage(text) {
       const container = document.getElementById('chat-messages');
-
+      
       const emptyState = container.querySelector('.chat-empty');
       if (emptyState) emptyState.remove();
 
       const userMsg = document.createElement('div');
-      userMsg.className = 'chat-user-message';
+      userMsg.className = 'query';
       userMsg.innerHTML = `
-        <span class="user-arrow">→</span>
-        <span class="user-text">${text}</span>
+        <span class="query-arrow">→</span>
+        <span class="query-text">${text}</span>
       `;
       container.appendChild(userMsg);
       container.scrollTop = container.scrollHeight;
 
       const thinking = document.createElement('div');
-      thinking.className = 'chat-thinking';
+      thinking.className = 'thinking';
       thinking.innerHTML = `
-        <div class="thinking-dots">
-          <span></span><span></span><span></span>
+        <div class="thinking-bar">
+          <div class="thinking-bar-fill"></div>
         </div>
+        <span class="thinking-text">Thinking...</span>
       `;
       container.appendChild(thinking);
       container.scrollTop = container.scrollHeight;
 
       setTimeout(() => {
-        thinking.remove();
-        addAIResponse();
+        thinking.innerHTML = '';
+        thinking.appendChild(createResponseElement());
+        container.scrollTop = container.scrollHeight;
+        playSound('confirm');
       }, 1200 + Math.random() * 800);
     }
 
-    function addAIResponse() {
-      const container = document.getElementById('chat-messages');
+    function createResponseElement() {
       const response = aiResponses[responseIndex % aiResponses.length];
       responseIndex++;
-
-      const aiMsg = document.createElement('div');
-      aiMsg.className = 'chat-ai-response';
-      aiMsg.innerHTML = `
+      
+      const div = document.createElement('div');
+      div.className = 'response';
+      div.innerHTML = `
         <div class="response-headline">${response.headline}</div>
         <div class="response-detail">${response.detail}</div>
-        <div class="response-actions">
-          ${response.actions.map(a => `
-            <button class="response-action-btn ${a.primary ? 'primary' : ''}">
-              <kbd>${a.key}</kbd> ${a.label}
-            </button>
-          `).join('')}
-        </div>
       `;
-      container.appendChild(aiMsg);
-      container.scrollTop = container.scrollHeight;
-      playSound('confirm');
+      return div;
     }
+
 
     document.getElementById('chat-input').addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
