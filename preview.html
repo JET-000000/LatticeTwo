@@ -1429,6 +1429,7 @@
     }
 
     .fix-all-btn {
+      position: relative;
       display: inline-flex;
       align-items: center;
       gap: 8px;
@@ -1441,6 +1442,24 @@
       font-weight: 500;
       cursor: pointer;
       transition: all 0.25s var(--ease-out-expo);
+      overflow: hidden;
+    }
+
+    .fix-all-btn::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: var(--progress, 0%);
+      background: linear-gradient(90deg, rgba(74, 222, 128, 0.25), rgba(74, 222, 128, 0.15));
+      transition: width 0.3s ease;
+      z-index: 0;
+    }
+
+    .fix-all-btn > * {
+      position: relative;
+      z-index: 1;
     }
 
     .fix-all-btn:hover {
@@ -1448,6 +1467,26 @@
       border-color: rgba(74, 222, 128, 0.4);
       transform: translateY(-1px);
       box-shadow: 0 4px 20px rgba(74, 222, 128, 0.15);
+    }
+
+    .fix-all-btn.working {
+      pointer-events: none;
+      min-width: 140px;
+    }
+
+    .fix-all-btn.working::before {
+      animation: shimmer 1.5s ease infinite;
+    }
+
+    @keyframes shimmer {
+      0% { opacity: 0.8; }
+      50% { opacity: 1; }
+      100% { opacity: 0.8; }
+    }
+
+    .fix-all-btn.complete {
+      background: rgba(74, 222, 128, 0.2);
+      border-color: rgba(74, 222, 128, 0.5);
     }
 
     .fix-all-btn kbd {
@@ -1462,6 +1501,36 @@
       height: 6px;
       background: var(--green);
       border-radius: 50%;
+      animation: pulse 2s ease infinite;
+    }
+
+    .fix-all-btn .fix-text {
+      white-space: nowrap;
+    }
+
+    .fix-all-btn .fix-progress-text {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Activity Tab specific nav styling */
+    .nav-tab[data-tab="activity"] {
+      position: relative;
+    }
+
+    .nav-tab[data-tab="activity"] .activity-indicator {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 6px;
+      height: 6px;
+      background: var(--green);
+      border-radius: 50%;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .nav-tab[data-tab="activity"].has-activity .activity-indicator {
+      opacity: 1;
       animation: pulse 2s ease infinite;
     }
 
@@ -2502,6 +2571,263 @@
     }
 
     /* ===========================================
+       ACTIVITY VIEW (Agent Work Tab)
+       =========================================== */
+    .activity-view {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      background: var(--bg-deep);
+      padding: 24px;
+      gap: 24px;
+      overflow: hidden;
+    }
+
+    .activity-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .activity-title-area {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .activity-title {
+      font-size: 1.4rem;
+      font-weight: 200;
+      color: var(--text-white);
+      letter-spacing: -0.01em;
+    }
+
+    .activity-subtitle {
+      font-size: 0.72rem;
+      color: var(--text-tertiary);
+    }
+
+    .activity-stats {
+      display: flex;
+      gap: 24px;
+    }
+
+    .activity-stat {
+      text-align: right;
+    }
+
+    .activity-stat-value {
+      font-size: 1.8rem;
+      font-weight: 200;
+      color: var(--text-white);
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+    }
+
+    .activity-stat-value.green { color: var(--green); }
+    .activity-stat-value.amber { color: var(--amber); }
+
+    .activity-stat-label {
+      font-size: 0.6rem;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 4px;
+    }
+
+    /* Activity Progress Section */
+    .activity-progress {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      flex-shrink: 0;
+    }
+
+    .activity-progress-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .activity-progress-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.8rem;
+      color: var(--text-primary);
+    }
+
+    .activity-progress-title .working-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--green);
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+      animation: pulse 1.5s ease infinite;
+    }
+
+    .activity-progress-percent {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--green);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .activity-progress-bar {
+      height: 4px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .activity-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--green), rgba(74, 222, 128, 0.6));
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .activity-progress-detail {
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+    }
+
+    /* Activity Stream - Agent Messages */
+    .activity-stream {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      overflow-y: auto;
+      padding-right: 8px;
+      mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
+    }
+
+    .activity-stream::-webkit-scrollbar { width: 4px; }
+    .activity-stream::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.08); border-radius: 2px; }
+
+    .activity-item {
+      display: flex;
+      gap: 14px;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      animation: activityItemIn 0.4s var(--ease-out-expo);
+    }
+
+    @keyframes activityItemIn {
+      from { opacity: 0; transform: translateY(10px); }
+    }
+
+    .activity-item.complete {
+      border-color: rgba(74, 222, 128, 0.15);
+      background: rgba(74, 222, 128, 0.02);
+    }
+
+    .activity-item.in-progress {
+      border-color: rgba(251, 191, 36, 0.15);
+      background: rgba(251, 191, 36, 0.02);
+    }
+
+    .activity-item-icon {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 8px;
+      flex-shrink: 0;
+    }
+
+    .activity-item.complete .activity-item-icon {
+      background: rgba(74, 222, 128, 0.1);
+      color: var(--green);
+    }
+
+    .activity-item.in-progress .activity-item-icon {
+      background: rgba(251, 191, 36, 0.1);
+      color: var(--amber);
+    }
+
+    .activity-item-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .activity-item-title {
+      font-size: 0.8rem;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .activity-item-desc {
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+    }
+
+    .activity-item-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .activity-item-file {
+      font-size: 0.65rem;
+      font-family: var(--font-mono);
+      color: var(--text-tertiary);
+      background: rgba(255, 255, 255, 0.04);
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .activity-item-time {
+      font-size: 0.6rem;
+      color: var(--text-muted);
+    }
+
+    /* Empty State */
+    .activity-empty {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      color: var(--text-tertiary);
+    }
+
+    .activity-empty-icon {
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+    }
+
+    .activity-empty-text {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .activity-empty-hint {
+      font-size: 0.7rem;
+      color: var(--text-tertiary);
+    }
+
+    /* ===========================================
        DEMO CONTROLS
        =========================================== */
     .demo-controls {
@@ -2727,21 +3053,25 @@
       <button class="nav-tab" id="tab-features" data-tab="features">Features</button>
       <button class="nav-tab" id="tab-tech-debt" data-tab="tech-debt">Tech Debt</button>
       <button class="nav-tab" id="tab-tests" data-tab="tests">Tests</button>
+      <button class="nav-tab" id="tab-activity" data-tab="activity">
+        Activity
+        <span class="activity-indicator"></span>
+      </button>
       
       <!-- Command Bar: Project-wide stats and actions -->
       <div class="command-bar">
         <div class="command-stat success">
           <span>Health</span>
-          <span class="command-stat-value">78%</span>
+          <span class="command-stat-value" id="health-value">78%</span>
         </div>
         <div class="command-stat warning">
           <span>Issues</span>
-          <span class="command-stat-value">14</span>
+          <span class="command-stat-value" id="issues-value">14</span>
         </div>
         <button class="fix-all-btn" id="fix-all-btn">
-          <span class="pulse-dot"></span>
-          Fix All Issues
-          <kbd>F</kbd>
+          <span class="pulse-dot" id="fix-pulse"></span>
+          <span class="fix-text">Fix All Issues</span>
+          <kbd id="fix-kbd">F</kbd>
         </button>
       </div>
       
@@ -3445,9 +3775,121 @@
           setupSortDropdowns();
           setupScrollIndicators();
           break;
+        case 'activity':
+          panelCenter.innerHTML = getActivityContent();
+          break;
       }
       
       playSound('tab');
+    }
+
+    // ===========================================
+    // ACTIVITY STATE & DATA
+    // ===========================================
+    let activityItems = [];
+    let fixAllInProgress = false;
+
+    const fixActions = [
+      { title: 'Adding type annotations', file: 'src/utils/formatters.ts', desc: 'Adding explicit return types to 3 functions' },
+      { title: 'Adding error boundaries', file: 'src/components/App.tsx', desc: 'Wrapping component tree with ErrorBoundary' },
+      { title: 'Removing unused imports', file: 'src/services/api.ts', desc: 'Cleaned 4 unused imports' },
+      { title: 'Consolidating color tokens', file: 'src/styles/theme.ts', desc: 'Unified 14 redundant color definitions' },
+      { title: 'Adding null checks', file: 'src/hooks/useAuth.ts', desc: 'Added optional chaining to prevent runtime errors' },
+      { title: 'Updating deprecated APIs', file: 'src/services/auth.ts', desc: 'Migrated to new authentication patterns' },
+      { title: 'Fixing spacing inconsistencies', file: 'src/components/Button.tsx', desc: 'Applied consistent 8px grid spacing' },
+      { title: 'Adding missing tests', file: 'src/utils/validators.ts', desc: 'Generated 6 unit tests for edge cases' },
+      { title: 'Optimizing bundle', file: 'package.json', desc: 'Tree-shaking removed 12% of dead code' },
+      { title: 'Fixing accessibility', file: 'src/components/Form.tsx', desc: 'Added aria-labels to form inputs' },
+      { title: 'Updating dependencies', file: 'package.json', desc: 'Updated 3 packages with security fixes' },
+      { title: 'Extracting shared component', file: 'src/components/Card.tsx', desc: 'Created reusable CardBase component' },
+      { title: 'Adding JSDoc comments', file: 'src/services/api.ts', desc: 'Documented public API methods' },
+      { title: 'Fixing memory leak', file: 'src/hooks/useWebSocket.ts', desc: 'Added cleanup on component unmount' },
+    ];
+
+    function getActivityContent() {
+      if (activityItems.length === 0 && !fixAllInProgress) {
+        return `
+          <div class="activity-view">
+            <div class="activity-header">
+              <div class="activity-title-area">
+                <div class="activity-title">Agent Activity</div>
+                <div class="activity-subtitle">Real-time agent operations and fixes</div>
+              </div>
+            </div>
+            <div class="activity-empty">
+              <div class="activity-empty-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <circle cx="12" cy="12" r="10"/>
+                  <polyline points="12 6 12 12 16 14"/>
+                </svg>
+              </div>
+              <div class="activity-empty-text">No active operations</div>
+              <div class="activity-empty-hint">Click "Fix All Issues" to start automated fixes</div>
+            </div>
+          </div>
+        `;
+      }
+
+      const completedCount = activityItems.filter(i => i.status === 'complete').length;
+      const totalCount = fixAllInProgress ? fixActions.length : activityItems.length;
+      const progressPercent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+      const currentAction = activityItems.find(i => i.status === 'in-progress');
+
+      return `
+        <div class="activity-view">
+          <div class="activity-header">
+            <div class="activity-title-area">
+              <div class="activity-title">Fixing All Issues</div>
+              <div class="activity-subtitle">Automated code improvements in progress</div>
+            </div>
+            <div class="activity-stats">
+              <div class="activity-stat">
+                <div class="activity-stat-value green">${completedCount}</div>
+                <div class="activity-stat-label">Complete</div>
+              </div>
+              <div class="activity-stat">
+                <div class="activity-stat-value">${totalCount - completedCount}</div>
+                <div class="activity-stat-label">Remaining</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="activity-progress">
+            <div class="activity-progress-header">
+              <div class="activity-progress-title">
+                ${fixAllInProgress ? '<span class="working-dot"></span>' : ''}
+                <span>${fixAllInProgress ? 'Processing...' : 'Complete'}</span>
+              </div>
+              <div class="activity-progress-percent">${progressPercent}%</div>
+            </div>
+            <div class="activity-progress-bar">
+              <div class="activity-progress-fill" style="width: ${progressPercent}%"></div>
+            </div>
+            ${currentAction ? `<div class="activity-progress-detail">${currentAction.file}</div>` : ''}
+          </div>
+
+          <div class="activity-stream" id="activity-stream">
+            ${activityItems.map(item => `
+              <div class="activity-item ${item.status}">
+                <div class="activity-item-icon">
+                  ${item.status === 'complete' ? 
+                    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>' :
+                    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'
+                  }
+                </div>
+                <div class="activity-item-content">
+                  <div class="activity-item-title">${item.title}</div>
+                  <div class="activity-item-desc">${item.desc}</div>
+                  <div class="activity-item-meta">
+                    <span class="activity-item-file">${item.file}</span>
+                    ${item.time ? `<span class="activity-item-time">${item.time}</span>` : ''}
+                  </div>
+                </div>
+              </div>
+            `).reverse().join('')}
+          </div>
+        </div>
+      `;
     }
 
     // ===========================================
@@ -4627,42 +5069,103 @@
       });
     });
 
-    // Fix All button
+    // Fix All button - Enhanced with inline progress and Activity tab
     const fixAllBtn = document.getElementById('fix-all-btn');
     if (fixAllBtn) {
-      fixAllBtn.addEventListener('click', () => {
-        playSound('confirm');
+      fixAllBtn.addEventListener('click', async () => {
+        if (fixAllInProgress) return;
         
-        // Update button state
-        fixAllBtn.innerHTML = '<span>Fixing...</span>';
-        fixAllBtn.style.pointerEvents = 'none';
+        playSound('startup');
+        fixAllInProgress = true;
+        activityItems = [];
         
-        showStatus('Fixing all issues...', 0);
+        // Switch to Activity tab
+        switchTab('activity');
         
-        // Simulate progress
-        let progress = 0;
-        const progressInterval = setInterval(() => {
-          progress += Math.random() * 15;
-          if (progress >= 100) {
-            progress = 100;
-            clearInterval(progressInterval);
-            
-            // Update stats in command bar
-            document.querySelectorAll('.command-stat.warning .command-stat-value').forEach(el => {
-              el.textContent = '0';
-            });
-            document.querySelectorAll('.command-stat.success .command-stat-value').forEach(el => {
-              el.textContent = '94%';
-            });
-            
-            fixAllBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> All Fixed';
-            fixAllBtn.style.background = 'rgba(74, 222, 128, 0.2)';
-            
-            showStatusSuccess('14 issues fixed');
-            setTimeout(() => hideStatus(), 2500);
+        // Update button state with inline progress
+        fixAllBtn.classList.add('working');
+        const fixText = fixAllBtn.querySelector('.fix-text');
+        const fixKbd = fixAllBtn.querySelector('#fix-kbd');
+        const pulseDot = fixAllBtn.querySelector('#fix-pulse');
+        
+        if (pulseDot) pulseDot.style.display = 'none';
+        if (fixKbd) fixKbd.style.display = 'none';
+        if (fixText) fixText.innerHTML = '<span class="fix-progress-text">0%</span>';
+        
+        // Mark Activity tab as having activity
+        const activityTab = document.getElementById('tab-activity');
+        if (activityTab) activityTab.classList.add('has-activity');
+        
+        // Process each fix action
+        for (let i = 0; i < fixActions.length; i++) {
+          const action = fixActions[i];
+          const progress = ((i + 1) / fixActions.length) * 100;
+          
+          // Add item as in-progress
+          activityItems.push({
+            ...action,
+            status: 'in-progress',
+            time: 'now'
+          });
+          
+          // Update Activity view
+          const panelCenter = document.getElementById('panel-center');
+          if (currentTab === 'activity') {
+            panelCenter.innerHTML = getActivityContent();
           }
-          updateStatusProgress(progress);
-        }, 150);
+          
+          // Update inline progress
+          fixAllBtn.style.setProperty('--progress', `${progress}%`);
+          if (fixText) fixText.innerHTML = `<span class="fix-progress-text">${Math.round(progress)}%</span>`;
+          
+          // Play sound for each action
+          playSound('cursor');
+          
+          // Wait for "processing"
+          await new Promise(r => setTimeout(r, 800 + Math.random() * 600));
+          
+          // Mark as complete
+          activityItems[i].status = 'complete';
+          activityItems[i].time = 'just now';
+          
+          // Update view again
+          if (currentTab === 'activity') {
+            panelCenter.innerHTML = getActivityContent();
+          }
+          
+          playSound('confirm');
+        }
+        
+        // Complete!
+        fixAllInProgress = false;
+        fixAllBtn.classList.remove('working');
+        fixAllBtn.classList.add('complete');
+        
+        if (fixText) fixText.textContent = 'All Fixed';
+        if (pulseDot) {
+          pulseDot.style.display = '';
+          pulseDot.style.background = 'var(--green)';
+          pulseDot.style.animation = 'none';
+        }
+        
+        // Update stats in command bar
+        const issuesValue = document.getElementById('issues-value');
+        const healthValue = document.getElementById('health-value');
+        if (issuesValue) issuesValue.textContent = '0';
+        if (healthValue) healthValue.textContent = '94%';
+        
+        // Update Activity view one final time
+        if (currentTab === 'activity') {
+          const panelCenter = document.getElementById('panel-center');
+          panelCenter.innerHTML = getActivityContent();
+        }
+        
+        // Remove activity indicator after a delay
+        setTimeout(() => {
+          if (activityTab) activityTab.classList.remove('has-activity');
+        }, 3000);
+        
+        playSound('startup');
       });
     }
 
