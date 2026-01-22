@@ -4631,6 +4631,7 @@
       switch(tabName) {
         case 'editor':
           panelCenter.innerHTML = getEditorContent();
+          setupStatCardInteractions();
           break;
         case 'features':
           panelCenter.innerHTML = getFeaturesContent();
@@ -4788,8 +4789,11 @@
       }
     };
 
-    // Fix actions with agent dialogue, prose, and ticker keywords
-    const fixActions = [
+    // Fix actions - starts empty, populated by Fix All or hold-to-confirm
+    let fixActions = [];
+    
+    // Predefined fix actions for Fix All button
+    const predefinedFixActions = [
       { 
         title: 'Adding type annotations', 
         file: 'src/utils/formatters.ts', 
@@ -6350,29 +6354,30 @@
     // ===========================================
     // STAT CARD INTERACTIONS
     // ===========================================
-    document.querySelectorAll('.stat-card').forEach(card => {
-      card.addEventListener('click', (e) => {
-        // Don't toggle if clicking an action button or input
-        if (e.target.closest('.stat-action-btn') || e.target.closest('.stat-input')) return;
-        
-        const isExpanded = card.classList.contains('expanded');
-        
-        // Toggle this card independently (don't close others)
-        if (!isExpanded) {
-          card.classList.add('expanded');
-          playSound('tab');
-        } else {
-          card.classList.remove('expanded');
-          playSound('cancel');
-        }
+    function setupStatCardInteractions() {
+      document.querySelectorAll('.stat-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+          // Don't toggle if clicking an action button or input
+          if (e.target.closest('.stat-action-btn') || e.target.closest('.stat-input')) return;
+          
+          const isExpanded = card.classList.contains('expanded');
+          
+          // Toggle this card independently (don't close others)
+          if (!isExpanded) {
+            card.classList.add('expanded');
+            playSound('tab');
+          } else {
+            card.classList.remove('expanded');
+            playSound('cancel');
+          }
+        });
       });
-    });
 
-    // Stat action button clicks
-    document.querySelectorAll('.stat-action-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        playSound('confirm');
+      // Stat action button clicks
+      document.querySelectorAll('.stat-action-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          playSound('confirm');
         
         // Visual feedback
         btn.style.opacity = '0.5';
@@ -6386,6 +6391,7 @@
         setTimeout(() => hideStatus(), 2000);
       });
     });
+    }
 
     // Fix All button - Enhanced with inline progress and Activity tab
     const fixAllBtn = document.getElementById('fix-all-btn');
@@ -6395,6 +6401,9 @@
         
         playSound('startup');
         fixAllInProgress = true;
+        
+        // Populate fixActions from predefined actions
+        fixActions = [...predefinedFixActions];
         
         // Initialize all tasks as pending
         activityTaskStates = {};
@@ -6774,6 +6783,33 @@
       const inputField = div.querySelector('.annotation-input-field');
       if (inputField) {
         inputField.addEventListener('keydown', (e) => {
+          // Hotkeys 1, 2, 3 switch cards even when input is focused
+          if (e.key === '1' || e.key === '2' || e.key === '3') {
+            e.preventDefault();
+            if (e.key !== key) {
+              // Switch to different card
+              closeDashboardAnnotation(key, () => {
+                openDashboardAnnotation(e.key);
+              });
+            }
+            return;
+          }
+          
+          // Escape closes the card
+          if (e.key === 'Escape') {
+            e.preventDefault();
+            closeDashboardAnnotation(key);
+            return;
+          }
+          
+          // Backspace on empty input closes the card
+          if (e.key === 'Backspace' && inputField.value === '') {
+            e.preventDefault();
+            closeDashboardAnnotation(key);
+            return;
+          }
+          
+          // Enter submits the query
           if (e.key === 'Enter' && inputField.value.trim()) {
             e.preventDefault();
             handleDashboardCardQuery(key, inputField.value.trim(), div);
