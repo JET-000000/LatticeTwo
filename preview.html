@@ -817,6 +817,7 @@
       position: fixed;
       top: 16px;
       right: 16px;
+      pointer-events: none;
       display: flex;
       align-items: center;
       gap: 12px;
@@ -833,6 +834,7 @@
     .status-island.visible {
       opacity: 1;
       transform: translateY(0);
+      pointer-events: auto;
     }
 
     .status-island.success {
@@ -1433,11 +1435,11 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 8px 14px;
-      background: linear-gradient(135deg, rgba(74, 222, 128, 0.12), rgba(74, 222, 128, 0.06));
-      border: 1px solid rgba(74, 222, 128, 0.25);
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 8px;
-      color: var(--green);
+      color: var(--text-secondary);
       font-size: 0.7rem;
       font-weight: 500;
       cursor: pointer;
@@ -1452,7 +1454,7 @@
       top: 0;
       bottom: 0;
       width: var(--progress, 0%);
-      background: linear-gradient(90deg, rgba(74, 222, 128, 0.25), rgba(74, 222, 128, 0.15));
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
       transition: width 0.3s ease;
       z-index: 0;
     }
@@ -1463,18 +1465,22 @@
     }
 
     .fix-all-btn:hover {
-      background: linear-gradient(135deg, rgba(74, 222, 128, 0.2), rgba(74, 222, 128, 0.1));
-      border-color: rgba(74, 222, 128, 0.4);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
       transform: translateY(-1px);
-      box-shadow: 0 4px 20px rgba(74, 222, 128, 0.15);
+      color: var(--text-primary);
     }
 
     .fix-all-btn.working {
       pointer-events: none;
       min-width: 140px;
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.15);
+      color: var(--text-primary);
     }
 
     .fix-all-btn.working::before {
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.15));
       animation: shimmer 1.5s ease infinite;
     }
 
@@ -1485,23 +1491,17 @@
     }
 
     .fix-all-btn.complete {
-      background: rgba(74, 222, 128, 0.2);
-      border-color: rgba(74, 222, 128, 0.5);
+      background: rgba(74, 222, 128, 0.15);
+      border-color: rgba(74, 222, 128, 0.4);
+      color: var(--green);
     }
 
     .fix-all-btn kbd {
       padding: 3px 6px;
-      background: rgba(74, 222, 128, 0.2);
+      background: rgba(255, 255, 255, 0.08);
       border-radius: 4px;
       font-size: 0.6rem;
-    }
-
-    .fix-all-btn .pulse-dot {
-      width: 6px;
-      height: 6px;
-      background: var(--green);
-      border-radius: 50%;
-      animation: pulse 2s ease infinite;
+      color: var(--text-tertiary);
     }
 
     .fix-all-btn .fix-text {
@@ -3401,25 +3401,15 @@
       
       <!-- Command Bar: Project-wide stats and actions -->
       <div class="command-bar">
-        <div class="command-stat success">
-          <span>Health</span>
-          <span class="command-stat-value" id="health-value">78%</span>
-        </div>
         <div class="command-stat warning">
           <span>Issues</span>
           <span class="command-stat-value" id="issues-value">14</span>
         </div>
         <button class="fix-all-btn" id="fix-all-btn">
-          <span class="pulse-dot" id="fix-pulse"></span>
           <span class="fix-text">Fix All Issues</span>
           <kbd id="fix-kbd">F</kbd>
         </button>
       </div>
-      
-      <button class="calculate-btn" id="calculate-btn">
-        <kbd>P</kbd>
-        Calculate
-      </button>
     </nav>
 
     <!-- Main Content -->
@@ -4426,19 +4416,40 @@
     function setupTaskCardInteractions() {
       document.querySelectorAll('.activity-task').forEach(task => {
         const expandBtn = task.querySelector('.task-expand-btn');
+        const index = parseInt(task.dataset.taskIndex);
+        
+        // Handle click on expand button
         if (expandBtn) {
           expandBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            const index = parseInt(task.dataset.taskIndex);
-            const state = activityTaskStates[index];
-            if (state) {
-              state.expanded = !state.expanded;
-              task.classList.toggle('expanded', state.expanded || state.status === 'active');
-              playSound(state.expanded ? 'tab' : 'cancel');
-            }
+            toggleTaskExpansion(task, index);
           });
         }
+        
+        // Also handle click on the whole card for completed/pending tasks
+        task.addEventListener('click', (e) => {
+          // Don't toggle if clicking on input or button
+          if (e.target.closest('input') || e.target.closest('button')) return;
+          toggleTaskExpansion(task, index);
+        });
       });
+    }
+    
+    // Toggle task card expansion
+    function toggleTaskExpansion(taskEl, index) {
+      // Ensure state exists for this task
+      if (!activityTaskStates[index]) {
+        activityTaskStates[index] = { status: 'pending', progress: 0, expanded: false };
+      }
+      
+      const state = activityTaskStates[index];
+      const isCurrentlyExpanded = taskEl.classList.contains('expanded');
+      
+      // Toggle expansion
+      state.expanded = !isCurrentlyExpanded;
+      taskEl.classList.toggle('expanded', state.expanded);
+      
+      playSound(state.expanded ? 'tab' : 'cancel');
     }
 
     // Word-by-word typing with cursor (L5ttice style)
@@ -5684,9 +5695,7 @@
         fixAllBtn.classList.add('working');
         const fixText = fixAllBtn.querySelector('.fix-text');
         const fixKbd = fixAllBtn.querySelector('#fix-kbd');
-        const pulseDot = fixAllBtn.querySelector('#fix-pulse');
         
-        if (pulseDot) pulseDot.style.display = 'none';
         if (fixKbd) fixKbd.style.display = 'none';
         if (fixText) fixText.innerHTML = '<span class="fix-progress-text">0%</span>';
         
@@ -5810,11 +5819,6 @@
         
         if (fixText) fixText.textContent = 'All Fixed';
         fixAllBtn.style.setProperty('--progress', '100%');
-        // No pulsing animation for completion state
-        if (pulseDot) {
-          pulseDot.style.display = 'none';
-        }
-        
         // Update header to show complete state
         const workingDot = document.querySelector('.activity-progress-title .working-dot');
         const processingText = document.querySelector('.activity-progress-title span:last-child');
@@ -5940,6 +5944,12 @@
         if (e.key === 'Escape') {
           showScreen('dashboard');
           playSound('cancel');
+        } else if ((e.key === 'f' || e.key === 'F') && !e.target.closest('input, textarea')) {
+          // Trigger Fix All Issues
+          const fixAllBtn = document.getElementById('fix-all-btn');
+          if (fixAllBtn && !fixAllInProgress) {
+            fixAllBtn.click();
+          }
         }
       }
     });
