@@ -1466,12 +1466,26 @@
        STATS ROW (Enhanced L5ttice-style)
        =========================================== */
     .stats-row {
+      position: relative;
       display: flex;
-      gap: 12px;
-      padding: 16px 20px;
-      border-bottom: 1px solid var(--border-subtle);
+      justify-content: center;
+      gap: 16px;
+      padding: 20px 40px;
       flex-shrink: 0;
     }
+
+    /* Gradient fade lines above and below */
+    .stats-row::before,
+    .stats-row::after {
+      content: '';
+      position: absolute;
+      left: 15%;
+      right: 15%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.08) 20%, rgba(255, 255, 255, 0.08) 80%, transparent 100%);
+    }
+    .stats-row::before { top: 0; }
+    .stats-row::after { bottom: 0; }
 
     .stat-card {
       position: relative;
@@ -1482,6 +1496,8 @@
       cursor: pointer;
       transition: all 0.25s var(--ease-out-expo);
       overflow: hidden;
+      max-width: 280px;
+      flex: 1;
     }
 
     .stat-card::before {
@@ -2471,29 +2487,40 @@
     .chat-input {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 18px 24px;
-      border-top: 1px solid rgba(255, 255, 255, 0.04);
+      gap: 12px;
+      padding: 24px 28px;
       flex-shrink: 0;
       background: transparent;
+      position: relative;
+    }
+
+    /* Gradient fade line above input */
+    .chat-input::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 10%;
+      right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.06) 20%, rgba(255, 255, 255, 0.06) 80%, transparent 100%);
     }
 
     .chat-input .arrow {
-      color: #333;
-      font-size: 0.85rem;
+      color: #444;
+      font-size: 1rem;
       transition: color 0.15s ease;
     }
 
     .chat-input:focus-within .arrow {
-      color: #666;
+      color: #777;
     }
 
     .chat-input input {
       flex: 1;
       background: transparent;
       border: none;
-      color: #999;
-      font-size: 0.9rem;
+      color: #888;
+      font-size: 1rem;
       font-weight: 300;
       outline: none;
     }
@@ -2503,12 +2530,12 @@
     }
 
     .chat-input input::placeholder {
-      color: #333;
+      color: #444;
     }
 
     .chat-input .hint {
-      font-size: 0.6rem;
-      color: #333;
+      font-size: 0.65rem;
+      color: #444;
       opacity: 0;
       transition: opacity 0.15s ease;
     }
@@ -2519,7 +2546,7 @@
 
     .chat-input .hint kbd {
       background: rgba(255, 255, 255, 0.06);
-      padding: 2px 5px;
+      padding: 2px 6px;
       border-radius: 3px;
     }
 
