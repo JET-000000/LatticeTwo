@@ -6089,15 +6089,7 @@
         await clickCursor();
         const fixBtn = document.querySelector('.insight-card[data-id="formatters"] .action-btn.primary');
         fixBtn.classList.add('used');
-        showStatus('Adding types...', 0);
-        await wait(300);
-        updateStatusProgress(50);
-        await wait(400);
-        updateStatusProgress(100);
-        await wait(300);
-        showStatusSuccess('Types added');
-        await wait(1500);
-        hideStatus();
+        await wait(1000);
 
         await showNarration('Watch <em>automated fixes</em> in real-time', 2500);
         await moveCursorToElement('#tab-activity', 0, 0);
