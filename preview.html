@@ -2047,23 +2047,119 @@
       color: var(--text-primary);
     }
 
+    /* Sort dropdown container */
+    .sort-dropdown-container {
+      position: relative;
+    }
+
     .sort-dropdown {
       display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 6px 10px;
+      gap: 8px;
+      padding: 8px 12px;
       background: var(--bg-elevated);
       border: 1px solid var(--border-subtle);
-      border-radius: 6px;
+      border-radius: 8px;
       font-size: 11px;
+      font-weight: 400;
       color: var(--text-secondary);
       cursor: pointer;
-      transition: all 0.15s ease;
+      transition: all 0.2s ease;
     }
 
     .sort-dropdown:hover {
       background: var(--bg-hover);
+      border-color: var(--border-visible);
       color: var(--text-prose);
+    }
+
+    .sort-dropdown.active {
+      background: var(--bg-active);
+      border-color: var(--border-visible);
+      color: var(--text-primary);
+    }
+
+    .sort-icon {
+      display: flex;
+      align-items: flex-end;
+      gap: 2px;
+      height: 12px;
+    }
+
+    .sort-icon span {
+      display: block;
+      width: 3px;
+      background: currentColor;
+      border-radius: 1px;
+      transition: height 0.2s ease;
+    }
+
+    .sort-icon span:nth-child(1) { height: 12px; }
+    .sort-icon span:nth-child(2) { height: 8px; }
+    .sort-icon span:nth-child(3) { height: 4px; }
+
+    .sort-dropdown.asc .sort-icon span:nth-child(1) { height: 4px; }
+    .sort-dropdown.asc .sort-icon span:nth-child(3) { height: 12px; }
+
+    .sort-dropdown-text {
+      flex: 1;
+    }
+
+    /* Sort dropdown menu */
+    .sort-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      min-width: 160px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-visible);
+      border-radius: 10px;
+      padding: 6px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-8px);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 100;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    .sort-menu.open {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .sort-menu-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .sort-menu-item:hover {
+      background: var(--bg-hover);
+      color: var(--text-prose);
+    }
+
+    .sort-menu-item.active {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-primary);
+    }
+
+    .sort-menu-item .check-icon {
+      width: 14px;
+      height: 14px;
+      opacity: 0;
+      color: var(--green);
+    }
+
+    .sort-menu-item.active .check-icon {
+      opacity: 1;
     }
 
     .insight-stats {
@@ -2326,6 +2422,83 @@
 
     .expanded-input input::placeholder {
       color: var(--text-tertiary);
+    }
+
+    /* Scroll indicator - bouncing arrow */
+    .scroll-indicator {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: scale(0.8) translateY(8px);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 10;
+    }
+
+    .insight-card.expanded .insight-expanded.has-more .scroll-indicator {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1) translateY(0);
+      transition-delay: 0.3s;
+    }
+
+    .scroll-indicator svg {
+      width: 16px;
+      height: 16px;
+      color: var(--text-secondary);
+      animation: bounceArrow 2s ease-in-out infinite;
+      animation-delay: 0.5s;
+    }
+
+    @keyframes bounceArrow {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(4px);
+      }
+      60% {
+        transform: translateY(2px);
+      }
+    }
+
+    /* Fade gradient to indicate more content */
+    .insight-expanded.has-more::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: linear-gradient(to bottom, transparent 0%, var(--bg-hover) 100%);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease 0.3s;
+    }
+
+    .insight-card.expanded .insight-expanded.has-more::after {
+      opacity: 0.6;
+    }
+
+    /* Update expanded section for scroll indicator positioning */
+    .insight-expanded {
+      position: relative;
+    }
+
+    /* Insight list transition for sort animation */
+    .insight-list {
+      transition: opacity 0.15s ease, transform 0.15s ease;
     }
 
     /* ===========================================
@@ -3257,14 +3430,20 @@
         case 'features':
           panelCenter.innerHTML = getFeaturesContent();
           setupCardInteractions();
+          setupSortDropdowns();
+          setupScrollIndicators();
           break;
         case 'tech-debt':
           panelCenter.innerHTML = getTechDebtContent();
           setupCardInteractions();
+          setupSortDropdowns();
+          setupScrollIndicators();
           break;
         case 'tests':
           panelCenter.innerHTML = getTestsContent();
           setupCardInteractions();
+          setupSortDropdowns();
+          setupScrollIndicators();
           break;
       }
       
@@ -3351,6 +3530,337 @@
       `;
       conversationArea.appendChild(exchange);
       playSound('confirm');
+    }
+
+    // ===========================================
+    // SORT FUNCTIONALITY
+    // ===========================================
+    let currentSortState = {
+      features: { field: 'score', dir: 'desc' },
+      'tech-debt': { field: 'severity', dir: 'asc' },
+      tests: { field: 'coverage', dir: 'desc' }
+    };
+
+    function setupSortDropdowns() {
+      document.querySelectorAll('.sort-dropdown-container').forEach(container => {
+        const btn = container.querySelector('.sort-dropdown');
+        const menu = container.querySelector('.sort-menu');
+        const sortType = container.dataset.sortType;
+
+        // Toggle menu on button click
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const isOpen = menu.classList.contains('open');
+          
+          // Close all other menus
+          document.querySelectorAll('.sort-menu.open').forEach(m => m.classList.remove('open'));
+          document.querySelectorAll('.sort-dropdown.active').forEach(b => b.classList.remove('active'));
+          
+          if (!isOpen) {
+            menu.classList.add('open');
+            btn.classList.add('active');
+            playSound('cursor');
+          }
+        });
+
+        // Handle menu item clicks
+        menu.querySelectorAll('.sort-menu-item').forEach(item => {
+          item.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const sortField = item.dataset.sort;
+            const currentField = currentSortState[sortType].field;
+            
+            // Toggle direction if same field, otherwise default direction
+            if (sortField === currentField) {
+              currentSortState[sortType].dir = currentSortState[sortType].dir === 'desc' ? 'asc' : 'desc';
+            } else {
+              // Default directions: score/coverage = desc (high first), severity = asc (worst first), name = asc
+              currentSortState[sortType].dir = (sortField === 'name') ? 'asc' : 
+                (sortField === 'severity') ? 'asc' : 'desc';
+            }
+            currentSortState[sortType].field = sortField;
+            
+            // Update UI
+            menu.querySelectorAll('.sort-menu-item').forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+            
+            // Update button text and direction indicator
+            const labelMap = {
+              score: 'Score', name: 'Name', files: 'File Count',
+              severity: 'Severity', issues: 'Issue Count',
+              coverage: 'Coverage', tests: 'Test Count'
+            };
+            btn.querySelector('.sort-dropdown-text').textContent = labelMap[sortField] || sortField;
+            btn.classList.toggle('asc', currentSortState[sortType].dir === 'asc');
+            
+            // Close menu
+            menu.classList.remove('open');
+            btn.classList.remove('active');
+            
+            // Apply sort
+            applySorting(sortType);
+            playSound('decide');
+          });
+        });
+      });
+
+      // Close menus when clicking outside
+      document.addEventListener('click', () => {
+        document.querySelectorAll('.sort-menu.open').forEach(m => m.classList.remove('open'));
+        document.querySelectorAll('.sort-dropdown.active').forEach(b => b.classList.remove('active'));
+      });
+    }
+
+    function applySorting(sortType) {
+      const { field, dir } = currentSortState[sortType];
+      let listId, data;
+      
+      if (sortType === 'features') {
+        listId = 'features-list';
+        data = [...featuresData];
+      } else if (sortType === 'tech-debt') {
+        listId = 'tech-debt-list';
+        data = [...techDebtData];
+      } else if (sortType === 'tests') {
+        listId = 'tests-list';
+        data = [...testsData];
+      }
+      
+      // Sort the data
+      data.sort((a, b) => {
+        let valA, valB;
+        
+        switch(field) {
+          case 'score':
+          case 'coverage':
+            valA = a.score;
+            valB = b.score;
+            break;
+          case 'severity':
+            valA = a.score;
+            valB = b.score;
+            break;
+          case 'name':
+            valA = a.name.toLowerCase();
+            valB = b.name.toLowerCase();
+            break;
+          case 'files':
+            valA = a.files ? a.files.length : 0;
+            valB = b.files ? b.files.length : 0;
+            break;
+          case 'issues':
+            valA = a.issues ? a.issues.length : 0;
+            valB = b.issues ? b.issues.length : 0;
+            break;
+          case 'tests':
+            valA = a.tests || 0;
+            valB = b.tests || 0;
+            break;
+          default:
+            valA = a.score;
+            valB = b.score;
+        }
+        
+        if (typeof valA === 'string') {
+          return dir === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+        }
+        return dir === 'asc' ? valA - valB : valB - valA;
+      });
+      
+      // Re-render the list
+      const list = document.getElementById(listId);
+      if (!list) return;
+      
+      // Animate out
+      list.style.opacity = '0';
+      list.style.transform = 'translateY(8px)';
+      
+      setTimeout(() => {
+        // Render sorted cards
+        if (sortType === 'features') {
+          list.innerHTML = data.map(f => renderFeatureCard(f)).join('');
+        } else if (sortType === 'tech-debt') {
+          list.innerHTML = data.map(f => renderTechDebtCard(f)).join('');
+        } else if (sortType === 'tests') {
+          list.innerHTML = data.map(t => renderTestCard(t)).join('');
+        }
+        
+        // Re-setup interactions
+        setupCardInteractions();
+        setupScrollIndicators();
+        
+        // Animate in
+        list.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+        list.style.opacity = '1';
+        list.style.transform = 'translateY(0)';
+      }, 150);
+    }
+
+    // Card render functions for sorting
+    function renderFeatureCard(f) {
+      return `
+        <div class="insight-card" data-id="${f.id}">
+          <div class="insight-card-main">
+            <div class="insight-score ${f.color}">
+              <span class="insight-score-num">${f.score}</span>
+            </div>
+            <div class="insight-card-content">
+              <div class="insight-card-title">${f.name}</div>
+              <div class="insight-card-desc">${f.desc}</div>
+              <div class="insight-card-meta">
+                ${f.meta.map(m => `<span class="insight-meta-badge">${m}</span>`).join('')}
+              </div>
+            </div>
+            <span class="insight-card-expand">+</span>
+          </div>
+          <div class="insight-expanded">
+            <div class="scroll-indicator">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </div>
+            <div class="expanded-section">
+              <div class="expanded-section-label">Analysis</div>
+              <p class="annotation-prose">${f.prose}</p>
+            </div>
+            <div class="expanded-section">
+              <div class="expanded-section-label">Files</div>
+              <div class="insight-file-list">
+                ${f.files.map(file => `<div class="insight-file-item">→ ${file}</div>`).join('')}
+              </div>
+            </div>
+            <div class="card-conversation"></div>
+            <div class="expanded-input">
+              <span class="arrow">→</span>
+              <input type="text" placeholder="Ask about this feature...">
+            </div>
+            <div class="expanded-actions">
+              ${f.actions.map(a => `
+                <button class="action-btn ${a.primary ? 'primary' : 'secondary'}">
+                  <kbd>${a.key}</kbd> ${a.label}
+                </button>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderTechDebtCard(f) {
+      return `
+        <div class="insight-card" data-id="${f.id}">
+          <div class="insight-card-main">
+            <div class="insight-score ${f.color}">
+              <span class="insight-score-num">${f.score}</span><span class="insight-score-unit">/10</span>
+            </div>
+            <div class="insight-card-content">
+              <div class="insight-card-title" style="font-family: var(--font-mono); font-size: 13px;">${f.name}</div>
+              <div class="insight-card-desc">${f.desc}</div>
+              <div class="insight-card-meta">
+                ${f.issues.map(i => `<span class="insight-meta-badge">${i}</span>`).join('')}
+              </div>
+            </div>
+            <span class="insight-card-expand">+</span>
+          </div>
+          <div class="insight-expanded">
+            <div class="scroll-indicator">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </div>
+            <div class="expanded-section">
+              <div class="expanded-section-label">Analysis</div>
+              <p class="annotation-prose">${f.prose}</p>
+            </div>
+            <div class="card-conversation"></div>
+            <div class="expanded-input">
+              <span class="arrow">→</span>
+              <input type="text" placeholder="Ask about this issue...">
+            </div>
+            <div class="expanded-actions">
+              ${f.actions.map(a => `
+                <button class="action-btn ${a.primary ? 'primary' : 'secondary'}">
+                  <kbd>${a.key}</kbd> ${a.label}
+                </button>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderTestCard(t) {
+      return `
+        <div class="insight-card" data-id="${t.name.replace('/', '')}">
+          <div class="insight-card-main">
+            <div class="insight-score ${t.color}">
+              <span class="insight-score-num">${t.score}</span><span class="insight-score-unit">%</span>
+            </div>
+            <div class="insight-card-content">
+              <div class="insight-card-title" style="font-family: var(--font-mono);">${t.name}</div>
+              <div class="insight-card-desc">${t.tests} tests, ${t.coverage} line coverage</div>
+              <div class="insight-card-meta">
+                <span class="insight-meta-badge">${t.desc.split('.')[0]}</span>
+              </div>
+            </div>
+            <span class="insight-card-expand">+</span>
+          </div>
+          <div class="insight-expanded">
+            <div class="scroll-indicator">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </div>
+            <div class="expanded-section">
+              <div class="expanded-section-label">Details</div>
+              <p class="annotation-prose">${t.desc}</p>
+            </div>
+            <div class="expanded-section">
+              <div class="expanded-section-label">Test Files</div>
+              <div class="insight-file-list">
+                ${t.files.map(file => `<div class="insight-file-item">→ ${file}</div>`).join('')}
+              </div>
+            </div>
+            <div class="card-conversation"></div>
+            <div class="expanded-input">
+              <span class="arrow">→</span>
+              <input type="text" placeholder="Ask about coverage...">
+            </div>
+            <div class="expanded-actions">
+              <button class="action-btn primary">
+                <kbd>G</kbd> Generate tests
+              </button>
+              <button class="action-btn secondary">
+                <kbd>R</kbd> Run tests
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // ===========================================
+    // SCROLL INDICATOR
+    // ===========================================
+    function setupScrollIndicators() {
+      document.querySelectorAll('.insight-card').forEach(card => {
+        const expanded = card.querySelector('.insight-expanded');
+        if (!expanded) return;
+        
+        // Check if card has substantial content (files list or multiple sections)
+        const hasFiles = expanded.querySelector('.insight-file-list');
+        const sectionCount = expanded.querySelectorAll('.expanded-section').length;
+        const hasConversation = expanded.querySelector('.card-conversation');
+        
+        // Show indicator if there's a file list or 2+ sections (content likely overflows)
+        const hasMoreContent = hasFiles || sectionCount >= 2;
+        
+        if (hasMoreContent) {
+          expanded.classList.add('has-more');
+        } else {
+          expanded.classList.remove('has-more');
+        }
+      });
     }
 
     // ===========================================
@@ -3451,7 +3961,26 @@
               <button class="filter-pill">Needs work</button>
             </div>
             <div class="spacer"></div>
-            <button class="sort-dropdown">Sort: Score ▾</button>
+            <div class="sort-dropdown-container" data-sort-type="features">
+              <button class="sort-dropdown" data-current-sort="score" data-sort-dir="desc">
+                <div class="sort-icon"><span></span><span></span><span></span></div>
+                <span class="sort-dropdown-text">Score</span>
+              </button>
+              <div class="sort-menu">
+                <div class="sort-menu-item active" data-sort="score">
+                  Score
+                  <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <div class="sort-menu-item" data-sort="name">
+                  Name
+                  <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <div class="sort-menu-item" data-sort="files">
+                  File Count
+                  <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div class="insight-stats">
@@ -3487,6 +4016,11 @@
                   <span class="insight-card-expand">+</span>
                 </div>
                 <div class="insight-expanded">
+                  <div class="scroll-indicator">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                  </div>
                   <div class="expanded-section">
                     <div class="expanded-section-label">Analysis</div>
                     <p class="annotation-prose">${f.prose}</p>
@@ -3536,7 +4070,26 @@
               <button class="filter-pill">Moderate</button>
             </div>
             <div class="spacer"></div>
-            <button class="sort-dropdown">Sort: Severity ▾</button>
+            <div class="sort-dropdown-container" data-sort-type="tech-debt">
+              <button class="sort-dropdown" data-current-sort="severity" data-sort-dir="asc">
+                <div class="sort-icon"><span></span><span></span><span></span></div>
+                <span class="sort-dropdown-text">Severity</span>
+              </button>
+              <div class="sort-menu">
+                <div class="sort-menu-item active" data-sort="severity">
+                  Severity
+                  <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <div class="sort-menu-item" data-sort="name">
+                  File Name
+                  <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <div class="sort-menu-item" data-sort="issues">
+                  Issue Count
+                  <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div class="insight-stats">
@@ -3572,6 +4125,11 @@
                   <span class="insight-card-expand">+</span>
                 </div>
                 <div class="insight-expanded">
+                  <div class="scroll-indicator">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                  </div>
                   <div class="expanded-section">
                     <div class="expanded-section-label">Analysis</div>
                     <p class="annotation-prose">${f.prose}</p>
@@ -3614,7 +4172,26 @@
               <button class="filter-pill">Low coverage</button>
             </div>
             <div class="spacer"></div>
-            <button class="sort-dropdown">Sort: Coverage ▾</button>
+            <div class="sort-dropdown-container" data-sort-type="tests">
+              <button class="sort-dropdown" data-current-sort="coverage" data-sort-dir="desc">
+                <div class="sort-icon"><span></span><span></span><span></span></div>
+                <span class="sort-dropdown-text">Coverage</span>
+              </button>
+              <div class="sort-menu">
+                <div class="sort-menu-item active" data-sort="coverage">
+                  Coverage
+                  <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <div class="sort-menu-item" data-sort="name">
+                  Name
+                  <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <div class="sort-menu-item" data-sort="tests">
+                  Test Count
+                  <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div class="insight-stats">
@@ -3650,6 +4227,11 @@
                   <span class="insight-card-expand">+</span>
                 </div>
                 <div class="insight-expanded">
+                  <div class="scroll-indicator">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                  </div>
                   <div class="expanded-section">
                     <div class="expanded-section-label">Details</div>
                     <p class="annotation-prose">${t.desc}</p>
