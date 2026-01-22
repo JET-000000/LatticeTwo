@@ -2727,6 +2727,7 @@
 
     /* Task Card - Individual fix item with progress */
     .activity-task {
+      position: relative;
       background: rgba(255, 255, 255, 0.015);
       border: 1px solid rgba(255, 255, 255, 0.04);
       border-radius: 10px;
@@ -2796,20 +2797,19 @@
       color: var(--text-secondary);
     }
 
-    /* Horizontal Ticker - L5ttice decorative element - full width edge-to-edge */
+    /* Horizontal Ticker - L5ttice decorative element - full bleed edge-to-edge */
     .task-ticker {
+      position: relative;
       overflow: hidden;
-      height: 24px;
+      height: 20px;
       margin: 16px 0 20px;
-      padding: 5px 0;
+      padding: 3px 0;
       width: 100%;
-      mask-image: linear-gradient(90deg, transparent 0%, black 2%, black 98%, transparent 100%);
+      mask-image: linear-gradient(90deg, transparent 0%, black 1%, black 99%, transparent 100%);
       opacity: 0;
       transition: opacity 0.4s ease 0.2s;
       box-sizing: border-box;
-      background: rgba(255, 255, 255, 0.025);
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      background: transparent;
     }
 
     .activity-task.expanded .task-ticker {
@@ -4394,12 +4394,12 @@
                       <div class="task-progress-fill" style="width: ${state.progress || 0}%"></div>
                     </div>
                   </div>
+                  ${action.ticker ? `
+                    <div class="task-ticker">
+                      <div class="ticker-track">${tickerHtml}</div>
+                    </div>
+                  ` : ''}
                   <div class="task-dialogue">
-                    ${action.ticker ? `
-                      <div class="task-ticker">
-                        <div class="ticker-track">${tickerHtml}</div>
-                      </div>
-                    ` : ''}
                     ${action.prose ? `
                       <div class="task-prose">${action.prose}</div>
                     ` : ''}
@@ -5110,7 +5110,7 @@
         <div class="insight-container">
           <div class="insight-header">
             <h2 class="insight-title">Tech Debt Overview</h2>
-            <p class="insight-summary">Improvement areas sorted by severity. Fix issues with a single click.</p>
+            <p class="insight-summary"><span class="highlight">Two</span> critical issues detected across <span class="highlight">four</span> files. Fix issues with a single click.</p>
           </div>
           
           <div class="insight-toolbar">
@@ -5213,7 +5213,7 @@
         <div class="insight-container">
           <div class="insight-header">
             <h2 class="insight-title">Test Coverage</h2>
-            <p class="insight-summary">Coverage by directory. Expand to see test files and add missing tests.</p>
+            <p class="insight-summary"><span class="highlight">Seventy-one percent</span> overall coverage across <span class="highlight">four</span> test suites. Expand to see test files and add missing tests.</p>
           </div>
           
           <div class="insight-toolbar">
